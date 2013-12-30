@@ -1,0 +1,75 @@
+/*
+	The page background is set to grey by default.
+*/
+html, body {
+	background-color: lightgrey;
+}
+
+/* Div that contains the application name. */
+#app_name {
+	text-align: center;
+}
+
+/* Application name text. */
+#app_name h2 {
+	font-weight: bold;
+}
+
+/* 
+	Contains all of the application options (create new document,
+	change editing mode, etc.) 
+*/
+#toolbar {
+	height: 120px; /* TODO: remove hard-coded value */
+	background-color: white;
+	border: 1px solid black;
+	text-align: center;
+}
+
+/* 
+	This element is hidden, this file-input button is invoked
+	when the 'Select Image' button is clicked.
+*/
+#image_select {
+	display: none;
+}
+
+/*
+	The page_body div contains:
+		- ODK Scan document
+		- Properties sidebar
+		- Loaded images
+*/
+#page_body {
+	margin-top: 15px;
+}
+
+/* 
+	Sidebar which allows the user to add/modify/delete
+	properties belonging to form elements and images
+	that are added to the ODK Scan doc.
+*/
+#prop_sidebar {
+	width: 250px; /* TODO: remove hard-coded value */
+	height: 500px; /* TODO: remove hard-coded value */
+	background-color: white;
+	border: 1px solid black;
+	text-align: center;
+	float: left;
+}
+
+/* A div container for the ODK Scan doc. */
+#scan_doc {
+	width: 8.5in; /* TODO: create pre-defined page size options */
+	height: 11in; /* TODO: create pre-defined page size options */
+	border: 2px solid black;
+	background-color: white;
+	float: left;
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+/* A div container for images that are added to the page_body. */
+#image_area {
+	float: left;
+}

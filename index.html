@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ODK Scan UI</title>
+	<!-- 
+	
+	Application Dependencies
+	
+	-->
+	
+	<!-- CSS -->
+    <link rel="stylesheet" href="style/style.css">
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="style/imgareaselect-animated.css">
+	<!---->
+
+	<!-- JavaScript libraries -->
+	<script src="js/libs/jquery-1.10.2.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script src="js/libs/handlebars-1.0.0.js"></script>
+	<script src="js/libs/ember.js"></script>
+	<script src="js/libs/ember-data.js"></script>
+	<script src="js/libs/load-image.min.js"></script>
+	<script src="js/libs/jquery.imgareaselect.pack.js"></script>
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>		
+	<!---->
+	
+	<!-- ODK Scan scripts -->
+	<script src="js/application.js"></script>
+	<script src="js/router.js"></script>
+	<script src="js/models/element.js"></script>
+	<script src="js/controllers/elements_controller.js"></script>
+	<script src="js/controllers/element_controller.js"></script>
+	<!---->
+  </head>
+  <body>    
+	<!-- inner body content is wrapped in 'handlebars' -->
+	<script type="text/x-handlebars" data-template-name="elements">
+		<!-- this is where the application 'main' code resides -->
+		
+		<div id="toolbar" class="row">
+			<div id="app_name" class="col-xs-2">
+				<h2>ODK Scan</h2>
+			</div>
+			<div class="col-xs-2">
+				<h3>Create Document</h3>				
+					<div class="btn-group">
+					  <button type="button" class="btn btn-default">Create New</button>
+					</div>
+				</div>
+			<div class="col-xs-2">
+				<h3>Edit Mode</h3>				
+				<div class="btn-group-sm" data-toggle="buttons">
+				  <label class="btn btn-primary" {{action "enableImageEdit"}}>
+					<input type="radio" name="options"> Image Editing
+				  </label>
+				  <label class="btn btn-primary" {{action "enableFormEdit"}}>
+					<input type="radio" name="options"> Form Editing
+				  </label>
+				</div>
+			</div>
+			{{#if isImageEditing}}
+				<div class="col-xs-2">
+					<h3>Image Editor</h3>
+					<div class="btn-group-sm">
+						<input id="image_select" type="file"></input>
+						<button id="image_button" type="button" class="btn btn-default" {{action 'selectImage'}}>Select Image</button>
+						<button type="button" class="btn btn-default">Add Selection</button>
+					</div>
+				</div>
+			{{else}}
+				<div class="col-xs-2">
+					<h3>Form Editor</h3>
+					<div class="btn-group">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						Choose Element <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#">Blank Box</a></li>
+							<li><a href="#">Checkboxes</a></li>
+							<li><a href="#">Fill-in bubbles</a></li>
+						</ul>
+					</div>
+				</div>			
+			{{/if}}
+			<div class="col-xs-2">
+				<h3>Save Document</h3>
+				<div class="btn-group-sm">
+				  <button type="button" class="btn btn-default">Save Image</button>
+				  <button type="button" class="btn btn-default">Save JSON</button>
+				</div>
+			</div>
+			
+			<div class="col-xs-2">
+				<h3>Help</h3>
+				<div class="btn-group-sm">
+				  <button type="button" class="btn btn-default">About ODK</button>
+				  <button type="button" class="btn btn-default">How to Use</button>
+				</div>
+			</div>
+		</div>
+		
+		{{outlet}}
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="elements/index">
+		<!-- this is the html that loads when the user navigates to this website -->
+		<div id="page_body">
+			<div id="prop_sidebar">
+				<h3>Form Properties</h3>				
+			</div>
+			<div id="scan_doc">
+				<div id="image_elements">				
+				</div>
+				<div id="form_elements">
+				</div>
+			</div>
+			<div id="image_area">
+			</div>
+		</div>
+	</script>
+  </body>
+</html>

@@ -73,3 +73,12 @@ html, body {
 #image_area {
 	float: left;
 }
+
+/* 
+	Makes the area that surrounds the selected region darker
+	in order to highlight the selected region. 
+*/
+.imgareaselect-outer {
+	background-color: black;
+	opacity: 0.5;
+}

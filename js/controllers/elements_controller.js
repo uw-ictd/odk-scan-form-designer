@@ -37,13 +37,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.set('isImageEditing', false);
 		},
 		selectImage: function() {
-			console.log("image select button was pressed");
 			$("#image_select").click();
 
 			$("#image_select").change(
 				function (event) {
-					console.log("loading image: " + event.target.files[0]);
-					
 					var selectedFile = event.target.files[0];
 					var reader = new FileReader();
 					var new_img = document.createElement("img");
@@ -53,30 +50,40 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						new_img.title = selectedFile.name;
 						new_img.src = event.target.result;
 						
-						/*
-						// Assuming that the image should NOT be scaled
-						loadImage.scale(
-							new_img,
-							// NOTE: by default limit the image size to .5 of the page width and height
-							{maxWidth: $("#scan_doc").width() / 2,
-							 maxHeight: $("#scan_doc").height() / 2
-							}
-						);
-						*/						
 						$("#image_area").append(new_img);	
 						
 						$('#image_area img').imgAreaSelect({
-							handles: true,
-							onSelectEnd: function(img, selection) {
+							handles: true, 
+							onSelectEnd: function(img, reg) {
 								var $new_img = $("<img/>").attr('src', img.src);
+
 								$new_img.css({
-									width: selection.width,
-									height: selection.height,
-									marginLeft: -selection.x1,
-									marginTop: -selection.y1,
-									position: 'relative'
-								})	
-								$("#scan_doc").append($new_img);
+									position: 'relative',
+									top: -reg.y1,
+									left: -reg.x1,
+								});	
+																
+								// Image is wrapped in a div to eliminate the overflow
+								// and only make the selected region visible.
+								// NOTE: default position is set to top-left of Scan doc.
+								var $img_div = $('<div/>').css({
+									position: 'absolute', 
+									overflow: 'hidden',
+									width: reg.width, 
+									height: reg.height,
+									top: 0, 
+									left: 0});
+								
+								// image is removed when double-clicked
+								$img_div.dblclick(
+									function() {
+										this.remove();
+									}
+								);								
+								$img_div.append($new_img);
+								$img_div.draggable({containment: 'parent', position: 'relative'});
+								
+								$("#scan_doc").append($img_div);								
 							}
 						});
 					};
@@ -84,6 +91,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					reader.readAsDataURL(selectedFile);					
 				}
 			);
+		},
+		saveImage: function() {
+			html2canvas($("#scan_doc"), {   
+				logging:true,
+				onrendered : function(canvas) {                           
+					var img_src = canvas.toDataURL('image/png'); 
+					canvas.toBlob(function(blob) {
+						var fname = "my_dom"					
+						saveAs(blob, fname);
+					});	
+				}
+			});
 		}
 	}
 });

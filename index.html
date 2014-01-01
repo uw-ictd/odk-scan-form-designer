@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>ODK Scan UI</title>
+    <title>ODK Scan</title>
 	<!-- 
 	
 	Application Dependencies
@@ -10,38 +10,44 @@
 	-->
 	
 	<!-- CSS -->
-    <link rel="stylesheet" href="style/style.css">
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-	<link rel="stylesheet" href="style/imgareaselect-animated.css">
+		<link rel="stylesheet" href="style/style.css">
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="style/imgareaselect-animated.css">
 	<!---->
 
 	<!-- JavaScript libraries -->
-	<script src="js/libs/jquery-1.10.2.min.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-	<script src="js/libs/handlebars-1.0.0.js"></script>
-	<script src="js/libs/ember.js"></script>
-	<script src="js/libs/ember-data.js"></script>
-	<script src="js/libs/load-image.min.js"></script>
-	<script src="js/libs/jquery.imgareaselect.pack.js"></script>
-	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>		
-	
-	<!-- converts a DOM element to a canvas element -->
-	<script src="js/libs/html2canvas.js"></script>
-	
-	<!-- used to save Blobs to a file -->
-	<script src="js/libs/FileSaver.js"></script>
-	
-	<!-- required in conjunction with the FileSaver library for browsers that 
-	do not support the toBlob function on canvas elements -->
-		<script src="js/libs/canvas-toBlob.js"></script>
+		<!-- jQuery libraries -->
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		
+		<!-- required for EmberJS (model-view-controller framework) -->
+		<script src="js/libs/handlebars-1.0.0.js"></script>
+		<script src="js/libs/ember.js"></script>
+		<script src="js/libs/ember-data.js"></script>
+			
+		<!-- used to implement image cropping/selection -->
+		<script src="js/libs/jquery.imgareaselect.pack.js"></script>
+		
+		<!-- used to implement the grid -->
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>		
+		
+		<!-- converts a DOM element to a canvas element -->
+		<script src="js/libs/html2canvas.js"></script>
+		
+		<!-- required in conjunction with the FileSaver library for browsers that 
+		do not support the toBlob function on canvas elements -->
+			<script src="js/libs/canvas-toBlob.js"></script>
+		
+		<!-- used to save Blobs to a file -->
+		<script src="js/libs/FileSaver.js"></script>
 	<!---->
 	
 	<!-- ODK Scan scripts -->
-	<script src="js/application.js"></script>
-	<script src="js/router.js"></script>
-	<script src="js/models/element.js"></script>
-	<script src="js/controllers/elements_controller.js"></script>
-	<script src="js/controllers/element_controller.js"></script>
+		<script src="js/application.js"></script>
+		<script src="js/router.js"></script>
+		<script src="js/models/element.js"></script>
+		<script src="js/controllers/elements_controller.js"></script>
+		<script src="js/controllers/element_controller.js"></script>
 	<!---->
   </head>
   <body>    
@@ -115,7 +121,8 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
-		<!-- this is the html that loads when the user navigates to this website -->
+		<!-- this is the html that loads in the body of the page when 
+		the user navigates to this website -->
 		<div id="page_body">
 			<div id="prop_sidebar">
 				<h3>Form Properties</h3>				

@@ -82,7 +82,7 @@
 					<div class="btn-group-sm">
 						<input id="image_select" type="file"></input>
 						<button id="image_button" type="button" class="btn btn-default" {{action 'selectImage'}}>Select Image</button>
-						<button type="button" class="btn btn-default">Add Selection</button>
+						<button id="add_sel" type="button" class="btn btn-default" {{action 'addSelection'}}>Add Selection</button>
 					</div>
 				</div>
 			{{else}}
@@ -130,6 +130,7 @@
 			<div id="scan_doc">
 			</div>
 			<div id="image_area">
+				<img id="loaded_image"></img>
 			</div>
 		</div>
 	</script>

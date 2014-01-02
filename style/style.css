@@ -94,3 +94,14 @@ html, body {
 	background-color: black;
 	opacity: 0.5;
 }
+
+/************************************************************
+*  Form Elements
+************************************************************/
+
+.box {
+	width: 100px;
+	height: 100px;
+	border-style: solid;
+	border-color: black;
+}

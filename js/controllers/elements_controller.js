@@ -1,3 +1,10 @@
+/*
+	Constants
+*/
+
+var GRID_X = 10;
+var GRID_Y = 10;
+
 ODKScan.ElementsController = Ember.ArrayController.extend({
 	isImageEditing: false,
 	imgSelect: null,
@@ -11,6 +18,34 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								handles: true
 							});				
 			controller.set('imgSelect', ias);		
+			
+			$("#box_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {
+						console.log("making box...");
+						var $new_box = $('<div/>').addClass('box').addClass('form_element');
+						
+						$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
+						$new_box.resizable({containment: 'parent', grid: [GRID_X, GRID_Y]});
+						$new_box.css({'border-width': $("#box_border").val()});
+						
+						// box is removed when double-clicked
+						$new_box.dblclick(
+							function() {
+								this.remove();
+							}
+						);
+						
+						$("#scan_doc").append($new_box);
+						$("#box_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#box_dialog").dialog("close");
+					}
+				}
+			});			
 		});
 	},
 	actions: {
@@ -40,14 +75,14 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		  console.log("created element");
 		},
 		enableImageEdit: function() {
-			console.log("enabling image editing");
 			$("#prop_sidebar").hide("slow");
 			this.set('isImageEditing', true);
 		},
 		enableFormEdit: function() {
-			console.log("enabling form editing");
 			$("#image_area img").attr('src', null);
-			$("#prop_sidebar").show("slow");
+			var ias = this.get('imgSelect');
+			ias.cancelSelection();
+			$("#prop_sidebar").show("slow");			
 			this.set('isImageEditing', false);
 		},
 		selectImage: function() {
@@ -116,6 +151,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					
 					$("#scan_doc").append($img_div);								
 			}
-		}			
+		},
+		createBox: function() {
+			console.log("creating box");
+			$("#box_dialog").dialog("open");
+		}
 	}
 });

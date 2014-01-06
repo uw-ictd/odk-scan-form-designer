@@ -99,6 +99,10 @@ html, body {
 *  Form Elements
 ************************************************************/
 
+.dashed_border:hover {
+	border: 1px dashed black;
+}
+
 .box {
 	width: 100px;
 	height: 100px;

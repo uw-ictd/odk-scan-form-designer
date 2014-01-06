@@ -41,6 +41,7 @@
 		
 		<!-- used to save Blobs to a file -->
 		<script src="js/libs/FileSaver.js"></script>
+		
 	<!---->
 	
 	<!-- ODK Scan scripts -->
@@ -95,7 +96,7 @@
 						</button>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#" {{action 'createBox'}}>Blank Box</a></li>
-							<li><a href="#">Checkboxes</a></li>
+							<li><a href="#" {{action 'createCheckbox'}}>Checkboxes</a></li>
 							<li><a href="#">Fill-in bubbles</a></li>
 						</ul>
 					</div>
@@ -120,7 +121,9 @@
 		
 		{{outlet}}
 		
+		<!-- dialog html is included below -->
 		{{partial 'boxDialog'}}
+		{{partial 'cbDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -144,6 +147,26 @@
 				<fieldset>
 					<label for="name">Border</label>
 					<input type="number" id="box_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">					
+				</fieldset>
+			</form>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_cbDialog">
+		<div id="checkbox_dialog" title="Create checkboxes">		
+			<form>
+				<fieldset>
+					<label for="name">Number of checkboxes</label>
+					<input type="number" id="num_cb" value="1" class="ui-widget-content ui-corner-all" min="1" max="10">	
+
+					<label for="name">Include border?</label>					
+					<input type="radio" class="border_yes" {{action 'enableBorder'}}>Yes
+					<input type="radio" class="border_no" {{action 'disableBorder'}}>No<br>				
+					
+					{{#if addBorder}}
+						<label for="name">Border</label>
+						<input type="number" id="cb_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">				
+					{{/if}}
 				</fieldset>
 			</form>
 		</div>

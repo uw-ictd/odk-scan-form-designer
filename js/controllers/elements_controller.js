@@ -14,8 +14,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		
 		var controller = this;
 		$(document).ready(function() {		
-			/* 
-				imgAreaSelect field is initialized here,
+			/* 	imgAreaSelect field is initialized here,
 				setting it as field allows the controller to 
 				access/modify the the selected image region
 				based on interaction from the user.
@@ -36,11 +35,23 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				buttons: {
 					"Ok": function() {
 						console.log("making box...");
-						var $new_box = $('<div/>').addClass('box').addClass('form_element');
+						var $new_box = $('<div/>').addClass('box').addClass('field');
+						
+						var box_width = GRID_X * 10;
+						var box_height = GRID_Y * 10;
+						var border_offset = 2 * $("#box_border").val();
+						var $new_cb = $('<div/>').css({width: box_width, height: box_height});
 						
 						$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 						$new_box.resizable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 						$new_box.css({'border-width': $("#box_border").val()});
+						$new_box.css({'background-color': 'green'});
+						$new_box.data("prop", {});
+						
+						// set field properties
+						var field_prop = $new_box.data("prop");						
+						field_prop.type = "box";
+						field_prop.name = "none";						
 						
 						// box is removed when double-clicked
 						$new_box.dblclick(
@@ -64,10 +75,24 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				buttons: {
 					"Ok": function() {
 						console.log("making checkboxes...");
-						var $new_cb = $('<div/>').css({width: 100, height: 100});
+						// NOTE: initial width and height are aligned to the grid size
+						var div_width = GRID_X * 10;
+						var div_height = GRID_Y * 10;
+						var $new_cb = $('<div/>').css({width: div_width, height: div_height});
 						
-						if (controller.get('addBorder')) {						
+						if (controller.get('addBorder')) {
 							$new_cb.css({'border-width': $("#cb_border").val()});
+							
+							/* 	
+								Adding a border to an element increases its 
+								width and height, so we must decrement the 
+								width and height of the shape to maintain
+								grid alignment.
+							*/
+
+							$new_cb.width(div_width - 2 * $("#cb_border").val() );
+							$new_cb.height(div_height - 2 * $("#cb_border").val());							
+							
 							// NOTE: hard-coded color and style
 							$new_cb.css({'border-color': "black"});
 							$new_cb.css({'border-style': "solid"});
@@ -104,8 +129,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	actions: {
 		enableBorder: function() {
 			this.set('addBorder', true);
-			/*
-				There's an issue with adding an 'action' to a
+			/*	There's an issue with adding an 'action' to a
 				radio button, after selecting an option you're
 				unable to change the selected button. 
 				
@@ -118,8 +142,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		disableBorder: function() {
 			this.set('addBorder', false);
-			/*
-				There's an issue with adding an 'action' to a
+			/*	There's an issue with adding an 'action' to a
 				radio button, after selecting an option you're
 				unable to change the selected button. 
 				
@@ -218,6 +241,39 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		createCheckbox: function() {
 			console.log("creating checkboxes");
 			$("#checkbox_dialog").dialog("open");
+		},
+		saveJSON: function() {
+			console.log("creating JSON");
+			var res = {};
+
+			// set Scan doc properties
+			res.height = $("#scan_doc").height();
+			res.width = $("#scan_doc").width();
+			res.fields = [];
+			
+			// iterate over all field elements
+			var all_fields = $(".field");			
+			for (var i = 0; i < all_fields.length; i++) {
+				var curr = $(all_fields[i]);
+				var f_data = curr.data("prop");
+				
+				var new_f = {};
+				res.fields.push(new_f);
+				
+				// retrieve/calculate data for the current field
+				new_f.type = f_data.type;
+				new_f.name = f_data.name;
+				new_f.segments = [];
+				
+				var seg = {};
+				seg.segment_x = curr.position().left;
+				seg.segment_y = curr.position().top;
+				seg.segment_width = curr.outerWidth();
+				seg.segment_height = curr.outerHeight();
+				
+				new_f.segments.push(seg);
+			}
+			console.log(JSON.stringify(res, null, '\t'));
 		}
 	}
 });

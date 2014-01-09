@@ -104,8 +104,18 @@ html, body {
 }
 
 .box {
-	width: 100px;
-	height: 100px;
 	border-style: solid;
 	border-color: black;
+	background-color: green; /* NOTE: only for debugging */
+}
+
+.cb_div {
+	display: inline-block;
+	border: 1px solid black;
+}
+
+.c_box {
+	border: 1px solid black;
+	float: left;
+	margin: 3px; /* TODO: remove hardcoded value */
 }

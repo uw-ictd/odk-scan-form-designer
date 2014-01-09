@@ -156,17 +156,11 @@
 		<div id="checkbox_dialog" title="Create checkboxes">		
 			<form>
 				<fieldset>
-					<label for="name">Number of checkboxes</label>
-					<input type="number" id="num_cb" value="1" class="ui-widget-content ui-corner-all" min="1" max="10">	
-
-					<label for="name">Include border?</label>					
-					<input type="radio" class="border_yes" {{action 'enableBorder'}}>Yes
-					<input type="radio" class="border_no" {{action 'disableBorder'}}>No<br>				
+					<label for="name">Horizontal # of checkboxes</label>
+					<input type="number" id="horiz_num_cb" value="1" class="ui-widget-content ui-corner-all" min="1" max="50">	
 					
-					{{#if addBorder}}
-						<label for="name">Border</label>
-						<input type="number" id="cb_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">				
-					{{/if}}
+					<label for="name">Vertical # of checkboxes</label>
+					<input type="number" id="vert_num_cb" value="1" class="ui-widget-content ui-corner-all" min="1" max="50">	
 				</fieldset>
 			</form>
 		</div>

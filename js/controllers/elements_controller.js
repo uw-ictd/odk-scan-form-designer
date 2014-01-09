@@ -4,11 +4,11 @@
 
 var GRID_X = 10;
 var GRID_Y = 10;
+var CHECKBOX_SIZE = 14;
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
 	isImageEditing: false,
 	imgSelect: null,
-	addBorder: false,
 	init: function() {
 		this._super();		
 		
@@ -35,23 +35,52 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				buttons: {
 					"Ok": function() {
 						console.log("making box...");
-						var $new_box = $('<div/>').addClass('box').addClass('field');
+						var $new_box = $('<div/>').addClass('field').addClass('box');
 						
+						// NOTE: initial width and height are aligned to the grid size
 						var box_width = GRID_X * 10;
 						var box_height = GRID_Y * 10;
-						var border_offset = 2 * $("#box_border").val();
-						var $new_cb = $('<div/>').css({width: box_width, height: box_height});
+						// $new_box is placed at the top left of the Scan doc
+						$new_box.css({width: box_width, height: box_height, top: 0, left: 0});						
 						
 						$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
-						$new_box.resizable({containment: 'parent', grid: [GRID_X, GRID_Y]});
+						$new_box.resizable({handles: 'all', 
+											containment: 'parent', 
+											grid: [GRID_X, GRID_Y],
+											minWidth: GRID_X * 5,
+											minHeight: GRID_Y * 5});
+																												
 						$new_box.css({'border-width': $("#box_border").val()});
-						$new_box.css({'background-color': 'green'});
+						$new_box.css({position: 'absolute'});
+						
+						// all user-defined properties will be stored in a JSON object 
 						$new_box.data("prop", {});
 						
 						// set field properties
-						var field_prop = $new_box.data("prop");						
-						field_prop.type = "box";
-						field_prop.name = "none";						
+						var field_prop = $new_box.data("prop");	
+						/* TODO: allow user to manipulate these properties */						
+						field_prop.type = "box"; 
+						field_prop.name = "none";			
+						
+						// this function is invoked when the JSON output is created
+						var getFieldJSON = function() {
+							var f_info = {};
+							
+							f_info.type = field_prop.type;
+							f_info.name = field_prop.name;
+							f_info.segments = [];
+				
+							var seg = {};
+							seg.segment_x = $new_box.position().left;
+							seg.segment_y = $new_box.position().top;
+							seg.segment_width = $new_box.outerWidth();
+							seg.segment_height = $new_box.outerHeight();
+							
+							f_info.segments.push(seg);
+							return f_info;
+						}
+						
+						$new_box.data("getFieldJSON", getFieldJSON);
 						
 						// box is removed when double-clicked
 						$new_box.dblclick(
@@ -76,47 +105,75 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					"Ok": function() {
 						console.log("making checkboxes...");
 						// NOTE: initial width and height are aligned to the grid size
-						var div_width = GRID_X * 10;
-						var div_height = GRID_Y * 10;
-						var $new_cb = $('<div/>').css({width: div_width, height: div_height});
+						var $cb_div = $('<div/>').addClass('cb_div').addClass('field');
 						
-						if (controller.get('addBorder')) {
-							$new_cb.css({'border-width': $("#cb_border").val()});
-							
-							/* 	
-								Adding a border to an element increases its 
-								width and height, so we must decrement the 
-								width and height of the shape to maintain
-								grid alignment.
-							*/
-
-							$new_cb.width(div_width - 2 * $("#cb_border").val() );
-							$new_cb.height(div_height - 2 * $("#cb_border").val());							
-							
-							// NOTE: hard-coded color and style
-							$new_cb.css({'border-color': "black"});
-							$new_cb.css({'border-style': "solid"});
-							
-							// reset the selected border option
-							controller.send('disableBorder');
-						} else {
-							$new_cb.addClass('dashed_border');
+						// the new field will be placed at the top left of the Scan doc
+						$cb_div.css({top: 0, left: 0, position: 'absolute'});																		
+						$cb_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});				
+						
+						for (var i = 0; i < $("#vert_num_cb").val(); i++) {
+							for (var j = 0; j < $("#horiz_num_cb").val(); j++) {
+								var $cb = $('<div/>').addClass('c_box');
+								$cb.css({width: CHECKBOX_SIZE, height: CHECKBOX_SIZE});
+								$cb_div.append($cb);
+							}
+							$cb_div.append('<br>');
 						}
-																	
-						$new_cb.draggable(
-							{containment: 'parent', 
-							grid: [GRID_X, GRID_Y]
+						
+						// all user-defined properties will be stored in a JSON object 
+						$cb_div.data("prop", {});		
+						
+						// set field properties
+						var field_prop = $cb_div.data("prop");	
+						/* TODO: allow user to manipulate these properties */												
+						field_prop.type = "box";
+						field_prop.name = "none";	
+
+						var getFieldJSON = function() {
+							var f_info = {};
+							f_info.segments = [];
+				
+							var seg = {};
+							seg.segment_x = $cb_div.position().left;
+							seg.segment_y = $cb_div.position().top;
+							seg.segment_width = $cb_div.outerWidth();
+							seg.segment_height = $cb_div.outerHeight();
+							
+							// seg.items contains list of locations of all checkboxes
+							seg.items = [];
+							
+							$cb_div.children('.c_box').each(function() {
+								var cb_loc = {}; // stores location of the checkbox
+								
+								/* 	NOTE: The checkbox location is given with
+									respect to its center. Also, position().left
+									and position().right do not take into account
+									the margins around the div, we have to add
+									horiz_offset to account for the margin.
+								*/								
+								var horiz_offset = parseInt($(this).css('margin-left'));
+								
+								// we use outerWidth() and outerHeight() because they take borders into account
+								cb_loc.item_x = horiz_offset + $(this).position().left + ($(this).outerWidth() / 2);
+								cb_loc.item_y = horiz_offset + $(this).position().top + ($(this).outerHeight() / 2);
+								
+								seg.items.push(cb_loc);
 							});
-						$new_cb.resizable({containment: 'parent', grid: [GRID_X, GRID_Y]});					
+							
+							f_info.segments.push(seg);
+							return f_info;
+						}
+						
+						$cb_div.data("getFieldJSON", getFieldJSON);
 						
 						// checkboxes are removed when double-clicked
-						$new_cb.dblclick(
+						$cb_div.dblclick(
 							function() {
 								this.remove();
 							}
 						);
 						
-						$("#scan_doc").append($new_cb);
+						$("#scan_doc").append($cb_div);
 						$("#checkbox_dialog").dialog("close");
 					},
 					"Cancel": function() {
@@ -127,32 +184,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		});
 	},
 	actions: {
-		enableBorder: function() {
-			this.set('addBorder', true);
-			/*	There's an issue with adding an 'action' to a
-				radio button, after selecting an option you're
-				unable to change the selected button. 
-				
-				As a work-around to this issue I'm manually 
-				changing the values of the radio buttons once
-				an option is selected.
-			*/
-			$(".border_yes").prop('checked', true);
-			$(".border_no").prop('checked', false);
-		},
-		disableBorder: function() {
-			this.set('addBorder', false);
-			/*	There's an issue with adding an 'action' to a
-				radio button, after selecting an option you're
-				unable to change the selected button. 
-				
-				As a work-around to this issue I'm manually 
-				changing the values of the radio buttons once
-				an option is selected.
-			*/
-			$(".border_no").prop('checked', true);
-			$(".border_yes").prop('checked', false);
-		},
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
 			this.set('isImageEditing', true);
@@ -255,23 +286,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var all_fields = $(".field");			
 			for (var i = 0; i < all_fields.length; i++) {
 				var curr = $(all_fields[i]);
-				var f_data = curr.data("prop");
 				
-				var new_f = {};
-				res.fields.push(new_f);
-				
-				// retrieve/calculate data for the current field
-				new_f.type = f_data.type;
-				new_f.name = f_data.name;
-				new_f.segments = [];
-				
-				var seg = {};
-				seg.segment_x = curr.position().left;
-				seg.segment_y = curr.position().top;
-				seg.segment_width = curr.outerWidth();
-				seg.segment_height = curr.outerHeight();
-				
-				new_f.segments.push(seg);
+				var fieldJSON = curr.data("getFieldJSON")();
+				res.fields.push(fieldJSON);
 			}
 			console.log(JSON.stringify(res, null, '\t'));
 		}

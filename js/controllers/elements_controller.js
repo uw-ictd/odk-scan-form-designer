@@ -4,7 +4,7 @@
 
 var GRID_X = 10;
 var GRID_Y = 10;
-var CHECKBOX_SIZE = 14;
+var CHECKBOX_SIZE = 30;
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
 	isImageEditing: false,
@@ -126,11 +126,27 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						// set field properties
 						var field_prop = $cb_div.data("prop");	
 						/* TODO: allow user to manipulate these properties */												
-						field_prop.type = "box";
-						field_prop.name = "none";	
-
+						field_prop.type = "int";
+						field_prop.name = "square_checkboxes";	
+						field_prop.label = "square_checkboxes";	
+						
+						var cf = {};
+						// initialize classifier 
+						cf.classifier_height = CHECKBOX_SIZE;
+						cf.classifier_width = CHECKBOX_SIZE;						
+						cf.training_data_uri = "checkboxes";
+						cf.classification_map = {empty: false};
+						cf.default_classification = true;
+						cf.advanced = {flip_training_data : true};	
+						
 						var getFieldJSON = function() {
 							var f_info = {};
+							
+							f_info.type = field_prop.type;
+							f_info.name = field_prop.name;
+							f_info.label = field_prop.label;
+							f_info.classifier = cf;
+							
 							f_info.segments = [];
 				
 							var seg = {};
@@ -138,6 +154,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							seg.segment_y = $cb_div.position().top;
 							seg.segment_width = $cb_div.outerWidth();
 							seg.segment_height = $cb_div.outerHeight();
+							seg.align_segment = false;
 							
 							// seg.items contains list of locations of all checkboxes
 							seg.items = [];
@@ -216,7 +233,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			html2canvas($("#scan_doc"), {   
 				logging:true,
 				onrendered : function(canvas) {                           
-					var img_src = canvas.toDataURL('image/png'); 
 					canvas.toBlob(function(blob) {
 						var fname = "my_dom"					
 						saveAs(blob, fname);

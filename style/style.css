@@ -99,10 +99,6 @@ html, body {
 *  Field Elements
 ************************************************************/
 
-.dashed_border:hover {
-	border: 1px dashed black;
-}
-
 .box {
 	border-style: solid;
 	border-color: black;
@@ -117,5 +113,5 @@ html, body {
 .c_box {
 	border: 1px solid black;
 	float: left;
-	margin: 3px; /* TODO: remove hardcoded value */
+	margin: 10px; /* TODO: remove hardcoded value */
 }

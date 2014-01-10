@@ -234,7 +234,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				logging:true,
 				onrendered : function(canvas) {
 					canvas.toBlob(function(blob) {
-						var fname = "my_dom"					
+						var fname = "scan_output"					
 						saveAs(blob, fname);
 					});	
 				}

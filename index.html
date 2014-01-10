@@ -66,19 +66,19 @@
 					<a class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a>New</a></li>
+						<li class="divider"></li>
 						<li><a>Load</a></li>	
+						<li><a>Export</a></li>			
 						<li class="divider"></li>						
-						<li><a {{action 'saveImage'}}>Save Image</a></li>
-						<li><a {{action 'saveJSON'}}>Save JSON</a></li>		
-						 <li class="divider"></li>
-						<li><a>Export</a></li>							
+						<li><a id="save_image" download="my_dom.jpg" {{action 'saveImage'}}>Save Image</a></li>
+						<li><a {{action 'saveJSON'}}>Save JSON</a></li>							
 					</ul>
 				</li>
 			  <li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown">Edit Mode <b class="caret"></b></a>
 				<ul class="dropdown-menu">
 				  <li><a {{action "enableImageEdit"}}>Image Editing</a></li>
-				  <li><a {{action "enableFormEdit"}}>Form Editing</a></li>				  
+				  <li><a {{action "enableFormEdit"}}>Field Editing</a></li>				  
 				</ul>
 			  </li>
 			{{#if isImageEditing}}
@@ -87,7 +87,7 @@
 				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
 			{{else}}
 				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown">Choose Element <b class="caret"></b></a>
+					<a class="dropdown-toggle" data-toggle="dropdown">Select Field <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a {{action 'createBox'}}>Blank Box</a></li>
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>

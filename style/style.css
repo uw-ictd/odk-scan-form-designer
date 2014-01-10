@@ -99,7 +99,6 @@ html, body {
 .box {
 	border-style: solid;
 	border-color: black;
-	background-color: green; /* NOTE: only for debugging */
 }
 
 .cb_div {

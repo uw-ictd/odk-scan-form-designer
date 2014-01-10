@@ -57,71 +57,52 @@
 	<script type="text/x-handlebars" data-template-name="elements">
 		<!-- this is where the application 'main' code resides -->
 		
-		<div id="toolbar" class="row">
-			<div id="app_name" class="col-xs-2">
-				<h2>ODK Scan</h2>
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="navbar-header">
+				<a class="navbar-brand" >ODK Scan</a>
 			</div>
-			<div class="col-xs-2">
-				<h3>Create Document</h3>				
-					<div class="btn-group">
-					  <button type="button" class="btn btn-default">Create New</button>
-					</div>
-				</div>
-			<div class="col-xs-2">
-				<h3>Edit Mode</h3>				
-				<div class="btn-group-sm" data-toggle="buttons">
-				  <label class="btn btn-primary" {{action "enableImageEdit"}}>
-					<input type="radio" name="options"> Image Editing
-				  </label>
-				  <label class="btn btn-primary" {{action "enableFormEdit"}}>
-					<input type="radio" name="options"> Form Editing
-				  </label>
-				</div>
-			</div>
+			<ul class="nav navbar-nav">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a>New</a></li>
+						<li><a>Load</a></li>	
+						<li class="divider"></li>						
+						<li><a {{action 'saveImage'}}>Save Image</a></li>
+						<li><a {{action 'saveJSON'}}>Save JSON</a></li>		
+						 <li class="divider"></li>
+						<li><a>Export</a></li>							
+					</ul>
+				</li>
+			  <li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown">Edit Mode <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+				  <li><a {{action "enableImageEdit"}}>Image Editing</a></li>
+				  <li><a {{action "enableFormEdit"}}>Form Editing</a></li>				  
+				</ul>
+			  </li>
 			{{#if isImageEditing}}
-				<div class="col-xs-2">
-					<h3>Image Editor</h3>
-					<div class="btn-group-sm">
-						<input id="image_select" type="file"></input>
-						<button id="image_button" type="button" class="btn btn-default" {{action 'selectImage'}}>Select Image</button>
-						<button id="add_sel" type="button" class="btn btn-default" {{action 'addSelection'}}>Add Selection</button>
-					</div>
-				</div>
+				<input id="image_select" type="file"></input>
+				<li><a id="image_button" {{action 'selectImage'}}>Select Image</a></li>
+				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
 			{{else}}
-				<div class="col-xs-2">
-					<h3>Form Editor</h3>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-						Choose Element <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#" {{action 'createBox'}}>Blank Box</a></li>
-							<li><a href="#" {{action 'createCheckbox'}}>Checkboxes</a></li>
-							<li><a href="#">Fill-in bubbles</a></li>
-						</ul>
-					</div>
-				</div>			
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown">Choose Element <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a {{action 'createBox'}}>Blank Box</a></li>
+						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
+						<li><a >Fill-in bubbles</a></li>
+					</ul>
+				</li>	
 			{{/if}}
-			<div class="col-xs-2">
-				<h3>Save Document</h3>
-				<div class="btn-group-sm">
-				  <button type="button" class="btn btn-default" {{action 'saveImage'}}>Save Image</button>
-				  <button type="button" class="btn btn-default" {{action 'saveJSON'}}>Save JSON</button>
-				</div>
-			</div>
-			
-			<div class="col-xs-2">
-				<h3>Help</h3>
-				<div class="btn-group-sm">
-				  <button type="button" class="btn btn-default">About ODK</button>
-				  <button type="button" class="btn btn-default">How to Use</button>
-				</div>
-			</div>
-		</div>
+				<li><a>Help</a></li>
+			</ul>				
+		</nav>
 		
+		<!-- the content below the navbar is loaded depending on the current url of the website -->
 		{{outlet}}
 		
-		<!-- dialog html is included below -->
+		<!-- the dialog menu html is separated and included below to keep the code more modular -->
 		{{partial 'boxDialog'}}
 		{{partial 'cbDialog'}}
 	</script>

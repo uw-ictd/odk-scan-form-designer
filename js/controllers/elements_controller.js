@@ -232,7 +232,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		saveImage: function() {
 			html2canvas($("#scan_doc"), {   
 				logging:true,
-				onrendered : function(canvas) {                           
+				onrendered : function(canvas) {
 					canvas.toBlob(function(blob) {
 						var fname = "my_dom"					
 						saveAs(blob, fname);
@@ -268,6 +268,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					height: reg.height,
 					top: 0, 
 					left: 0});
+				
+				$img_div.addClass("img_div");
 				
 				// image is removed when double-clicked
 				$img_div.dblclick(

@@ -5,6 +5,14 @@ html, body {
 	background-color: lightgrey;
 }
 
+/* Makes dialog boxes appear above other elements, 
+also makes the background inactive while a dialog
+box is open. */
+.ui-dialog, .ui-front {
+
+	z-index: 10000 !important;
+}
+
 /* Div that contains the application name. */
 #app_name {
 	text-align: center;
@@ -109,5 +117,4 @@ html, body {
 .c_box {
 	border: 1px solid black;
 	float: left;
-	margin: 10px; /* TODO: remove hardcoded value */
 }

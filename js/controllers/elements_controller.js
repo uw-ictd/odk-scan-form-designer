@@ -111,13 +111,73 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						$cb_div.css({top: 0, left: 0, position: 'absolute'});																		
 						$cb_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});				
 						
-						for (var i = 0; i < $("#vert_num_cb").val(); i++) {
-							for (var j = 0; j < $("#horiz_num_cb").val(); j++) {
-								var $cb = $('<div/>').addClass('c_box');
-								$cb.css({width: CHECKBOX_SIZE, height: CHECKBOX_SIZE});
-								$cb_div.append($cb);
+						// the horizontal spacing between the centers of checkboxes
+						var horiz_dx = parseInt($("#cb_horiz_dx").val());
+						
+						// the vetical spacing between the centers of checkboxes
+						var vert_dx = parseInt($("#cb_vert_dy").val());
+						
+						// margin values
+						var MARGIN_TOP = parseInt($("#cb_margin_top").val());
+						var MARGIN_BOTTOM = parseInt($("#cb_margin_bottom").val());
+						var MARGIN_LEFT = parseInt($("#cb_margin_left").val());
+						var MARGIN_RIGHT = parseInt($("#cb_margin_right").val());
+						
+						for (var i = 0; i < $("#vert_num_cb").val(); i++) {	
+							var mT;
+							var mB;
+							
+							// special case: only one row
+							if ($("#vert_num_cb").val() == 1) {
+								mT = MARGIN_TOP;
+								mB = MARGIN_BOTTOM;
+							} else if (i == 0) { // first row
+								mT = MARGIN_TOP;
+								mB = (vert_dx - CHECKBOX_SIZE) / 2;
+							} else if (i < $("#vert_num_cb").val() - 1) { // middle row
+								mT = (vert_dx - CHECKBOX_SIZE) / 2;
+								mB = (vert_dx - CHECKBOX_SIZE) / 2;
+							} else { // last row
+								mT = (vert_dx - CHECKBOX_SIZE) / 2;
+								mB = MARGIN_BOTTOM;
 							}
-							$cb_div.append('<br>');
+						
+							// special case: only one checkbox in the row
+							if ($("#horiz_num_cb").val() == 1) {
+								var $cb = $('<div/>').addClass('c_box');
+								$cb.css({width: CHECKBOX_SIZE, height: CHECKBOX_SIZE});		
+									
+								$cb.css({marginLeft: MARGIN_LEFT, 
+										marginTop: mT, 
+										marginBottom: mB, 
+										marginRight: MARGIN_RIGHT});
+								$cb_div.append($cb);
+							} else {												
+								for (var j = 0; j < $("#horiz_num_cb").val(); j++) {	
+									var $cb = $('<div/>').addClass('c_box');
+									$cb.css({width: CHECKBOX_SIZE, height: CHECKBOX_SIZE});
+
+									// TODO: remove hardcoded margin values
+									if (j == 0) { // edge case, first checkbox
+										$cb.css({marginLeft: MARGIN_LEFT, 
+												marginTop: mT, 
+												marginBottom: mB, 
+												marginRight: (horiz_dx - CHECKBOX_SIZE) / 2});
+									} else if (j < $("#horiz_num_cb").val() - 1) {
+										$cb.css({marginLeft: (horiz_dx - CHECKBOX_SIZE) / 2, 
+												marginTop: mT, 
+												marginBottom: mB, 
+												marginRight: (horiz_dx - CHECKBOX_SIZE) / 2});
+									} else { // edge case, last checkbox
+										$cb.css({marginLeft: (horiz_dx - CHECKBOX_SIZE) / 2, 
+												marginTop: mT, 
+												marginBottom: mB, 
+												marginRight: MARGIN_RIGHT});
+									}
+									$cb_div.append($cb);
+								}
+							}		
+							$cb_div.append($("<br>"));							
 						}
 						
 						// all user-defined properties will be stored in a JSON object 

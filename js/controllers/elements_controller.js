@@ -229,10 +229,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 									horiz_offset to account for the margin.
 								*/								
 								var horiz_offset = parseInt($(this).css('margin-left'));
+								var vert_offset = parseInt($(this).css('margin-top'));
 								
 								// we use outerWidth() and outerHeight() because they take borders into account
 								cb_loc.item_x = horiz_offset + $(this).position().left + ($(this).outerWidth() / 2);
-								cb_loc.item_y = horiz_offset + $(this).position().top + ($(this).outerHeight() / 2);
+								cb_loc.item_y = vert_offset + $(this).position().top + ($(this).outerHeight() / 2);
 								
 								seg.items.push(cb_loc);
 							});

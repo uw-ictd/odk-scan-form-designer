@@ -29,6 +29,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				All dialog windows are initialized below.
 			*/
 			
+			$("#save_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {
+						$("#zip_link").attr("download", $("#zip_name").val());
+						// trigger the file to be downloaded
+						document.getElementById("zip_link").click();
+						$("#save_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#save_dialog").dialog("close");
+					}
+				}			
+			});
+			
 			$("#box_dialog").dialog({
 				autoOpen: false,
 				modal: true,
@@ -369,7 +385,51 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var fieldJSON = curr.data("getFieldJSON")();
 				res.fields.push(fieldJSON);
 			}
-			console.log(JSON.stringify(res, null, '\t'));
+			var res = JSON.stringify(res, null, '\t');
+		},
+		saveZIP: function() {
+			// create a zip file for the form image and json
+			var zip = new JSZip();
+			
+			var res = {};
+
+			// set Scan doc properties
+			res.height = $("#scan_doc").height();
+			res.width = $("#scan_doc").width();
+			res.fields = [];
+			
+			// iterate over all field elements
+			var all_fields = $(".field");			
+			for (var i = 0; i < all_fields.length; i++) {
+				var curr = $(all_fields[i]);
+				
+				var fieldJSON = curr.data("getFieldJSON")();
+				res.fields.push(fieldJSON);
+			}
+			
+			var json_output = JSON.stringify(res, null, '\t');
+			
+			html2canvas($("#scan_doc"), {   
+				logging:true,
+				onrendered : function(canvas) {
+					var img_src = canvas.toDataURL("image/jpeg");
+					
+					/* 	Need to extract the base64 from the image source.
+						Image src is in the form: data:image/jpeg;base64,...
+						Where '...' is the actual base64.
+					*/
+					var img_base64 = img_src.split(",")[1];
+					
+					// add img to zip file
+					zip.file("form.jpg", img_base64, {base64: true});
+					zip.file("template.json", json_output);
+					var content = zip.generate();
+
+					var res = "data:application/zip;base64," + content;
+					$("#zip_link").attr('href', res);
+				}
+			});	
+			$("#save_dialog").dialog("open");
 		}
 	}
 });

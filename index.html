@@ -42,6 +42,8 @@
 		<!-- used to save Blobs to a file -->
 		<script src="js/libs/FileSaver.js"></script>
 		
+		<!-- used to save zip files of the Scan doc and JSON output -->
+		<script src="js/libs/jszip.js"></script>
 	<!---->
 	
 	<!-- ODK Scan scripts -->
@@ -71,7 +73,8 @@
 						<li><a>Export</a></li>			
 						<li class="divider"></li>						
 						<li><a id="save_image" download="my_dom.jpg" {{action 'saveImage'}}>Save Image</a></li>
-						<li><a {{action 'saveJSON'}}>Save JSON</a></li>							
+						<li><a {{action 'saveJSON'}}>Save JSON</a></li>		
+						<li><a {{action 'saveZIP'}}>Save zip</a></li>				
 					</ul>
 				</li>
 			  <li class="dropdown">
@@ -105,6 +108,7 @@
 		<!-- the dialog menu html is separated and included below to keep the code more modular -->
 		{{partial 'boxDialog'}}
 		{{partial 'cbDialog'}}
+		{{partial 'saveDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -138,30 +142,46 @@
 			<form>
 				<fieldset>
 					<label for="name">Number of columns</label>
-					<input type="number" id="horiz_num_cb" value="1" class="ui-widget-content ui-corner-all" min="1">	
+					<input type="number" id="horiz_num_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
 					
 					<label for="name">Number of rows</label>
-					<input type="number" id="vert_num_cb" value="1" class="ui-widget-content ui-corner-all" min="1">	
+					<input type="number" id="vert_num_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+					
+					<hr class="horz_divider">
 					
 					<label for="name">Horizontal spacing</label>
 					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="cb_horiz_dx" value="30" class="ui-widget-content ui-corner-all" min="30">	
+					<input type="number" id="cb_horiz_dx" value="30" class="int_input ui-widget-content ui-corner-all" min="30"><br>
 					
 					<label for="name">Vertical spacing</label>
 					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="cb_vert_dy" value="30" class="ui-widget-content ui-corner-all" min="30">	
+					<input type="number" id="cb_vert_dy" value="30" class="int_input ui-widget-content ui-corner-all" min="30"><br>
+					
+					<hr class="horz_divider">
 					
 					<label for="name">Top Margin</label>
-					<input type="number" id="cb_margin_top" value="10" class="ui-widget-content ui-corner-all" min="0">
+					<input type="number" id="cb_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 					
 					<label for="name">Bottom Margin</label>
-					<input type="number" id="cb_margin_bottom" value="10" class="ui-widget-content ui-corner-all" min="0">	
+					<input type="number" id="cb_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
 					
 					<label for="name">Left Margin</label>
-					<input type="number" id="cb_margin_left" value="10" class="ui-widget-content ui-corner-all" min="0">	
+					<input type="number" id="cb_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 					
 					<label for="name">Right Margin</label>
-					<input type="number" id="cb_margin_right" value="10" class="ui-widget-content ui-corner-all" min="0">	
+					<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+				</fieldset>
+			</form>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_saveDialog">
+		<div id="save_dialog" title="Save Scan Form">		
+			<form>
+				<fieldset>
+					<label for="name">Filename</label>
+					<input type="text" id="zip_name" class="ui-widget-content ui-corner-all">		
+					<a id="zip_link" download="odk_scan_output"></a>
 				</fieldset>
 			</form>
 		</div>

@@ -96,6 +96,23 @@ box is open. */
 	opacity: 0.5;
 }
 
+/* contains the link to the saved zip file */
+#zip_link {
+	display: none;
+}
+
+/* added to all integer input boxes */
+.int_input {
+	width: 40px;
+	float: right;
+}
+
+/* limits the margin on horizontal dividers */
+.horz_divider {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
 /************************************************************
 *  Field Elements
 ************************************************************/

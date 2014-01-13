@@ -94,7 +94,7 @@
 					<ul class="dropdown-menu">
 						<li><a {{action 'createBox'}}>Blank Box</a></li>
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
-						<li><a >Fill-in bubbles</a></li>
+						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
 					</ul>
 				</li>	
 			{{/if}}
@@ -108,6 +108,7 @@
 		<!-- the dialog menu html is separated and included below to keep the code more modular -->
 		{{partial 'boxDialog'}}
 		{{partial 'cbDialog'}}
+		{{partial 'bubbleDialog'}}
 		{{partial 'saveDialog'}}
 	</script>
 	
@@ -141,11 +142,18 @@
 		<div id="checkbox_dialog" title="Create checkboxes">		
 			<form>
 				<fieldset>
+					<label for="name">Checkbox size</label>
+					<select id="cb_size"> 
+						<option value="small">Small</option>
+						<option value="medium">Medium</option>
+						<option value="large">Large</option>				
+					</select><br>
+					
 					<label for="name">Number of columns</label>
-					<input type="number" id="horiz_num_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+					<input type="number" id="num_col_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
 					
 					<label for="name">Number of rows</label>
-					<input type="number" id="vert_num_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+					<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
 					
 					<hr class="horz_divider">
 					
@@ -170,6 +178,51 @@
 					
 					<label for="name">Right Margin</label>
 					<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+				</fieldset>
+			</form>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_bubbleDialog">
+		<div id="bubble_dialog" title="Create fill-in bubbles">		
+			<form>
+				<fieldset>
+					<label for="name">Bubble size</label>
+					<select id="bubb_size"> 
+						<option value="small">Small</option>
+						<option value="medium">Medium</option>
+						<option value="large">Large</option>				
+					</select><br>
+					
+					<label for="name">Number of columns</label>
+					<input type="number" id="num_col_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+					
+					<label for="name">Number of rows</label>
+					<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+					
+					<hr class="horz_divider">
+					
+					<label for="name">Horizontal spacing</label>
+					<!-- TODO: remove hardcoded min value -->
+					<input type="number" id="bubble_horiz_dx" value="30" class="int_input ui-widget-content ui-corner-all" min="30"><br>
+					
+					<label for="name">Vertical spacing</label>
+					<!-- TODO: remove hardcoded min value -->
+					<input type="number" id="bubble_vert_dy" value="30" class="int_input ui-widget-content ui-corner-all" min="30"><br>
+					
+					<hr class="horz_divider">
+					
+					<label for="name">Top Margin</label>
+					<input type="number" id="bubble_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+					
+					<label for="name">Bottom Margin</label>
+					<input type="number" id="bubble_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+					
+					<label for="name">Left Margin</label>
+					<input type="number" id="bubble_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+					
+					<label for="name">Right Margin</label>
+					<input type="number" id="bubble_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 				</fieldset>
 			</form>
 		</div>

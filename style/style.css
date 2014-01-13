@@ -135,3 +135,26 @@ box is open. */
 	border: 1px solid black;
 	float: left;
 }
+
+.bubble_div {
+	display: inline-block;
+	border: 1px solid black;
+}
+
+.bubble_small {
+	border: 1px solid black;
+	float: left;
+	border-radius: 15px;
+}
+
+.bubble_med {
+	border: 1px solid black;
+	float: left;
+	border-radius: 18px;
+}
+
+.bubble_large {
+	border: 1px solid black;
+	float: left;
+	border-radius: 25px;
+}

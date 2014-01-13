@@ -54,7 +54,7 @@ GridField.prototype.constructGrid = function() {
 			mB = this.margin_bottom;
 		}
 	
-		// special case: only one checkbox in the row
+		// special case: only one grid element in the row
 		if (this.num_cols == 1) {
 			var $g_element = $('<div/>').addClass(this.ele_class);
 			$g_element.css({width: this.element_width, height: this.element_height});		
@@ -69,7 +69,7 @@ GridField.prototype.constructGrid = function() {
 				var $g_element = $('<div/>').addClass(this.ele_class);
 				$g_element.css({width: this.element_width, height: this.element_height});
 
-				if (j == 0) { // edge case, first checkbox
+				if (j == 0) { // edge case, first grid element in the row
 					$g_element.css({marginLeft: this.margin_left, 
 							marginTop: mT, 
 							marginBottom: mB, 
@@ -79,7 +79,7 @@ GridField.prototype.constructGrid = function() {
 							marginTop: mT, 
 							marginBottom: mB, 
 							marginRight: (this.horiz_dx - this.element_width) / 2});
-				} else { // edge case, last checkbox
+				} else { // edge case, last grid element in the row
 					$g_element.css({marginLeft: (this.horiz_dx - this.element_width) / 2, 
 							marginTop: mT, 
 							marginBottom: mB, 
@@ -155,7 +155,7 @@ GridField.prototype.constructGrid = function() {
 	
 	$grid_div.data("getFieldJSON", getFieldJSON);
 	
-	// checkboxes are removed when double-clicked
+	// grid fields are removed when double-clicked
 	$grid_div.dblclick(
 		function() {
 			this.remove();

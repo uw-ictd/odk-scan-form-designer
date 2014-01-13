@@ -56,7 +56,7 @@ GridField.prototype.constructGrid = function() {
 	
 		// special case: only one grid element in the row
 		if (this.num_cols == 1) {
-			var $g_element = $('<div/>').addClass(this.ele_class);
+			var $g_element = this.makeGridElement();
 			$g_element.css({width: this.element_width, height: this.element_height});		
 				
 			$g_element.css({marginLeft: this.margin_left, 
@@ -66,7 +66,7 @@ GridField.prototype.constructGrid = function() {
 			$grid_div.append($g_element);
 		} else {												
 			for (var j = 0; j < this.num_cols; j++) {	
-				var $g_element = $('<div/>').addClass(this.ele_class);
+				var $g_element = this.makeGridElement();
 				$g_element.css({width: this.element_width, height: this.element_height});
 
 				if (j == 0) { // edge case, first grid element in the row
@@ -211,6 +211,11 @@ CheckboxField.prototype = new GridField();
 // make the constructor point to the CheckboxField class
 CheckboxField.prototype.constructor = CheckboxField;
 
+// creates the div each checkbox
+CheckboxField.prototype.makeGridElement = function() {
+	return $("<div/>").addClass(this.ele_class);
+}
+
 function BubbleField() {
 	// Set all bubble attributes
 	
@@ -257,6 +262,11 @@ BubbleField.prototype = new GridField();
 
 // make the constructor point to the BubbleField class
 BubbleField.prototype.constructor = BubbleField;
+
+// creates the div each bubble
+BubbleField.prototype.makeGridElement = function() {
+	return $("<div/>").addClass(this.ele_class);
+}
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
 	isImageEditing: false,

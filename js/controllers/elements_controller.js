@@ -334,10 +334,10 @@ SegNumField.prototype.makeGridElement = function() {
 	/*	add dots to the number,
 		6 total dots (three rows of two)
 	*/
-	var y_pos = this.element_height / 4;
-	var x_pos = this.element_width / 3;
+	var y_pos = this.element_height / 6;
+	var x_pos = this.element_width / 4;
 	
-	for (var i = 1; i <= 3; i++) {
+	for (var i = 1; i <= 5; i += 2) {
 		var $left_dot = $("<div/>");
 		$left_dot.addClass("dot");
 		// NOTE: assuming this.dot_width == this.dot_width
@@ -352,7 +352,7 @@ SegNumField.prototype.makeGridElement = function() {
 		$right_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$right_dot.css({left: (2 * x_pos) - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		$right_dot.css({left: (3 * x_pos) - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
 		
 		$new_num.append($left_dot);
 		$new_num.append($right_dot);

@@ -327,13 +327,26 @@ SegNumField.prototype = new GridField();
 // make the constructor point to the SegNumField class
 SegNumField.prototype.constructor = SegNumField;
 
-// creates the div each bubble
+// creates the div for each segmented number
 SegNumField.prototype.makeGridElement = function() {
 	var $new_num = $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 	
-	/*	add dots to the number,
-		6 total dots (three rows of two)
+	/*	Add dots to the number,
+		6 total dots (three rows of two).
+		
+		Each row is separated by 2/6 of the
+		height of the segmented number div.
+		(1st row is 1/6 from the top,
+		2nd row is 3/6 from the top,
+		and the 3rd row is 5/6 from the top).
+		
+		Each column of dots is separated by
+		2/4 of the width of the segmented 
+		number div. (1st column is 1/4
+		from the left, and the 2nd 
+		column is 3/4 from the left).
 	*/
+	
 	var y_pos = this.element_height / 6;
 	var x_pos = this.element_width / 4;
 	

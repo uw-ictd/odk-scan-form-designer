@@ -122,8 +122,8 @@ box is open. */
 }
 
 .box {
-	border-style: solid;
-	border-color: black;
+	outline-style: solid;
+	outline-color: black;
 }
 
 .cb_div {
@@ -157,4 +157,20 @@ box is open. */
 	border: 1px solid black;
 	float: left;
 	border-radius: 25px;
+}
+
+.num_div {
+	display: inline-block;
+	border: 1px solid black;
+}
+
+.num {
+	outline: 1px solid black;
+	float: left;
+	position: relative;
+}
+
+.dot {
+	position: absolute;
+	background-color: black;
 }

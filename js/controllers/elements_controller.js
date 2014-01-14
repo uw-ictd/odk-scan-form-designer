@@ -5,13 +5,22 @@
 var GRID_X = 10;
 var GRID_Y = 10;
 
-var CHECKBOX_SMALL = 20;
-var CHECKBOX_MEDIUM = 35;
-var CHECKBOX_LARGE = 50;
+var CHECKBOX_SMALL = 10;
+var CHECKBOX_MEDIUM = 16;
+var CHECKBOX_LARGE = 25;
 
-var BUBBLE_SMALL = 20;
-var BUBBLE_MEDIUM = 35;
-var BUBBLE_LARGE = 50;
+var BUBBLE_SMALL = 10;
+var BUBBLE_MEDIUM = 16;
+var BUBBLE_LARGE = 25;
+
+// sizes are set in [width, height]
+var SEG_NUM_SMALL = [20, 28];
+var SEG_NUM_MEDIUM = [40, 56];
+var SEG_NUM_LARGE = [80, 112];
+
+var DOT_SMALL = 2;
+var DOT_MEDIUM = 5;
+var DOT_LARGE = 7;
 
 /*
 	Parent class => GridElement
@@ -45,19 +54,18 @@ GridField.prototype.constructGrid = function() {
 			mB = this.margin_bottom;
 		} else if (i == 0) { // first row
 			mT = this.margin_top;
-			mB = (this.vert_dy - this.element_height) / 2;
+			mB = this.vert_dy / 2;
 		} else if (i < this.num_rows - 1) { // middle row
-			mT = (this.vert_dy - this.element_height) / 2;
-			mB = (this.vert_dy - this.element_height) / 2;
+			mT = this.vert_dy / 2;
+			mB = this.vert_dy / 2;
 		} else { // last row
-			mT = (this.vert_dy - this.element_height) / 2;
+			mT = this.vert_dy / 2;
 			mB = this.margin_bottom;
 		}
 	
 		// special case: only one grid element in the row
 		if (this.num_cols == 1) {
 			var $g_element = this.makeGridElement();
-			$g_element.css({width: this.element_width, height: this.element_height});		
 				
 			$g_element.css({marginLeft: this.margin_left, 
 					marginTop: mT, 
@@ -67,20 +75,19 @@ GridField.prototype.constructGrid = function() {
 		} else {												
 			for (var j = 0; j < this.num_cols; j++) {	
 				var $g_element = this.makeGridElement();
-				$g_element.css({width: this.element_width, height: this.element_height});
 
 				if (j == 0) { // edge case, first grid element in the row
 					$g_element.css({marginLeft: this.margin_left, 
 							marginTop: mT, 
 							marginBottom: mB, 
-							marginRight: (this.horiz_dx - this.element_width) / 2});
+							marginRight: this.horiz_dx / 2});
 				} else if (j < this.num_cols - 1) {
-					$g_element.css({marginLeft: (this.horiz_dx - this.element_width) / 2, 
+					$g_element.css({marginLeft: this.horiz_dx / 2, 
 							marginTop: mT, 
 							marginBottom: mB, 
-							marginRight: (this.horiz_dx - this.element_width) / 2});
+							marginRight: this.horiz_dx / 2});
 				} else { // edge case, last grid element in the row
-					$g_element.css({marginLeft: (this.horiz_dx - this.element_width) / 2, 
+					$g_element.css({marginLeft: this.horiz_dx / 2, 
 							marginTop: mT, 
 							marginBottom: mB, 
 							marginRight: this.margin_right});
@@ -213,7 +220,7 @@ CheckboxField.prototype.constructor = CheckboxField;
 
 // creates the div each checkbox
 CheckboxField.prototype.makeGridElement = function() {
-	return $("<div/>").addClass(this.ele_class);
+	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
 
 function BubbleField() {
@@ -265,7 +272,92 @@ BubbleField.prototype.constructor = BubbleField;
 
 // creates the div each bubble
 BubbleField.prototype.makeGridElement = function() {
-	return $("<div/>").addClass(this.ele_class);
+	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
+}
+
+function SegNumField() {
+	// Set all segmented number attributes
+	
+	// set the grid class
+	this.grid_class = 'num_div';
+	
+	// set the class of the grid elements
+	this.ele_class = 'num';
+	
+	// TODO: find out what these values should actually be
+	this.type = 'int';
+	this.name = "seg_number";	
+	this.label = "seg_number";		
+	this.data_uri = "numbers";
+	
+	// number size
+	this.element_width = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
+						($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[0] : SEG_NUM_LARGE[0];
+	this.element_height = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[1] : 
+						($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[1] : SEG_NUM_LARGE[1];
+	
+	// inner dot size
+	this.dot_width = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
+						($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
+	this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
+						($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;;
+	
+	// the horizontal spacing between the centers of bubbles
+	this.horiz_dx = parseInt($("#seg_num_horiz_dx").val());
+	
+	// the vetical spacing between the centers of bubbles
+	this.vert_dy = parseInt($("#seg_num_vert_dy").val());
+	
+	// margin values
+	this.margin_top = parseInt($("#seg_num_margin_top").val());
+	this.margin_bottom = parseInt($("#seg_num_margin_bottom").val());
+	this.margin_left = parseInt($("#seg_num_margin_left").val());
+	this.margin_right = parseInt($("#seg_num_margin_right").val());
+	
+	// number of rows
+	this.num_rows = $("#num_row_seg_num").val();
+	
+	// number of columns
+	this.num_cols = $("#num_col_seg_num").val();
+}
+
+// inherit GridField
+SegNumField.prototype = new GridField();
+
+// make the constructor point to the SegNumField class
+SegNumField.prototype.constructor = SegNumField;
+
+// creates the div each bubble
+SegNumField.prototype.makeGridElement = function() {
+	var $new_num = $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
+	
+	/*	add dots to the number,
+		6 total dots (three rows of two)
+	*/
+	var y_pos = this.element_height / 4;
+	var x_pos = this.element_width / 3;
+	
+	for (var i = 1; i <= 3; i++) {
+		var $left_dot = $("<div/>");
+		$left_dot.addClass("dot");
+		// NOTE: assuming this.dot_width == this.dot_width
+		$left_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
+		
+		// shifts over the dot to place its center at the appropriate location
+		$left_dot.css({left: x_pos - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		
+		var $right_dot = $("<div/>");
+		$right_dot.addClass("dot");
+		// NOTE: assuming this.dot_width == this.dot_width
+		$right_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
+		
+		// shifts over the dot to place its center at the appropriate location
+		$right_dot.css({left: (2 * x_pos) - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		
+		$new_num.append($left_dot);
+		$new_num.append($right_dot);
+	}
+	return $new_num;
 }
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
@@ -328,7 +420,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 											minWidth: GRID_X * 5,
 											minHeight: GRID_Y * 5});
 																												
-						$new_box.css({'border-width': $("#box_border").val()});
+						$new_box.css({'outline-width': $("#box_border").val() + 'px'});
 						$new_box.css({position: 'absolute'});
 						
 						// all user-defined properties will be stored in a JSON object 
@@ -410,7 +502,25 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						$("#bubble_dialog").dialog("close");
 					}
 				}
-			});			
+			});
+
+			$("#seg_num_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {
+						console.log("making numbers...");
+						
+						var numField = new SegNumField();
+						numField.constructGrid();						
+						
+						$("#seg_num_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#seg_num_dialog").dialog("close");
+					}
+				}
+			});					
 		});
 	},
 	actions: {
@@ -507,6 +617,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		createBubbles: function() {
 			console.log("creating fill-in bubbles");
 			$("#bubble_dialog").dialog("open");
+		},
+		createNumbers: function() {
+			console.log("creating segmented numbers");
+			$("#seg_num_dialog").dialog("open");
 		},
 		saveJSON: function() {
 			console.log("creating JSON");

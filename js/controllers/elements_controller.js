@@ -22,16 +22,27 @@ var DOT_SMALL = 2;
 var DOT_MEDIUM = 5;
 var DOT_LARGE = 7;
 
-/*
-	Parent class => GridElement
-		- Contains code to create the grid of element.
+/*	GridElement class acts similar to an abstract class
+	in Java, it has to be subclassed in order to invoke
+	the constructGrid function.
 	
-		Child class => Checkbox. 
-			- Sets fields used by the GridElement class.
-		Child class => Bubble
-			- Sets fields used by the GridElement class.
+	Each subclass requires the following fields to be 
+	initialized:
+		- num_rows (int) 
+		- num_cols (int)
+		- margin_top (int)
+		- margin_bottom (int)
+		- margin_left (int)
+		- margin_right (int)
+		- vert_dy (int)
+		- horz_dx (int)
+		- element_height (int)
+		- element_width (int)
+		- ele_class (string)
+		- grid_class (string)
+		- data_uri (string)
+		- makeGridElement (function, returns jQuery object)
 */
-
 function GridField() {
 }
 
@@ -172,6 +183,7 @@ GridField.prototype.constructGrid = function() {
 	$("#scan_doc").append($grid_div);
 };
 
+// constructs a grid of checkboxes
 function CheckboxField() {
 	// Set all checkbox attributes
 	
@@ -218,11 +230,12 @@ CheckboxField.prototype = new GridField();
 // make the constructor point to the CheckboxField class
 CheckboxField.prototype.constructor = CheckboxField;
 
-// creates the div each checkbox
+// creates the div for each checkbox
 CheckboxField.prototype.makeGridElement = function() {
 	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
 
+// constructs a grid of bubbles
 function BubbleField() {
 	// Set all bubble attributes
 	
@@ -270,7 +283,7 @@ BubbleField.prototype = new GridField();
 // make the constructor point to the BubbleField class
 BubbleField.prototype.constructor = BubbleField;
 
-// creates the div each bubble
+// creates the div for each bubble
 BubbleField.prototype.makeGridElement = function() {
 	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
@@ -331,20 +344,17 @@ SegNumField.prototype.constructor = SegNumField;
 SegNumField.prototype.makeGridElement = function() {
 	var $new_num = $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 	
-	/*	Add dots to the number,
-		6 total dots (three rows of two).
-		
-		Each row is separated by 2/6 of the
-		height of the segmented number div.
-		(1st row is 1/6 from the top,
-		2nd row is 3/6 from the top,
-		and the 3rd row is 5/6 from the top).
-		
-		Each column of dots is separated by
-		2/4 of the width of the segmented 
-		number div. (1st column is 1/4
-		from the left, and the 2nd 
-		column is 3/4 from the left).
+	/*	NOTE: Dots are spaced out evenly - 
+	
+		1st row is placed 1/6 of the height from 
+		the top of the number, 2nd row is 3/6 of
+		the height from the top, and the 3rd row 
+		is 5/6 of the height from the top of the
+		number.
+
+		1st column is placed 1/4 of the width from
+		the left side of the number, and the 2nd 
+		column is 3/4 of the width from the left.
 	*/
 	
 	var y_pos = this.element_height / 6;
@@ -682,7 +692,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					var img_src = canvas.toDataURL("image/jpeg");
 					
 					/* 	Need to extract the base64 from the image source.
-						Image src is in the form: data:image/jpeg;base64,...
+						img_src is in the form: data:image/jpeg;base64,...
 						Where '...' is the actual base64.
 					*/
 					var img_base64 = img_src.split(",")[1];

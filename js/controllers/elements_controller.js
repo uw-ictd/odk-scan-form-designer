@@ -128,6 +128,7 @@ GridField.prototype.constructGrid = function() {
 	cf.default_classification = true;
 	cf.advanced = {flip_training_data : true};	
 	
+	var this_field = this;
 	var getFieldJSON = function() {
 		var f_info = {};
 		
@@ -135,6 +136,10 @@ GridField.prototype.constructGrid = function() {
 		f_info.name = field_prop.name;
 		f_info.label = field_prop.label;
 		f_info.classifier = cf;
+		
+		if (this_field.param) {
+			f_info.param = this_field.param;
+		}
 		
 		f_info.segments = [];
 
@@ -247,10 +252,16 @@ function BubbleField() {
 						($("#bubb_size").val() == 'medium') ? 'bubble_med' : 'bubble_large';
 	
 	// TODO: find out what these values should actually be
-	this.type = 'int';
+	this.type = $("#bubb_type").val();
 	this.name = "circle_bubbles";	
 	this.label = "circle_bubbles";		
 	this.data_uri = "bubbles";
+	
+	if (this.type == 'tally') {
+		this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val()
+	} else if (this.type == 'select1') {
+		this.param = 'yes_no';
+	}
 	
 	// bubble size
 	this.element_width = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
@@ -401,10 +412,82 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								handles: true
 							});				
 			controller.set('imgSelect', ias);		
+									
+			$("#uploaded_image").change(
+				function (event) {
+					var selectedFile = event.target.files[0];
+					var reader = new FileReader();
+					reader.onload = function(event) {
+						$("#uploaded_image").data("img_src", event.target.result);													
+					};								
+					reader.readAsDataURL(selectedFile);					
+				}
+			);
+			
+			$("#uploaded_json").change(
+				function (event) {
+					var selectedFile = event.target.files[0];
+					var reader = new FileReader();
+					reader.onload = function(event) {
+						console.log('json file: ' + event.target.result);	
+						$("#uploaded_json").data("json", event.target.result);
+					};								
+					reader.readAsText(selectedFile);					
+				}
+			);
 						
 			/*
 				All dialog windows are initialized below.
 			*/
+			
+			$("#load_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {				
+						// check if no json was uploaded, error case
+						// if no json was uploaded?
+						if (!$("#uploaded_json").data("json")) {
+							console.log("no json uploaded");
+						} else {							
+							// load images into the scan doc
+							var scanDoc = JSON.parse($("#uploaded_json").data("json"));
+							var images = scanDoc.images;
+							
+							if (images && !$("#uploaded_image").data("img_src")) {
+								// error case, no image was uploaded
+							} else {							
+								// load image snippets into the Scan doc
+								var img_src = $("#uploaded_image").data("img_src");
+								for (var i = 0; i < images.length; i++) {
+									var img_json = images[i];
+									
+									var $img_div = $("<div/>").css({position: 'absolute',
+																	height: img_json.height, 
+																	width: img_json.width,
+																	top: img_json.div_top,
+																	left: img_json.div_left});
+									$img_div.addClass("img_div");
+									$img_div.draggable({containment: 'parent'});
+									var $img = $("<img/>").css({top: img_json.img_top, 
+																left: img_json.img_left});
+									$img.attr('src', img_src);
+									
+									$img_div.append($img);
+									$("#scan_doc").append($img_div);
+								}
+							}
+							
+							// load all fields into the doc...
+						}
+												
+						$("#load_dialog").dialog("close");					
+					},
+					"Cancel": function() {
+						$("#load_dialog").dialog("close");
+					}
+				}			
+			});
 			
 			$("#save_dialog").dialog({
 				autoOpen: false,
@@ -598,7 +681,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var $new_img = $("<img/>").attr('src', $("#loaded_image").attr('src'));
 
 				$new_img.css({
-					position: 'relative',
 					top: -reg.y1,
 					left: -reg.x1,
 				});	
@@ -607,9 +689,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// and only make the selected region visible.
 				// NOTE: default position of selected image
 				// is set to top-left of Scan doc.
-				var $img_div = $('<div/>').css({
-					position: 'absolute', 
-					overflow: 'hidden',
+				var $img_div = $('<div/>').addClass("img_div").css({
+					position: 'absolute',
 					width: reg.width, 
 					height: reg.height,
 					top: 0, 
@@ -624,7 +705,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					}
 				);								
 				$img_div.append($new_img);
-				$img_div.draggable({containment: 'parent', position: 'relative'});
+				$img_div.draggable({containment: 'parent'});
 				
 				$("#scan_doc").append($img_div);								
 			}
@@ -645,35 +726,43 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			console.log("creating segmented numbers");
 			$("#seg_num_dialog").dialog("open");
 		},
-		saveJSON: function() {
-			console.log("creating JSON");
-			var res = {};
-
-			// set Scan doc properties
-			res.height = $("#scan_doc").height();
-			res.width = $("#scan_doc").width();
-			res.fields = [];
-			
-			// iterate over all field elements
-			var all_fields = $(".field");			
-			for (var i = 0; i < all_fields.length; i++) {
-				var curr = $(all_fields[i]);
-				
-				var fieldJSON = curr.data("getFieldJSON")();
-				res.fields.push(fieldJSON);
-			}
-			var res = JSON.stringify(res, null, '\t');
+		loadDoc: function() {
+			console.log("loading document...");
+			$("#load_dialog").dialog("open");
 		},
-		saveZIP: function() {
+		saveDoc: function() {
+			/*	Need to save metadata about all fields (including all
+				parameters that were used to make them) and images.
+			*/
+			
+			// save metadata about all images
+			var savedDoc = {};
+			savedDoc.images = [];
+			savedDoc.fields = [];
+			
+			$(".img_div").each(function() {
+				var img_div = {};
+				img_div.height = $(this).height();
+				img_div.width = $(this).width();
+				img_div.div_top = $(this).css('top');
+				img_div.div_left = $(this).css('left');
+				img_div.img_top = $(this).children("img").css('top');
+				img_div.img_left = $(this).children("img").css('left');
+				
+				savedDoc.images.push(img_div);
+			});
+			console.log(JSON.stringify(savedDoc, null, '\t'));
+		},
+		exportZIP: function() {
 			// create a zip file for the form image and json
 			var zip = new JSZip();
 			
-			var res = {};
+			var scanDoc = {};
 
 			// set Scan doc properties
-			res.height = $("#scan_doc").height();
-			res.width = $("#scan_doc").width();
-			res.fields = [];
+			scanDoc.height = $("#scan_doc").height();
+			scanDoc.width = $("#scan_doc").width();
+			scanDoc.fields = [];
 			
 			// iterate over all field elements
 			var all_fields = $(".field");			
@@ -681,10 +770,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var curr = $(all_fields[i]);
 				
 				var fieldJSON = curr.data("getFieldJSON")();
-				res.fields.push(fieldJSON);
+				scanDoc.fields.push(fieldJSON);
 			}
 			
-			var json_output = JSON.stringify(res, null, '\t');
+			var json_output = JSON.stringify(scanDoc, null, '\t');
 			
 			html2canvas($("#scan_doc"), {   
 				logging:true,
@@ -702,8 +791,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					zip.file("template.json", json_output);
 					var content = zip.generate();
 
-					var res = "data:application/zip;base64," + content;
-					$("#zip_link").attr('href', res);
+					var scanDoc = "data:application/zip;base64," + content;
+					$("#zip_link").attr('href', scanDoc);
 				}
 			});	
 			$("#save_dialog").dialog("open");

@@ -116,9 +116,16 @@ box is open. */
 /************************************************************
 *  Field Elements
 ************************************************************/
+.img_div {
+	overflow: hidden;
+}
 
 .img_div:hover {
 	border: 1px dashed black;
+}
+
+.img_div img {
+	position: relative;
 }
 
 .box {

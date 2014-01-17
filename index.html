@@ -69,14 +69,14 @@
 					<ul class="dropdown-menu">
 						<li><a>New</a></li>
 						<li class="divider"></li>
-						<li><a>Load</a></li>	
-						<li><a>Save</a></li>			
+						<li><a {{action 'loadDoc'}}>Load</a></li>	
+						<li><a {{action 'saveDoc'}}>Save</a></li>			
 						<li class="divider"></li>	
 						<!--
 						<li><a id="save_image" download="my_dom.jpg" {{action 'saveImage'}}>Save Image</a></li>
 						<li><a {{action 'saveJSON'}}>Save JSON</a></li>		
 						-->
-						<li><a {{action 'saveZIP'}}>Export zip</a></li>				
+						<li><a {{action 'exportZIP'}}>Export zip</a></li>				
 					</ul>
 				</li>
 			  <li class="dropdown">
@@ -114,6 +114,7 @@
 		{{partial 'bubbleDialog'}}
 		{{partial 'segNumDialog'}}
 		{{partial 'saveDialog'}}
+		{{partial 'loadDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -133,166 +134,161 @@
 	
 	<script type="text/x-handlebars" data-template-name="_boxDialog">
 		<div id="box_dialog" title="Create blank box">		
-			<form>
-				<fieldset>
-					<label for="name">Border</label>
-					<input type="number" id="box_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">					
-				</fieldset>
-			</form>
+			<label for="name">Border</label>
+			<input type="number" id="box_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">					
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_cbDialog">
 		<div id="checkbox_dialog" title="Create checkboxes">		
-			<form>
-				<fieldset>
-					<label for="name">Checkbox size</label>
-					<select id="cb_size"> 
-						<option value="small">Small</option>
-						<option value="medium">Medium</option>
-						<option value="large">Large</option>				
-					</select><br>
-					
-					<label for="name">Number of columns</label>
-					<input type="number" id="num_col_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-					
-					<label for="name">Number of rows</label>
-					<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-					
-					<hr class="horz_divider">
-					
-					<label for="name">Horizontal spacing</label>
-					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="cb_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Vertical spacing</label>
-					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="cb_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<hr class="horz_divider">
-					
-					<label for="name">Top Margin</label>
-					<input type="number" id="cb_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Bottom Margin</label>
-					<input type="number" id="cb_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-					
-					<label for="name">Left Margin</label>
-					<input type="number" id="cb_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Right Margin</label>
-					<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-				</fieldset>
-			</form>
+			<label for="name">Checkbox size</label>
+			<select id="cb_size"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			
+			<label for="name">Number of columns</label>
+			<input type="number" id="num_col_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+			
+			<label for="name">Number of rows</label>
+			<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Horizontal spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="cb_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Vertical spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="cb_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Top Margin</label>
+			<input type="number" id="cb_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Bottom Margin</label>
+			<input type="number" id="cb_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+			
+			<label for="name">Left Margin</label>
+			<input type="number" id="cb_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Right Margin</label>
+			<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_bubbleDialog">
 		<div id="bubble_dialog" title="Create fill-in bubbles">		
-			<form>
-				<fieldset>
-					<label for="name">Bubble size</label>
-					<select id="bubb_size"> 
-						<option value="small">Small</option>
-						<option value="medium">Medium</option>
-						<option value="large">Large</option>				
-					</select><br>
-					
-					<label for="name">Number of columns</label>
-					<input type="number" id="num_col_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-					
-					<label for="name">Number of rows</label>
-					<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-					
-					<hr class="horz_divider">
-					
-					<label for="name">Horizontal spacing</label>
-					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="bubble_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Vertical spacing</label>
-					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="bubble_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<hr class="horz_divider">
-					
-					<label for="name">Top Margin</label>
-					<input type="number" id="bubble_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Bottom Margin</label>
-					<input type="number" id="bubble_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-					
-					<label for="name">Left Margin</label>
-					<input type="number" id="bubble_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Right Margin</label>
-					<input type="number" id="bubble_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-				</fieldset>
-			</form>
+			<label for="name">Bubble size</label>
+			<select id="bubb_size"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			
+			<label for="name">Bubble type</label>
+			<select id="bubb_type"> 
+				<option value="tally">Tally</option>
+				<option value="select1">Select</option>										
+			</select><br>
+			
+			<label for="name">Number of columns</label>
+			<input type="number" id="num_col_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+			
+			<label for="name">Number of rows</label>
+			<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Horizontal spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="bubble_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Vertical spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="bubble_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Top Margin</label>
+			<input type="number" id="bubble_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Bottom Margin</label>
+			<input type="number" id="bubble_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+			
+			<label for="name">Left Margin</label>
+			<input type="number" id="bubble_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Right Margin</label>
+			<input type="number" id="bubble_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_segNumDialog">
 		<div id="seg_num_dialog" title="Create segmented numbers">		
-			<form>
-				<fieldset>
-					<label for="name">Number size</label>
-					<select id="seg_num_size"> 
-						<option value="small">Small</option>
-						<option value="medium">Medium</option>
-						<option value="large">Large</option>				
-					</select><br>
-					
-					<label for="name">Dot size</label>
-					<select id="dot_size"> 
-						<option value="small">Small</option>
-						<option value="medium">Medium</option>
-						<option value="large">Large</option>				
-					</select><br>
-					
-					<label for="name">Number of columns</label>
-					<input type="number" id="num_col_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-					
-					<label for="name">Number of rows</label>
-					<input type="number" id="num_row_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-					
-					<hr class="horz_divider">
-					
-					<label for="name">Horizontal spacing</label>
-					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="seg_num_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Vertical spacing</label>
-					<!-- TODO: remove hardcoded min value -->
-					<input type="number" id="seg_num_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<hr class="horz_divider">
-					
-					<label for="name">Top Margin</label>
-					<input type="number" id="seg_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Bottom Margin</label>
-					<input type="number" id="seg_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-					
-					<label for="name">Left Margin</label>
-					<input type="number" id="seg_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-					
-					<label for="name">Right Margin</label>
-					<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-				</fieldset>
-			</form>
+			<label for="name">Number size</label>
+			<select id="seg_num_size"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			
+			<label for="name">Dot size</label>
+			<select id="dot_size"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			
+			<label for="name">Number of columns</label>
+			<input type="number" id="num_col_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+			
+			<label for="name">Number of rows</label>
+			<input type="number" id="num_row_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Horizontal spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="seg_num_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Vertical spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="seg_num_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Top Margin</label>
+			<input type="number" id="seg_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Bottom Margin</label>
+			<input type="number" id="seg_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+			
+			<label for="name">Left Margin</label>
+			<input type="number" id="seg_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Right Margin</label>
+			<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_saveDialog">
 		<div id="save_dialog" title="Save Scan Form">		
-			<form>
-				<fieldset>
-					<label for="name">Filename</label>
-					<input type="text" id="zip_name" class="ui-widget-content ui-corner-all">		
-					<a id="zip_link" download="odk_scan_output"></a>
-				</fieldset>
-			</form>
+			<label for="name">Filename</label>
+			<input type="text" id="zip_name" class="ui-widget-content ui-corner-all">		
+			<a id="zip_link" download="odk_scan_output"></a>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_loadDialog">
+		<div id="load_dialog" title="Load Scan Form">		
+			<label for="name">Image</label>
+			<input type="file" id="uploaded_image" class="ui-corner-all">		
+			<label for="name">JSON</label>
+			<input type="file" id="uploaded_json" class="ui-corner-all">							
 		</div>
 	</script>
 	

@@ -151,19 +151,19 @@ box is open. */
 .bubble_small {
 	border: 1px solid black;
 	float: left;
-	border-radius: 15px;
+	border-radius: 5px;
 }
 
 .bubble_med {
 	border: 1px solid black;
 	float: left;
-	border-radius: 18px;
+	border-radius: 8px;
 }
 
 .bubble_large {
 	border: 1px solid black;
 	float: left;
-	border-radius: 25px;
+	border-radius: 13px;
 }
 
 .num_div {
@@ -172,7 +172,7 @@ box is open. */
 }
 
 .num {
-	outline: 1px solid black;
+	border: 1px solid black;
 	float: left;
 	position: relative;
 }

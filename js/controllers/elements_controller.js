@@ -11,7 +11,7 @@ var CHECKBOX_LARGE = 25;
 
 var BUBBLE_SMALL = 10;
 var BUBBLE_MEDIUM = 16;
-var BUBBLE_LARGE = 25;
+var BUBBLE_LARGE = 26;
 
 // sizes are set in [width, height]
 var SEG_NUM_SMALL = [20, 28];
@@ -124,9 +124,9 @@ GridField.prototype.constructGrid = function() {
 	cf.classifier_height = this.element_height;
 	cf.classifier_width = this.element_width;						
 	cf.training_data_uri = this.data_uri;
-	cf.classification_map = {empty: false};
+	cf.classification_map = this.cf_map;
 	cf.default_classification = true;
-	cf.advanced = {flip_training_data : true};	
+	cf.advanced = this.cf_advanced;
 	
 	var this_field = this;
 	var getFieldJSON = function() {
@@ -152,8 +152,8 @@ GridField.prototype.constructGrid = function() {
 		
 		// seg.items contains list of locations of all grid elements
 		seg.items = [];
-		
-		$grid_div.children(this.ele_class).each(function() {
+
+		$grid_div.children('div').each(function() {
 			var ele_loc = {}; // stores location of the grid element
 			
 			/* 	NOTE: The element location is given with
@@ -197,12 +197,15 @@ function CheckboxField() {
 	
 	// set the class of the grid elements
 	this.ele_class = 'c_box';
+	this.ele_class_per = '.c_box';
 	
 	// TODO: find out how these values should be set
 	this.type = 'int';
 	this.name = "square_checkboxes";	
 	this.label = "square_checkboxes";		
 	this.data_uri = "checkboxes";
+	this.cf_advanced = {flip_training_data : false};
+	this.cf_map = {empty : false};
 	
 	// checkbox size
 	this.element_width = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
@@ -256,9 +259,11 @@ function BubbleField() {
 	this.name = "circle_bubbles";	
 	this.label = "circle_bubbles";		
 	this.data_uri = "bubbles";
+	this.cf_advanced = {flip_training_data : false};
+	this.cf_map = {empty : false};
 	
 	if (this.type == 'tally') {
-		this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val()
+		this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val();
 	} else if (this.type == 'select1') {
 		this.param = 'yes_no';
 	}
@@ -308,11 +313,17 @@ function SegNumField() {
 	// set the class of the grid elements
 	this.ele_class = 'num';
 	
+	this.border_offset = 2;
+	
 	// TODO: find out what these values should actually be
-	this.type = 'int';
+	this.type = 'string';
 	this.name = "seg_number";	
 	this.label = "seg_number";		
 	this.data_uri = "numbers";
+	this.param = $("#num_row_seg_num").val() * $("#num_col_seg_num").val();
+	this.cf_advanced = {flip_training_data : false, eigenvalues : 13};
+	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
+					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
 	
 	// number size
 	this.element_width = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
@@ -368,8 +379,8 @@ SegNumField.prototype.makeGridElement = function() {
 		column is 3/4 of the width from the left.
 	*/
 	
-	var y_pos = this.element_height / 6;
-	var x_pos = this.element_width / 4;
+	var y_pos = (this.element_height - this.border_offset) / 6;
+	var x_pos = (this.element_width - this.border_offset) / 4;
 	
 	for (var i = 1; i <= 5; i += 2) {
 		var $left_dot = $("<div/>");
@@ -735,11 +746,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				parameters that were used to make them) and images.
 			*/
 			
-			// save metadata about all images
 			var savedDoc = {};
 			savedDoc.images = [];
 			savedDoc.fields = [];
 			
+			// save metadata about all images
 			$(".img_div").each(function() {
 				var img_div = {};
 				img_div.height = $(this).height();

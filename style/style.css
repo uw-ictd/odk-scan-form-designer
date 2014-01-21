@@ -129,8 +129,8 @@ box is open. */
 }
 
 .box {
-	outline-style: solid;
-	outline-color: black;
+	border-style: solid;
+	border-color: black;
 }
 
 .cb_div {

@@ -176,7 +176,7 @@ GridField.prototype.getFieldJSON = function() {
 	// check if the field has a 'param'
 	// attribute (only bubbles require it)
 	if (this.param) {
-		f_info.param = this_field.param;
+		f_info.param = this.param;
 	}
 	
 	f_info.segments = [];

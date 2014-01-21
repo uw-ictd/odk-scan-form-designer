@@ -105,7 +105,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								} else if (f_json.field_type == 'seg_num') {
 									var seg_num_field = new SegNumField(f_json);
 									seg_num_field.constructGrid();			
-								} 
+								} else if (f_json.field_type == 'box') {
+									var box = new Box(f_json);
+									box.constructBox();		
+								} else {
+									console.log("unsupported field");
+								}
 							}
 						}
 												
@@ -139,61 +144,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				buttons: {
 					"Ok": function() {
 						console.log("making box...");
-						var $new_box = $('<div/>').addClass('field').addClass('box');
-						
-						// NOTE: initial width and height are aligned to the grid size
-						var box_width = GRID_X * 10;
-						var box_height = GRID_Y * 10;
-						// $new_box is placed at the top left of the Scan doc
-						$new_box.css({width: box_width, height: box_height, top: 0, left: 0});						
-						
-						$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
-						$new_box.resizable({handles: 'all', 
-											containment: 'parent', 
-											grid: [GRID_X, GRID_Y],
-											minWidth: GRID_X * 5,
-											minHeight: GRID_Y * 5});
-																												
-						$new_box.css({'outline-width': $("#box_border").val() + 'px'});
-						$new_box.css({position: 'absolute'});
-						
-						// all user-defined properties will be stored in a JSON object 
-						$new_box.data("prop", {});
-						
-						// set field properties
-						var field_prop = $new_box.data("prop");	
-						/* TODO: allow user to manipulate these properties */						
-						field_prop.type = "box"; 
-						field_prop.name = "none";			
-						
-						// this function is invoked when the JSON output is created
-						var getFieldJSON = function() {
-							var f_info = {};
-							
-							f_info.type = field_prop.type;
-							f_info.name = field_prop.name;
-							f_info.segments = [];
-				
-							var seg = {};
-							seg.segment_x = $new_box.position().left;
-							seg.segment_y = $new_box.position().top;
-							seg.segment_width = $new_box.outerWidth();
-							seg.segment_height = $new_box.outerHeight();
-							
-							f_info.segments.push(seg);
-							return f_info;
-						}
-						
-						$new_box.data("getFieldJSON", getFieldJSON);
-						
-						// box is removed when double-clicked
-						$new_box.dblclick(
-							function() {
-								this.remove();
-							}
-						);
-						
-						$("#scan_doc").append($new_box);
+						var new_box = new Box();
+						new_box.constructBox();
 						$("#box_dialog").dialog("close");
 					},
 					"Cancel": function() {

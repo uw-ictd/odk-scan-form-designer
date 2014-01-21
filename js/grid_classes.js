@@ -230,36 +230,34 @@ function CheckboxField(init_val) {
 	this.cf_advanced = {flip_training_data : false};
 	this.cf_map = {empty : false};
 	
-	if (init_val) {
-		return; // the rest of the values have already been set by init()
+	if (!init_val) {
+		// set the class of the grid elements
+		this.ele_class = 'c_box';
+		
+		// checkbox size
+		this.element_width = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
+							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
+		this.element_height = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
+							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
+		
+		// the horizontal spacing between the centers of checkboxes
+		this.horiz_dx = parseInt($("#cb_horiz_dx").val());
+		
+		// the vetical spacing between the centers of checkboxes
+		this.vert_dy = parseInt($("#cb_vert_dy").val());
+		
+		// margin values
+		this.margin_top = parseInt($("#cb_margin_top").val());
+		this.margin_bottom = parseInt($("#cb_margin_bottom").val());
+		this.margin_left = parseInt($("#cb_margin_left").val());
+		this.margin_right = parseInt($("#cb_margin_right").val());
+		
+		// number of rows
+		this.num_rows = $("#num_row_cb").val();
+		
+		// number of columns
+		this.num_cols = $("#num_col_cb").val();
 	}
-	
-	// set the class of the grid elements
-	this.ele_class = 'c_box';
-	
-	// checkbox size
-	this.element_width = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
-						($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
-	this.element_height = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
-						($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
-	
-	// the horizontal spacing between the centers of checkboxes
-	this.horiz_dx = parseInt($("#cb_horiz_dx").val());
-	
-	// the vetical spacing between the centers of checkboxes
-	this.vert_dy = parseInt($("#cb_vert_dy").val());
-	
-	// margin values
-	this.margin_top = parseInt($("#cb_margin_top").val());
-	this.margin_bottom = parseInt($("#cb_margin_bottom").val());
-	this.margin_left = parseInt($("#cb_margin_left").val());
-	this.margin_right = parseInt($("#cb_margin_right").val());
-	
-	// number of rows
-	this.num_rows = $("#num_row_cb").val();
-	
-	// number of columns
-	this.num_cols = $("#num_col_cb").val();
 }
 
 // inherit GridField
@@ -299,42 +297,41 @@ function BubbleField(init_val) {
 	
 	if (init_val) {
 		this.param = init_val.param;
-		return; // the rest of the values have already been set by init()
+	} else {
+		// set the class of the grid elements
+		this.ele_class = ($("#bubb_size").val() == 'small') ? 'bubble_small' : 
+							($("#bubb_size").val() == 'medium') ? 'bubble_med' : 'bubble_large';
+		
+		if (this.type == 'tally') {
+			this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val();
+		} else if (this.type == 'select1') {
+			this.param = 'yes_no';
+		}
+		
+		// bubble size
+		this.element_width = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
+							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
+		this.element_height = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
+							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
+		
+		// the horizontal spacing between the centers of bubbles
+		this.horiz_dx = parseInt($("#bubble_horiz_dx").val());
+		
+		// the vetical spacing between the centers of bubbles
+		this.vert_dy = parseInt($("#bubble_vert_dy").val());
+		
+		// margin values
+		this.margin_top = parseInt($("#bubble_margin_top").val());
+		this.margin_bottom = parseInt($("#bubble_margin_bottom").val());
+		this.margin_left = parseInt($("#bubble_margin_left").val());
+		this.margin_right = parseInt($("#bubble_margin_right").val());
+		
+		// number of rows
+		this.num_rows = $("#num_row_bubbles").val();
+		
+		// number of columns
+		this.num_cols = $("#num_col_bubbles").val();
 	}
-	
-	// set the class of the grid elements
-	this.ele_class = ($("#bubb_size").val() == 'small') ? 'bubble_small' : 
-						($("#bubb_size").val() == 'medium') ? 'bubble_med' : 'bubble_large';
-	
-	if (this.type == 'tally') {
-		this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val();
-	} else if (this.type == 'select1') {
-		this.param = 'yes_no';
-	}
-	
-	// bubble size
-	this.element_width = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
-						($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
-	this.element_height = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
-						($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
-	
-	// the horizontal spacing between the centers of bubbles
-	this.horiz_dx = parseInt($("#bubble_horiz_dx").val());
-	
-	// the vetical spacing between the centers of bubbles
-	this.vert_dy = parseInt($("#bubble_vert_dy").val());
-	
-	// margin values
-	this.margin_top = parseInt($("#bubble_margin_top").val());
-	this.margin_bottom = parseInt($("#bubble_margin_bottom").val());
-	this.margin_left = parseInt($("#bubble_margin_left").val());
-	this.margin_right = parseInt($("#bubble_margin_right").val());
-	
-	// number of rows
-	this.num_rows = $("#num_row_bubbles").val();
-	
-	// number of columns
-	this.num_cols = $("#num_col_bubbles").val();
 }
 
 // inherit GridField
@@ -380,45 +377,45 @@ function SegNumField(init_val) {
 		this.dot_width = init_val.dot_width;
 		this.dot_height = init_val.dot_height;
 		return; // the rest of the values have already been set by init()
-	}
-	
-	// set the class of the grid elements
-	this.ele_class = 'num';
-	
-	// TODO: allow user to modify the borders of grid elements?
-	this.border_offset = 2;
-	
-	this.param = $("#num_row_seg_num").val() * $("#num_col_seg_num").val();
+	} else {
+		// set the class of the grid elements
+		this.ele_class = 'num';
+		
+		// TODO: allow user to modify the borders of grid elements?
+		this.border_offset = 2;
+		
+		this.param = $("#num_row_seg_num").val() * $("#num_col_seg_num").val();
 
-	// number size
-	this.element_width = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
-						($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[0] : SEG_NUM_LARGE[0];
-	this.element_height = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[1] : 
-						($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[1] : SEG_NUM_LARGE[1];
-	
-	// inner dot size
-	this.dot_width = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
-						($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
-	this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
-						($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;;
-	
-	// the horizontal spacing between the centers of bubbles
-	this.horiz_dx = parseInt($("#seg_num_horiz_dx").val());
-	
-	// the vetical spacing between the centers of bubbles
-	this.vert_dy = parseInt($("#seg_num_vert_dy").val());
-	
-	// margin values
-	this.margin_top = parseInt($("#seg_num_margin_top").val());
-	this.margin_bottom = parseInt($("#seg_num_margin_bottom").val());
-	this.margin_left = parseInt($("#seg_num_margin_left").val());
-	this.margin_right = parseInt($("#seg_num_margin_right").val());
-	
-	// number of rows
-	this.num_rows = $("#num_row_seg_num").val();
-	
-	// number of columns
-	this.num_cols = $("#num_col_seg_num").val();
+		// number size
+		this.element_width = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
+							($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[0] : SEG_NUM_LARGE[0];
+		this.element_height = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[1] : 
+							($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[1] : SEG_NUM_LARGE[1];
+		
+		// inner dot size
+		this.dot_width = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
+							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
+		this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
+							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;;
+		
+		// the horizontal spacing between the centers of bubbles
+		this.horiz_dx = parseInt($("#seg_num_horiz_dx").val());
+		
+		// the vetical spacing between the centers of bubbles
+		this.vert_dy = parseInt($("#seg_num_vert_dy").val());
+		
+		// margin values
+		this.margin_top = parseInt($("#seg_num_margin_top").val());
+		this.margin_bottom = parseInt($("#seg_num_margin_bottom").val());
+		this.margin_left = parseInt($("#seg_num_margin_left").val());
+		this.margin_right = parseInt($("#seg_num_margin_right").val());
+		
+		// number of rows
+		this.num_rows = $("#num_row_seg_num").val();
+		
+		// number of columns
+		this.num_cols = $("#num_col_seg_num").val();
+	}
 }
 
 // inherit GridField

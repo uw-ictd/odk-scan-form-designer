@@ -67,6 +67,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							
 							if (images && !$("#uploaded_image").data("img_src")) {
 								// error case, no image was uploaded
+								console.log('error, no image file');
 							} else {							
 								// load image snippets into the Scan doc
 								var img_src = $("#uploaded_image").data("img_src");
@@ -89,7 +90,23 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								}
 							}
 							
-							// load all fields into the doc...
+							// load all fields into the doc
+							var fields = scanDoc.fields;
+							for (var i = 0; i < fields.length; i++) {								
+								var f_json = fields[i];
+								console.log('loading field: ' + JSON.stringify(f_json, null, '\t'));
+								if (f_json.field_type == 'checkbox') {
+									console.log("\tloading checkbox");
+									var cb_field = new CheckboxField(f_json);
+									cb_field.constructGrid();			
+								} else if (f_json.field_type == 'bubble') {
+									var bubb_field = new BubbleField(f_json);
+									bubb_field.constructGrid();			
+								} else if (f_json.field_type == 'seg_num') {
+									var seg_num_field = new SegNumField(f_json);
+									seg_num_field.constructGrid();			
+								} 
+							}
 						}
 												
 						$("#load_dialog").dialog("close");					
@@ -344,8 +361,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		saveDoc: function() {
 			/*	Need to save metadata about all fields (including all
 				parameters that were used to make them) and images.
-			*/
-			
+			*/			
 			var savedDoc = {};
 			savedDoc.images = [];
 			savedDoc.fields = [];
@@ -362,12 +378,14 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				
 				savedDoc.images.push(img_div);
 			});
-			console.log(JSON.stringify(savedDoc, null, '\t'));
 		
 			/*	 create a new JSON object for each field */
 			$(".field").each(function() {
-				
+				var json = $(this).data("obj").saveJSON();
+				savedDoc.fields.push(json);				
 			});
+			
+			console.log(JSON.stringify(savedDoc, null, '\t'));
 		},
 		exportZIP: function() {
 			// create a zip file for the form image and json
@@ -383,10 +401,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// compute and get the JSON for each field
 			var all_fields = $(".field");			
 			for (var i = 0; i < all_fields.length; i++) {
-				var curr = $(all_fields[i]);
+				var $curr_field = $(all_fields[i]);				
+				var fieldObj = $curr_field.data("obj");
 				
-				var fieldJSON = curr.data("getFieldJSON")();
-				scanDoc.fields.push(fieldJSON);
+				scanDoc.fields.push(fieldObj.getFieldJSON());
 			}
 			
 			var json_output = JSON.stringify(scanDoc, null, '\t');

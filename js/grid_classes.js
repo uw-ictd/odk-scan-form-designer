@@ -10,8 +10,8 @@ var BUBBLE_LARGE = 26;
 
 // sizes are set in [width, height]
 var SEG_NUM_SMALL = [20, 28];
-var SEG_NUM_MEDIUM = [40, 56];
-var SEG_NUM_LARGE = [80, 112];
+var SEG_NUM_MEDIUM = [30, 42];
+var SEG_NUM_LARGE = [45, 63];
 
 var DOT_SMALL = 2;
 var DOT_MEDIUM = 5;
@@ -43,14 +43,61 @@ var DOT_LARGE = 7;
 function GridField() {
 }
 
+// constructor for GridField object, passed in the
+// init_val constructor when the Scan doc is loaded
+// from a JSON file
+GridField.prototype.init = function(init_val) {
+	this.$grid_div = $('<div/>');
+	this.$grid_div.data("obj", this);
+	
+	if (init_val) {
+		this.num_rows = init_val.num_rows;
+		this.num_cols = init_val.num_cols;
+		this.margin_top = init_val.margin_top;
+		this.margin_bottom = init_val.margin_bottom;
+		this.margin_left = init_val.margin_left;
+		this.margin_right = init_val.margin_right;
+		this.vert_dy = init_val.vert_dy;
+		this.horiz_dx = init_val.horiz_dx;
+		this.element_height = init_val.element_height;
+		this.element_width = init_val.element_width;
+		this.ele_class = init_val.ele_class;
+		this.$grid_div.css({top: init_val.top, left: init_val.left});
+	} else {
+		this.$grid_div.css({top: 0, left: 0});
+	}
+}
+
+// returns the properties which are common
+// to all of the subclasses of GridField
+GridField.prototype.getProperties = function() {
+	var json = {};
+	
+	json.num_rows = this.num_rows;
+	json.num_cols = this.num_cols;
+	json.margin_top = this.margin_top;
+	json.margin_bottom = this.margin_bottom;
+	json.margin_left = this.margin_left;
+	json.margin_right = this.margin_right;
+	json.vert_dy = this.vert_dy;
+	json.horiz_dx = this.horiz_dx;
+	json.element_height = this.element_height;
+	json.element_width = this.element_width;
+	json.ele_class = this.ele_class;
+	json.left = this.$grid_div.css('left');
+	json.top = this.$grid_div.css('top');
+	
+	return json;
+}
+
 GridField.prototype.constructGrid = function() {
 	console.log("making grid...");
 	// NOTE: initial width and height are aligned to the grid size
-	var $grid_div = $('<div/>').addClass(this.grid_class).addClass('field');
+	this.$grid_div.addClass(this.grid_class).addClass('field');
 	
 	// the new field will be placed at the top left of the Scan doc
-	$grid_div.css({top: 0, left: 0, position: 'absolute'});																	
-	$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});			
+	this.$grid_div.css({position: 'absolute'});																	
+	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});			
 	
 	// construct the grid
 	for (var i = 0; i < this.num_rows; i++) {	
@@ -80,7 +127,7 @@ GridField.prototype.constructGrid = function() {
 					marginTop: mT, 
 					marginBottom: mB, 
 					marginRight: this.margin_right});
-			$grid_div.append($g_element);
+			this.$grid_div.append($g_element);
 		} else {												
 			for (var j = 0; j < this.num_cols; j++) {	
 				var $g_element = this.makeGridElement();
@@ -93,21 +140,27 @@ GridField.prototype.constructGrid = function() {
 				} else { // edge case, last grid element in the row
 					$g_element.css({marginLeft: this.horiz_dx / 2, marginRight: this.margin_right});
 				}
-				$grid_div.append($g_element);
+				this.$grid_div.append($g_element);
 			}
 		}		
-		$grid_div.append($("<br>"));							
+		this.$grid_div.append($("<br>"));							
 	}
 	
-	// all user-defined properties will be stored in a JSON object 
-	$grid_div.data("prop", {});		
-	
-	// set field properties
-	var field_prop = $grid_div.data("prop");	
-	/* TODO: allow user to manipulate these properties */												
-	field_prop.type = this.type;
-	field_prop.name = this.name;	
-	field_prop.label = this.label;
+	// grid fields are removed when double-clicked
+	this.$grid_div.dblclick(
+		function() {
+			this.remove();
+		}
+	);
+
+	$("#scan_doc").append(this.$grid_div);
+};
+
+GridField.prototype.getFieldJSON = function() {
+	var f_info = {};
+	f_info.type = this.type;
+	f_info.name = this.name;
+	f_info.label = this.label;
 	
 	var cf = {};
 	// initialize classifier 
@@ -117,76 +170,57 @@ GridField.prototype.constructGrid = function() {
 	cf.classification_map = this.cf_map;
 	cf.default_classification = true;
 	cf.advanced = this.cf_advanced;
+		
+	f_info.classifier = cf;
 	
-	var this_field = this;
-	var getFieldJSON = function() {
-		var f_info = {};
-		
-		f_info.type = field_prop.type;
-		f_info.name = field_prop.name;
-		f_info.label = field_prop.label;
-		f_info.classifier = cf;
-		
-		if (this_field.param) {
-			f_info.param = this_field.param;
-		}
-		
-		f_info.segments = [];
-
-		var seg = {};
-		seg.segment_x = $grid_div.position().left;
-		seg.segment_y = $grid_div.position().top;
-		seg.segment_width = $grid_div.outerWidth();
-		seg.segment_height = $grid_div.outerHeight();
-		seg.align_segment = false;
-		
-		// seg.items contains list of locations of all grid elements
-		seg.items = [];
-
-		$grid_div.children('div').each(function() {
-			var ele_loc = {}; // stores location of the grid element
-			
-			/* 	NOTE: The element location is given with
-				respect to its center. Also, position().left
-				and position().right do not take into account
-				the margins around the div, we have to add
-				horiz_offset to account for the margin.
-			*/								
-			var horiz_offset = parseInt($(this).css('margin-left'));
-			var vert_offset = parseInt($(this).css('margin-top'));
-			
-			// we use outerWidth() and outerHeight() because they take borders into account
-			ele_loc.item_x = horiz_offset + $(this).position().left + ($(this).outerWidth() / 2);
-			ele_loc.item_y = vert_offset + $(this).position().top + ($(this).outerHeight() / 2);
-			
-			seg.items.push(ele_loc);
-		});
-		
-		f_info.segments.push(seg);
-		return f_info;
+	// check if the field has a 'param'
+	// attribute (only bubbles require it)
+	if (this.param) {
+		f_info.param = this_field.param;
 	}
 	
-	$grid_div.data("getFieldJSON", getFieldJSON);
+	f_info.segments = [];
+
+	var seg = {};
+	seg.segment_x = this.$grid_div.position().left;
+	seg.segment_y = this.$grid_div.position().top;
+	seg.segment_width = this.$grid_div.outerWidth();
+	seg.segment_height = this.$grid_div.outerHeight();
+	seg.align_segment = false;
 	
-	// grid fields are removed when double-clicked
-	$grid_div.dblclick(
-		function() {
-			this.remove();
-		}
-	);
-	$grid_div.data("obj", this);
-	$("#scan_doc").append($grid_div);
+	// seg.items contains list of locations of all grid elements
+	seg.items = [];
+
+	this.$grid_div.children('div').each(function() {
+		var ele_loc = {}; // stores location of the grid element
+		
+		/* 	NOTE: The element location is given with
+			respect to its center. Also, position().left
+			and position().right do not take into account
+			the margins around the div, we have to add
+			horiz_offset to account for the margin.
+		*/								
+		var horiz_offset = parseInt($(this).css('margin-left'));
+		var vert_offset = parseInt($(this).css('margin-top'));
+		
+		// we use outerWidth() and outerHeight() because they take borders into account
+		ele_loc.item_x = horiz_offset + $(this).position().left + ($(this).outerWidth() / 2);
+		ele_loc.item_y = vert_offset + $(this).position().top + ($(this).outerHeight() / 2);
+		
+		seg.items.push(ele_loc);
+	});
+	
+	f_info.segments.push(seg);
+	return f_info;
 };
 
 // constructs a grid of checkboxes
-function CheckboxField() {
+function CheckboxField(init_val) {
+	this.init(init_val); // essentially calling the superclass's constructor
 	// Set all checkbox attributes
 	
 	// set the grid class
 	this.grid_class = 'cb_div';
-	
-	// set the class of the grid elements
-	this.ele_class = 'c_box';
 	
 	// TODO: find out how these values should be set
 	this.type = 'int';
@@ -195,6 +229,13 @@ function CheckboxField() {
 	this.data_uri = "checkboxes";
 	this.cf_advanced = {flip_training_data : false};
 	this.cf_map = {empty : false};
+	
+	if (init_val) {
+		return; // the rest of the values have already been set by init()
+	}
+	
+	// set the class of the grid elements
+	this.ele_class = 'c_box';
 	
 	// checkbox size
 	this.element_width = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
@@ -232,16 +273,21 @@ CheckboxField.prototype.makeGridElement = function() {
 	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
 
+// returns JSON containing the current state of 
+// the field (position, grid element type, etc.)
+CheckboxField.prototype.saveJSON = function() {
+	var json = this.getProperties();
+	json.field_type = 'checkbox';
+	return json;
+}
+
 // constructs a grid of bubbles
-function BubbleField() {
+function BubbleField(init_val) {
+	this.init(init_val); // essentially calling the superclass's constructor
 	// Set all bubble attributes
 	
 	// set the grid class
 	this.grid_class = 'bubble_div';
-	
-	// set the class of the grid elements
-	this.ele_class = ($("#bubb_size").val() == 'small') ? 'bubble_small' : 
-						($("#bubb_size").val() == 'medium') ? 'bubble_med' : 'bubble_large';
 	
 	// TODO: find out what these values should actually be
 	this.type = $("#bubb_type").val();
@@ -250,6 +296,15 @@ function BubbleField() {
 	this.data_uri = "bubbles";
 	this.cf_advanced = {flip_training_data : false};
 	this.cf_map = {empty : false};
+	
+	if (init_val) {
+		this.param = init_val.param;
+		return; // the rest of the values have already been set by init()
+	}
+	
+	// set the class of the grid elements
+	this.ele_class = ($("#bubb_size").val() == 'small') ? 'bubble_small' : 
+						($("#bubb_size").val() == 'medium') ? 'bubble_med' : 'bubble_large';
 	
 	if (this.type == 'tally') {
 		this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val();
@@ -293,11 +348,39 @@ BubbleField.prototype.makeGridElement = function() {
 	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
 
-function SegNumField() {
+// returns JSON containing the current state of 
+// the field (position, grid element type, etc.)
+BubbleField.prototype.saveJSON = function() {
+	var json = this.getProperties();
+	json.field_type = 'bubble';
+	json.param = this.param;
+	return json;
+}
+
+function SegNumField(init_val) {
+	this.init(init_val); // essentially calling the superclass's constructor
 	// Set all segmented number attributes
 	
 	// set the grid class
 	this.grid_class = 'num_div';
+	
+	// TODO: find out what these values should actually be
+	this.type = 'string';
+	this.name = "seg_number";	
+	this.label = "seg_number";		
+	this.data_uri = "numbers";
+	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
+	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
+					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
+	
+	if (init_val) {
+		console.log('loading from');
+		this.border_offset = init_val.border_offset;
+		this.param = init_val;
+		this.dot_width = init_val.dot_width;
+		this.dot_height = init_val.dot_height;
+		return; // the rest of the values have already been set by init()
+	}
 	
 	// set the class of the grid elements
 	this.ele_class = 'num';
@@ -305,16 +388,8 @@ function SegNumField() {
 	// TODO: allow user to modify the borders of grid elements?
 	this.border_offset = 2;
 	
-	// TODO: find out what these values should actually be
-	this.type = 'string';
-	this.name = "seg_number";	
-	this.label = "seg_number";		
-	this.data_uri = "numbers";
 	this.param = $("#num_row_seg_num").val() * $("#num_col_seg_num").val();
-	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
-	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
-					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
-	
+
 	// number size
 	this.element_width = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
 						($("#seg_num_size").val() == 'medium') ? SEG_NUM_MEDIUM[0] : SEG_NUM_LARGE[0];
@@ -393,4 +468,16 @@ SegNumField.prototype.makeGridElement = function() {
 		$new_num.append($right_dot);
 	}
 	return $new_num;
+}
+
+// returns JSON containing the current state of 
+// the field (position, grid element type, etc.)
+SegNumField.prototype.saveJSON = function() {
+	var json = this.getProperties();
+	json.field_type = 'seg_num';
+	json.param = this.param;
+	json.border_offset = this.border_offset;
+	json.dot_width = this.dot_width;
+	json.dot_height = this.dot_height;
+	return json;
 }

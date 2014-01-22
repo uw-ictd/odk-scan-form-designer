@@ -84,8 +84,8 @@
 			  <li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown">Edit Mode <b class="caret"></b></a>
 				<ul class="dropdown-menu">
-				  <li><a {{action "enableImageEdit"}}>Image Editing</a></li>
-				  <li><a {{action "enableFormEdit"}}>Field Editing</a></li>				  
+				  <li><a {{action "enableImageEdit"}}>Image Layer</a></li>
+				  <li><a {{action "enableFieldEdit"}}>Field Layer</a></li>				  
 				</ul>
 			  </li>
 			{{#if isImageEditing}}
@@ -94,9 +94,9 @@
 				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
 			{{else}}
 				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown">Select Field <b class="caret"></b></a>
+					<a class="dropdown-toggle" data-toggle="dropdown">Add Field <b class="caret"></b></a>
 					<ul class="dropdown-menu">
-						<li><a {{action 'createBox'}}>Blank Box</a></li>
+						<li><a {{action 'createBox'}}>Text Box</a></li>
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
 						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
 						<li><a {{action 'createNumbers'}}>Numbers</a></li>

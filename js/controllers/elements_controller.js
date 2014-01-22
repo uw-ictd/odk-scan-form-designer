@@ -214,7 +214,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#prop_sidebar").hide("slow");
 			this.set('isImageEditing', true);
 		},
-		enableFormEdit: function() {
+		enableFieldEdit: function() {
 			$("#image_area img").attr('src', null);
 			var ias = this.get('imgSelect');
 			ias.cancelSelection();

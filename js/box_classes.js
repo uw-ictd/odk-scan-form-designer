@@ -30,8 +30,8 @@ Box.prototype.constructBox = function() {
 	this.$box.resizable({handles: 'all', 
 						containment: 'parent', 
 						grid: [GRID_X, GRID_Y],
-						minWidth: GRID_X * 5,
-						minHeight: GRID_Y * 5});
+						minWidth: GRID_X * 1,
+						minHeight: GRID_Y * 1});
 																							
 	this.$box.css({'border-width': this.border_width + 'px'});
 	this.$box.css({position: 'absolute'});		

@@ -14,8 +14,8 @@ function Box(init_val) {
 		this.top = 0;
 		// NOTE: initial width and height are aligned
 		// to the grid size
-		this.box_width = GRID_X * 10;
-		this.box_height = GRID_Y * 10;
+		this.box_width = GRID_X * 5;
+		this.box_height = GRID_Y * 5;
 		this.border_width = $("#box_border").val();
 	}
 	this.type = "box"; 

@@ -100,6 +100,7 @@
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
 						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
 						<li><a {{action 'createNumbers'}}>Numbers</a></li>
+						<li><a {{action 'createText'}}>Text</a></li>
 					</ul>
 				</li>	
 			{{/if}}
@@ -117,6 +118,7 @@
 		{{partial 'segNumDialog'}}
 		{{partial 'saveDialog'}}
 		{{partial 'loadDialog'}}
+		{{partial 'textDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -130,6 +132,10 @@
 			</div>
 			<div id="image_area">
 				<img id="loaded_image"></img>
+				<div id="img_container">
+					<img id="wrapped_image"></img>
+				</div>
+				<div id="processed_images"></div>
 			</div>
 		</div>
 	</script>
@@ -294,5 +300,17 @@
 		</div>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="_textDialog">
+		<div id="text_dialog" title="Create text box">		
+			<label for="name">Text size</label>
+			<select id="text_size"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			<label for="name">Text</label>
+			<input type="text" id="text_input" class="ui-widget-content ui-corner-all">					
+		</div>
+	</script>	
   </body>
 </html>

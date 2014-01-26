@@ -373,7 +373,7 @@ function SegNumField(init_val) {
 	if (init_val) {
 		console.log('loading from');
 		this.border_offset = init_val.border_offset;
-		this.param = init_val;
+		this.param = init_val.param;
 		this.dot_width = init_val.dot_width;
 		this.dot_height = init_val.dot_height;
 		return; // the rest of the values have already been set by init()

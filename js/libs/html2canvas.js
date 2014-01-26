@@ -2858,6 +2858,11 @@ _html2canvas.Renderer.Canvas = function(options) {
         newCanvas.height = Math.ceil(bounds.height);
         ctx = newCanvas.getContext("2d");
 
+        console.log("bounds.left: " + bounds.left);
+        console.log("bounds.right: " + bounds.right)
+        console.log("bounds.width: " + bounds.width)
+        console.log("bounds.height: " + bounds.height)
+        
         ctx.drawImage(canvas, bounds.left, bounds.top, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
         canvas = null;
         return newCanvas;

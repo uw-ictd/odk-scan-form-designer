@@ -70,23 +70,62 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								console.log('error, no image file');
 							} else {							
 								// load image snippets into the Scan doc
-								var img_src = $("#uploaded_image").data("img_src");
+								var img_src = $("#uploaded_image").data("img_src");								
+								var img_pos = [];
+								var img_index = 0;
+								$("#scan_doc").children().remove();
+								
+								var remove_pics = function(index) {
+									// check if all pics have been loaded
+									if (index == img_pos.length) {
+										$("#processed_images").children().remove();
+									}
+								};
+								
 								for (var i = 0; i < images.length; i++) {
 									var img_json = images[i];
+									console.log(JSON.stringify(img_json));
 									
-									var $img_div = $("<div/>").css({position: 'absolute',
-																	height: img_json.height, 
-																	width: img_json.width,
-																	top: img_json.div_top,
-																	left: img_json.div_left});
-									$img_div.addClass("img_div");
-									$img_div.draggable({containment: 'parent'});
-									var $img = $("<img/>").css({top: img_json.img_top, 
-																left: img_json.img_left});
-									$img.attr('src', img_src);
+									var $img_container = $("<div/>").css({position: 'absolute',
+													height: img_json.orig_height, 
+													width: img_json.orig_width,
+													overflow: 'hidden',
+													position: 'absolute'});
+									img_pos.push(img_json);
 									
-									$img_div.append($img);
-									$("#scan_doc").append($img_div);
+									var $wrapped_image = $("<img/>").attr('src', img_src);
+									$wrapped_image.css({
+										position: 'relative',
+										top: img_json.img_top,
+										left: img_json.img_left,
+									});			
+									$img_container.append($wrapped_image);
+									$('#processed_images').append($img_container);
+
+									html2canvas($img_container, {   
+										logging:true,
+										onrendered : function(canvas) {												
+											var img_src = canvas.toDataURL("image/jpeg");						
+											var $img = $("<img/>").attr('src', img_src);											
+											$img.css({width: '100%', height: '100%'});
+											var img_json = img_pos[img_index];
+											img_index += 1;
+											remove_pics(img_index);
+											
+											$img.data('left', img_json.img_left);
+											$img.data('top', img_json.img_top);
+											$img.data('orig_width', img_json.orig_width);
+											$img.data('orig_height', img_json.orig_height);
+											
+											var $img_draggable = $("<div/>").css({width: img_json.width, height: img_json.height}).append($img);
+											$img_draggable.addClass('img_div');											
+											$img_draggable.css({position: 'absolute', left: img_json.div_left, top: img_json.div_top});																						
+											$("#scan_doc").append($img_draggable);						
+											$img_draggable.draggable({containment: 'parent', position: 'absolute'});
+											$img_draggable.resizable({containment: 'parent', aspectRatio: true, handles: 'all'});	
+											$img_draggable.dblclick(function() { $(this).remove() });
+										}
+									});			
 								}
 							}
 							
@@ -206,7 +245,32 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						$("#seg_num_dialog").dialog("close");
 					}
 				}
-			});					
+			});		
+
+			$("#text_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {
+						var $text_box = $("<div/>").css({width: GRID_X * 10, 
+														height: GRID_Y * 10, 
+														border: '1px solid black',														
+														wordWrap: 'break-word',
+														fontSize: $("#text_size").val(),
+														fontFamily: "Times New Roman"});						
+						$text_box.draggable({containment: 'parent'});
+						$text_box.resizable({containment: 'parent', handles: 'all'});	
+						
+						var $text = $("<p/>").text($("#text_input").val());
+						$text_box.append($text);
+						$("#scan_doc").append($text_box);
+						$("#text_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#text_dialog").dialog("close");
+					}
+				}
+			});			
 		});
 	},
 	actions: {
@@ -258,36 +322,45 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				console.log("no region selected");
 			} else {
 				console.log("region selected!");
-				var $new_img = $("<img/>").attr('src', $("#loaded_image").attr('src'));
-
-				$new_img.css({
+				
+				$("#wrapped_image").attr('src', $("#loaded_image").attr('src'));
+				$("#wrapped_image").css({
+					position: 'relative',
 					top: -reg.y1,
 					left: -reg.x1,
-				});	
-												
+				});		
+				
 				// Image is wrapped in a div to eliminate the overflow
 				// and only make the selected region visible.
 				// NOTE: default position of selected image
-				// is set to top-left of Scan doc.
-				var $img_div = $('<div/>').addClass("img_div").css({
+				// is set to top-left of Scan doc.			
+				$("#img_container").css({
+					overflow: 'hidden',
 					position: 'absolute',
 					width: reg.width, 
-					height: reg.height,
-					top: 0, 
-					left: 0});
+					height: reg.height});		
 				
-				$img_div.addClass("img_div");
-				
-				// image is removed when double-clicked
-				$img_div.dblclick(
-					function() {
-						this.remove();
+				html2canvas($("#img_container"), {   
+					logging:true,
+					onrendered : function(canvas) {
+						var img_src = canvas.toDataURL("image/jpeg");						
+						var $img = $("<img/>").attr('src', img_src);
+						$img.data('top', -reg.y1);
+						$img.data('left', -reg.x1);
+						$img.data('orig_width', reg.width);
+						$img.data('orig_height', reg.height);
+						
+						$img.css({width: '100%', height: '100%'});
+						var $img_draggable = $("<div/>").css({width: reg.width, height: reg.height});
+						$img_draggable.css({left: 0, top: 0, position: 'absolute'});										
+						$("#scan_doc").append($img_draggable);						
+						$img_draggable.draggable({containment: 'parent'});
+						$img_draggable.resizable({containment: 'parent', aspectRatio: true, handles: 'all'});	
+						$img_draggable.addClass('img_div').append($img);		
+						$img_draggable.dblclick(function() { $(this).remove() });
+						$("#img_container").children('img').attr('src', null);							
 					}
-				);								
-				$img_div.append($new_img);
-				$img_div.draggable({containment: 'parent'});
-				
-				$("#scan_doc").append($img_div);								
+				});			
 			}
 		},
 		createBox: function() {
@@ -305,6 +378,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		createNumbers: function() {
 			console.log("creating segmented numbers");
 			$("#seg_num_dialog").dialog("open");
+		},
+		createText: function() {
+			console.log("creating text");
+			$("#text_dialog").dialog("open");
 		},
 		loadDoc: function() {
 			console.log("loading document...");
@@ -325,8 +402,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				img_div.width = $(this).width();
 				img_div.div_top = $(this).css('top');
 				img_div.div_left = $(this).css('left');
-				img_div.img_top = $(this).children("img").css('top');
-				img_div.img_left = $(this).children("img").css('left');
+				// NOTE: img position, original size stored in the img's data field
+				img_div.img_top = $(this).children("img").data('top');
+				img_div.img_left = $(this).children("img").data('left');
+				img_div.orig_height = $(this).children("img").data('orig_height');
+				img_div.orig_width = $(this).children("img").data('orig_width');
 				
 				savedDoc.images.push(img_div);
 			});

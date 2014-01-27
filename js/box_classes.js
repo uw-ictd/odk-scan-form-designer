@@ -14,8 +14,8 @@ function Box(init_val) {
 		this.top = 0;
 		// NOTE: initial width and height are aligned
 		// to the grid size
-		this.box_width = GRID_X * 5;
-		this.box_height = GRID_Y * 5;
+		this.box_width = GRID_X * 10;
+		this.box_height = GRID_Y * 10;
 		this.border_width = $("#box_border").val();
 	}
 	this.type = "box"; 
@@ -84,7 +84,13 @@ Box.prototype.copyField = function() {
 	// make a new copy of the $box
 	var $new_box = this.$box.clone();
 	$new_box.css({left: 0, top: 0});
-	$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});
+	$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
+	$new_box.resizable({handles: 'all', 
+						containment: 'parent', 
+						grid: [GRID_X, GRID_Y],
+						minWidth: GRID_X * 1,
+						minHeight: GRID_Y * 1});	
+						
 	$new_box.dblclick(function() { this.remove() });
 	$new_box.click(function() {
 		$(".selected_field").removeClass("selected_field");	
@@ -100,3 +106,19 @@ Box.prototype.copyField = function() {
 	$new_box.addClass("selected_field");
 	$("#scan_doc").append($new_box);
 };
+
+function TextBox() {
+	Box.call(this); // call super constructor.	
+	
+	this.$box.css({wordWrap: 'break-word',
+			border: '1px solid black',
+			fontSize: $("#text_size").val(),
+			fontFamily: "Times New Roman"});					
+						
+	var $text = $("<p/>").text($("#text_input").val());
+	this.$box.append($text);
+}
+
+// subclass extends superclass
+TextBox.prototype = Object.create(Box.prototype);
+TextBox.prototype.constructor = TextBox;

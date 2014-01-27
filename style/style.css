@@ -140,6 +140,10 @@ box is open. */
 	border-color: black;
 }
 
+.box p{
+	text-align: center;
+}
+
 .cb_div {
 	display: inline-block;
 	border: 1px solid black;

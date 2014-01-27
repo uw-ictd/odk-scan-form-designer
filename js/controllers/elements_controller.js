@@ -240,18 +240,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				modal: true,
 				buttons: {
 					"Ok": function() {
-						var $text_box = $("<div/>").css({width: GRID_X * 10, 
-														height: GRID_Y * 10, 
-														border: '1px solid black',														
-														wordWrap: 'break-word',
-														fontSize: $("#text_size").val(),
-														fontFamily: "Times New Roman"});						
-						$text_box.draggable({containment: 'parent'});
-						$text_box.resizable({containment: 'parent', handles: 'all'});	
+						var new_text_box = new TextBox();
+						new_text_box.constructBox();
 						
-						var $text = $("<p/>").text($("#text_input").val());
-						$text_box.append($text);
-						$("#scan_doc").append($text_box);
 						$("#text_dialog").dialog("close");
 					},
 					"Cancel": function() {

@@ -69,61 +69,49 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								// error case, no image was uploaded
 								console.log('error, no image file');
 							} else {							
-								// load image snippets into the Scan doc
-								var img_src = $("#uploaded_image").data("img_src");								
+								// load image snippets into the Scan doc							
 								var img_pos = [];
 								var img_index = 0;
+								
+								// remove all current fields in the Scan doc
 								$("#scan_doc").children().remove();
 								
-								var remove_pics = function(index) {
+								var check_if_done = function(index) {
 									// check if all pics have been loaded
 									if (index == img_pos.length) {
 										$("#processed_images").children().remove();
 									}
 								};
 								
+								var img_src = $("#uploaded_image").data("img_src");	
 								for (var i = 0; i < images.length; i++) {
 									var img_json = images[i];
-									console.log(JSON.stringify(img_json));
-									
-									var $img_container = $("<div/>").css({position: 'absolute',
-													height: img_json.orig_height, 
-													width: img_json.orig_width,
-													overflow: 'hidden',
-													position: 'absolute'});
 									img_pos.push(img_json);
-									
-									var $wrapped_image = $("<img/>").attr('src', img_src);
-									$wrapped_image.css({
-										position: 'relative',
-										top: img_json.img_top,
-										left: img_json.img_left,
-									});			
-									$img_container.append($wrapped_image);
-									$('#processed_images').append($img_container);
+	
+									// load the image into the dom
+									var $img_container = load_into_dom(img_src, 
+															img_json.orig_height,
+															img_json.orig_width,
+															img_json.img_top,
+															img_json.img_left);												
 
 									html2canvas($img_container, {   
 										logging:true,
 										onrendered : function(canvas) {												
-											var img_src = canvas.toDataURL("image/jpeg");						
-											var $img = $("<img/>").attr('src', img_src);											
-											$img.css({width: '100%', height: '100%'});
-											var img_json = img_pos[img_index];
+											var cropped_img_src = canvas.toDataURL("image/jpeg");															// get image position/size information
+											var img_json = img_pos[img_index];											
+											load_into_scan(cropped_img_src, 
+														img_json.height, 
+														img_json.width, 
+														img_json.orig_height,
+														img_json.orig_width,
+														img_json.img_top, 
+														img_json.img_left, 
+														img_json.div_top, 
+														img_json.div_left);
+																
 											img_index += 1;
-											remove_pics(img_index);
-											
-											$img.data('left', img_json.img_left);
-											$img.data('top', img_json.img_top);
-											$img.data('orig_width', img_json.orig_width);
-											$img.data('orig_height', img_json.orig_height);
-											
-											var $img_draggable = $("<div/>").css({width: img_json.width, height: img_json.height}).append($img);
-											$img_draggable.addClass('img_div');											
-											$img_draggable.css({position: 'absolute', left: img_json.div_left, top: img_json.div_top});																						
-											$("#scan_doc").append($img_draggable);						
-											$img_draggable.draggable({containment: 'parent', position: 'absolute'});
-											$img_draggable.resizable({containment: 'parent', aspectRatio: true, handles: 'all'});	
-											$img_draggable.dblclick(function() { $(this).remove() });
+											check_if_done(img_index);
 										}
 									});			
 								}
@@ -322,43 +310,27 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				console.log("no region selected");
 			} else {
 				console.log("region selected!");
-				
-				$("#wrapped_image").attr('src', $("#loaded_image").attr('src'));
-				$("#wrapped_image").css({
-					position: 'relative',
-					top: -reg.y1,
-					left: -reg.x1,
-				});		
-				
-				// Image is wrapped in a div to eliminate the overflow
-				// and only make the selected region visible.
-				// NOTE: default position of selected image
-				// is set to top-left of Scan doc.			
-				$("#img_container").css({
-					overflow: 'hidden',
-					position: 'absolute',
-					width: reg.width, 
-					height: reg.height});		
-				
-				html2canvas($("#img_container"), {   
+				/*	Image is wrapped in a div to eliminate the overflow
+					and only make the selected region visible. html2canvas
+					is used to create a jpg of the selected region, which
+					is then put into the Scan doc.			
+
+					NOTE: html2canvas requires the DOM elements be loaded into
+					the canvas in order to work correctly. That's why images
+					are loaded into wrapped_image/img_container rather than 
+					local img/div elements.
+				*/
+
+				// load the image into the dom
+				var img_src = $("#loaded_image").attr('src');
+				var $img_container = load_into_dom(img_src, reg.height, reg.width, -reg.y1, -reg.x1);				
+
+				html2canvas($img_container, {   
 					logging:true,
 					onrendered : function(canvas) {
-						var img_src = canvas.toDataURL("image/jpeg");						
-						var $img = $("<img/>").attr('src', img_src);
-						$img.data('top', -reg.y1);
-						$img.data('left', -reg.x1);
-						$img.data('orig_width', reg.width);
-						$img.data('orig_height', reg.height);
-						
-						$img.css({width: '100%', height: '100%'});
-						var $img_draggable = $("<div/>").css({width: reg.width, height: reg.height});
-						$img_draggable.css({left: 0, top: 0, position: 'absolute'});										
-						$("#scan_doc").append($img_draggable);						
-						$img_draggable.draggable({containment: 'parent'});
-						$img_draggable.resizable({containment: 'parent', aspectRatio: true, handles: 'all'});	
-						$img_draggable.addClass('img_div').append($img);		
-						$img_draggable.dblclick(function() { $(this).remove() });
-						$("#img_container").children('img').attr('src', null);							
+						var cropped_img_src = canvas.toDataURL("image/jpeg");			
+						load_into_scan(cropped_img_src, reg.height, reg.width, reg.height, reg.width, -reg.y1, -reg.x1, 0, 0);
+						$("#processed_images").children().remove();										
 					}
 				});			
 			}
@@ -444,8 +416,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			html2canvas($("#scan_doc"), {   
 				logging:true,
 				onrendered : function(canvas) {
-					var img_src = canvas.toDataURL("image/jpeg");
-					
+					var img_src = canvas.toDataURL("image/jpeg");					
 					/* 	Need to extract the base64 from the image source.
 						img_src is in the form: data:image/jpeg;base64,...
 						Where '...' is the actual base64.

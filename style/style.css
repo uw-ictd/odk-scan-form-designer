@@ -113,17 +113,13 @@ box is open. */
 	margin-bottom: 6px;
 }
 
-#wrapped_image {
-	position: absolute;
-}
-
-#img_container {
-	position: absolute;
-}
-
 /************************************************************
 *  Field Elements
 ************************************************************/
+.selected_field {
+	background-color: rgba(7, 197, 223, 0.41);
+}
+
 .img_div {
 	overflow: hidden;
 	position: absolute;

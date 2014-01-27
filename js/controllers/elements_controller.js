@@ -310,17 +310,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				console.log("no region selected");
 			} else {
 				console.log("region selected!");
-				/*	Image is wrapped in a div to eliminate the overflow
-					and only make the selected region visible. html2canvas
-					is used to create a jpg of the selected region, which
-					is then put into the Scan doc.			
-
-					NOTE: html2canvas requires the DOM elements be loaded into
-					the canvas in order to work correctly. That's why images
-					are loaded into wrapped_image/img_container rather than 
-					local img/div elements.
-				*/
-
 				// load the image into the dom
 				var img_src = $("#loaded_image").attr('src');
 				var $img_container = load_into_dom(img_src, reg.height, reg.width, -reg.y1, -reg.x1);				
@@ -354,6 +343,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		createText: function() {
 			console.log("creating text");
 			$("#text_dialog").dialog("open");
+		},
+		copyField: function() {
+			var selectedField = $(".selected_field").data('obj');
+			selectedField.copyField();		
 		},
 		loadDoc: function() {
 			console.log("loading document...");
@@ -413,6 +406,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			var json_output = JSON.stringify(scanDoc, null, '\t');
 			
+			$(".selected_field").removeClass("selected_field");
 			html2canvas($("#scan_doc"), {   
 				logging:true,
 				onrendered : function(canvas) {

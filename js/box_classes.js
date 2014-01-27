@@ -37,11 +37,15 @@ Box.prototype.constructBox = function() {
 	this.$box.css({position: 'absolute'});		
 	
 	// box is removed when double-clicked
-	this.$box.dblclick(
-		function() {
-			this.remove();
-		}
-	);
+	this.$box.dblclick( function() { this.remove() });
+	
+	this.$box.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+	});
+
+	$(".selected_field").removeClass("selected_field");
+	this.$box.addClass("selected_field");
 	
 	$("#scan_doc").append(this.$box);
 };
@@ -74,4 +78,25 @@ Box.prototype.saveJSON = function() {
 	fieldJSON.border_width = this.border_width;
 	
 	return fieldJSON;
+};
+
+Box.prototype.copyField = function() {
+	// make a new copy of the $box
+	var $new_box = this.$box.clone();
+	$new_box.css({left: 0, top: 0});
+	$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});
+	$new_box.dblclick(function() { this.remove() });
+	$new_box.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+	});
+	
+	// copy the field object
+	var $new_field = jQuery.extend({}, this);
+	$new_box.data('obj', $new_field);
+	$new_field.$box = $new_box;
+	
+	$(".selected_field").removeClass("selected_field");	
+	$new_box.addClass("selected_field");
+	$("#scan_doc").append($new_box);
 };

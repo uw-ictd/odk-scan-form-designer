@@ -97,7 +97,7 @@ GridField.prototype.constructGrid = function() {
 	
 	// the new field will be placed at the top left of the Scan doc
 	this.$grid_div.css({position: 'absolute'});																	
-	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});			
+	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});			
 	
 	// construct the grid
 	for (var i = 0; i < this.num_rows; i++) {	
@@ -147,12 +147,15 @@ GridField.prototype.constructGrid = function() {
 	}
 	
 	// grid fields are removed when double-clicked
-	this.$grid_div.dblclick(
-		function() {
-			this.remove();
-		}
-	);
+	this.$grid_div.dblclick( function() { this.remove() });
+	
+	this.$grid_div.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+	});
 
+	$(".selected_field").removeClass("selected_field");
+	this.$grid_div.addClass("selected_field");
 	$("#scan_doc").append(this.$grid_div);
 };
 
@@ -212,6 +215,27 @@ GridField.prototype.getFieldJSON = function() {
 	
 	f_info.segments.push(seg);
 	return f_info;
+};
+
+GridField.prototype.copyField = function() {
+	// make a new copy of the $grid_div
+	var $new_grid = this.$grid_div.clone();
+	$new_grid.css({left: 0, top: 0});
+	$new_grid.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
+	$new_grid.dblclick(function() { this.remove() });
+	$new_grid.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+	});
+	
+	// copy the field object
+	var $new_field = jQuery.extend({}, this);
+	$new_grid.data('obj', $new_field);
+	$new_field.$grid_div = $new_grid;
+	
+	$(".selected_field").removeClass("selected_field");	
+	$new_grid.addClass("selected_field");
+	$("#scan_doc").append($new_grid);
 };
 
 // constructs a grid of checkboxes

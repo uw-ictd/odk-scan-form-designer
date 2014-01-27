@@ -1,4 +1,12 @@
-var load_into_dom = function(img_src, img_height, img_width, top_pos, left_pos) {					
+var load_into_dom = function(img_src, img_height, img_width, top_pos, left_pos) {		
+	/*	Image is wrapped in a div to eliminate the overflow
+		and only make the selected region visible. html2canvas
+		is used to create a jpg of the selected region, which
+		is then put into the Scan doc.			
+
+		NOTE: html2canvas requires the DOM elements be loaded into
+		the canvas in order to work correctly.
+	*/			
 	var $wrapped_image = $("<img/>");
 	$wrapped_image.attr('src', img_src);
 	$wrapped_image.css({
@@ -13,11 +21,7 @@ var load_into_dom = function(img_src, img_height, img_width, top_pos, left_pos) 
 					width: img_width,
 					overflow: 'hidden'});		
 	$img_container.append($wrapped_image);
-	/*	NOTE: html2canvas requires the DOM elements be loaded into
-		the canvas in order to work correctly. That's why images
-		are loaded into processed_images here rather than local
-		img/div elements.
-	*/	
+
 	$("#processed_images").append($img_container);
 	return $img_container;
 };

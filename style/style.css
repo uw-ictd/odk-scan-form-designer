@@ -113,6 +113,10 @@ box is open. */
 	margin-bottom: 6px;
 }
 
+.drop_down {
+	float: right;
+}
+
 /************************************************************
 *  Field Elements
 ************************************************************/
@@ -186,6 +190,10 @@ box is open. */
 	border: 1px solid black;
 	float: left;
 	position: relative;
+}
+
+.num_group {
+	float: left;
 }
 
 .dot {

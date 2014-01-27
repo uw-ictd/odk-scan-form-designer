@@ -6,6 +6,7 @@ var GRID_X = 10;
 var GRID_Y = 10;
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
+	groups: [1, 2],
 	isImageEditing: false,
 	imgSelect: null,
 	init: function() {
@@ -250,6 +251,20 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					}
 				}
 			});			
+			$("#form_num_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {					
+						var formNumField = new FormNumField();
+						formNumField.constructGrid();							
+						$("#form_num_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#form_num_dialog").dialog("close");
+					}
+				}
+			});			
 		});
 	},
 	actions: {
@@ -334,6 +349,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		createText: function() {
 			console.log("creating text");
 			$("#text_dialog").dialog("open");
+		},
+		createFormattedNumber: function() {
+			console.log("creating formatted number");
+			$("#form_num_dialog").dialog("open");
+		},
+		updateNumGroups: function() {	
+			var arr = [];
+			for (var i = 1; i <= $("#num_col_form_num").val(); i++) {
+				arr.push(i);
+			}
+			this.set('groups', arr);
+			console.log('num groups is: ' + $("#num_col_form_num").val());
 		},
 		copyField: function() {
 			var selectedField = $(".selected_field").data('obj');

@@ -50,6 +50,7 @@
 		<script src="js/application.js"></script>
 		<script src="js/router.js"></script>
 		<script src="js/grid_classes.js"></script>
+		<script src="js/formatted_number_class.js"></script>
 		<script src="js/box_classes.js"></script>
 		<script src="js/image_util.js"></script>
 		<script src="js/models/element.js"></script>
@@ -102,6 +103,7 @@
 						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
 						<li><a {{action 'createNumbers'}}>Numbers</a></li>
 						<li><a {{action 'createText'}}>Text</a></li>
+						<li><a {{action 'createFormattedNumber'}}>Formated Number</a></li>
 					</ul>
 				</li>	
 				<li><a {{action 'copyField'}}>Copy Field</a></li>
@@ -121,6 +123,7 @@
 		{{partial 'saveDialog'}}
 		{{partial 'loadDialog'}}
 		{{partial 'textDialog'}}
+		{{partial 'formNumDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -149,7 +152,7 @@
 	<script type="text/x-handlebars" data-template-name="_cbDialog">
 		<div id="checkbox_dialog" title="Create checkboxes">		
 			<label for="name">Checkbox size</label>
-			<select id="cb_size"> 
+			<select id="cb_size" class="drop_down"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
@@ -190,14 +193,14 @@
 	<script type="text/x-handlebars" data-template-name="_bubbleDialog">
 		<div id="bubble_dialog" title="Create fill-in bubbles">		
 			<label for="name">Bubble size</label>
-			<select id="bubb_size"> 
+			<select id="bubb_size" class="drop_down"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			
 			<label for="name">Bubble type</label>
-			<select id="bubb_type"> 
+			<select id="bubb_type" class="drop_down"> 
 				<option value="tally">Tally</option>
 				<option value="select1">Select</option>										
 			</select><br>
@@ -237,14 +240,14 @@
 	<script type="text/x-handlebars" data-template-name="_segNumDialog">
 		<div id="seg_num_dialog" title="Create segmented numbers">		
 			<label for="name">Number size</label>
-			<select id="seg_num_size"> 
+			<select id="seg_num_size" class="drop_down"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			
 			<label for="name">Dot size</label>
-			<select id="dot_size"> 
+			<select id="dot_size" class="drop_down"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
@@ -302,13 +305,68 @@
 	<script type="text/x-handlebars" data-template-name="_textDialog">
 		<div id="text_dialog" title="Create text box">		
 			<label for="name">Text size</label>
-			<select id="text_size"> 
+			<select id="text_size" class="drop_down"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			<label for="name">Text</label>
 			<input type="text" id="text_input" class="ui-widget-content ui-corner-all">					
+		</div>
+	</script>	
+	
+	<script type="text/x-handlebars" data-template-name="_formNumDialog">
+		<div id="form_num_dialog" title="Create formatted number">		
+			<label for="name">Number size</label>
+			<select id="form_num_size" class="drop_down"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			
+			<label for="name">Dot size</label>
+			<select id="form_num_dot_size" class="drop_down"> 
+				<option value="small">Small</option>
+				<option value="medium">Medium</option>
+				<option value="large">Large</option>				
+			</select><br>
+			
+			<label for="name">Delimiter</label>
+			<select id="delim_type" class="drop_down"> 
+				<option value="/">/</option>
+				<option value="-">-</option>
+				<option value=".">.</option>				
+			</select><br>
+
+			<label for="name">Number of groups</label>
+			<input type="number" id="num_col_form_num" value="2" class="int_input ui-widget-content ui-corner-all" min="2" {{action 'updateNumGroups'}}><br>
+			{{#each groups}}
+				&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{this}}</label>
+				<input type="number" value="1" class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
+			{{/each}}
+			<hr class="horz_divider">
+			
+			<label for="name">Number spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="form_num_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Group spacing</label>
+			<!-- TODO: remove hardcoded min value -->
+			<input type="number" id="form_num_group_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<hr class="horz_divider">
+			
+			<label for="name">Top Margin</label>
+			<input type="number" id="form_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Bottom Margin</label>
+			<input type="number" id="form_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+			
+			<label for="name">Left Margin</label>
+			<input type="number" id="form_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			
+			<label for="name">Right Margin</label>
+			<input type="number" id="form_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>			
 		</div>
 	</script>	
   </body>

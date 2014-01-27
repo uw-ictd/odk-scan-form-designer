@@ -136,6 +136,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								} else if (f_json.field_type == 'box') {
 									var box = new Box(f_json);
 									box.constructBox();		
+								} else if (f_json.field_type == 'text') {
+									var box = new TextBox(f_json);
+									box.constructBox();	
+								} else if (f_json.field_type == 'form_num') {
+									var formNumField = new FormNumField(f_json);
+									formNumField.constructGrid();		
 								} else {
 									console.log("unsupported field");
 								}

@@ -19,7 +19,8 @@ function Box(init_val) {
 		this.border_width = $("#box_border").val();
 	}
 	this.type = "box"; 
-	this.name = "none";		
+	this.name = "none";	
+	this.field_type = 'box'
 }
 
 Box.prototype.constructBox = function() {
@@ -70,7 +71,7 @@ Box.prototype.getFieldJSON = function() {
 Box.prototype.saveJSON = function() {
 	var fieldJSON = {};
 	
-	fieldJSON.field_type = 'box';
+	fieldJSON.field_type = this.field_type;
 	fieldJSON.left = this.$box.css('left');
 	fieldJSON.top = this.$box.css('top');
 	fieldJSON.box_width = this.$box.css('width');
@@ -117,6 +118,7 @@ function TextBox() {
 						
 	var $text = $("<p/>").text($("#text_input").val());
 	this.$box.append($text);
+	this.field_type = 'text';
 }
 
 // subclass extends superclass

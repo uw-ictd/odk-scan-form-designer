@@ -101,6 +101,12 @@ box is open. */
 	display: none;
 }
 
+/* contains the link to the saved scan json */
+#scan_json_link {
+	display: none;
+}
+
+
 /* added to all integer input boxes */
 .int_input {
 	width: 40px;
@@ -113,8 +119,15 @@ box is open. */
 	margin-bottom: 6px;
 }
 
-.drop_down {
+/* aligns dropdown buttons to the right of the page */
+select {
 	float: right;
+}
+
+/* aligns input boxes to the right of the page */
+input[type=text], input[type=number] {
+	float: right;
+	margin-left: 15px;
 }
 
 /************************************************************
@@ -140,6 +153,7 @@ box is open. */
 }
 
 .box {
+	position: absolute;
 	border-style: solid;
 	border-color: black;
 }

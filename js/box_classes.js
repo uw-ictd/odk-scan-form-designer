@@ -4,38 +4,34 @@ function Box(init_val) {
 	this.$box.data("obj", this);
 	
 	if(init_val) {
-		this.left = init_val.left;
-		this.top = init_val.top;
-		this.box_width = init_val.box_width;
-		this.box_height = init_val.box_height;
+		this.$box.css({width: init_val.box_width, 
+					height: init_val.box_height,
+					left: init_val.left,
+					top: init_val.top});
 		this.border_width = init_val.border_width;
 	} else {
-		this.left = 0;
-		this.top = 0;
 		// NOTE: initial width and height are aligned
 		// to the grid size
-		this.box_width = GRID_X * 10;
-		this.box_height = GRID_Y * 10;
+		this.$box.css({width: GRID_X * 10, 
+					height: GRID_Y * 10,
+					left: 0,
+					top: 0});
 		this.border_width = $("#box_border").val();
 	}
 	this.type = "box"; 
 	this.name = "none";	
-	this.field_type = 'box'
 }
 
 Box.prototype.constructBox = function() {
-	this.$box.addClass('field').addClass('box');
-	this.$box.css({width: this.box_width, height: this.box_height, top: this.top, left: this.left});						
-	
+	this.$box.addClass('field').addClass('box');								
 	this.$box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	this.$box.resizable({handles: 'all', 
 						containment: 'parent', 
 						grid: [GRID_X, GRID_Y],
 						minWidth: GRID_X * 1,
-						minHeight: GRID_Y * 1});
+						minHeight: GRID_Y * 1});	
 																							
-	this.$box.css({'border-width': this.border_width + 'px'});
-	this.$box.css({position: 'absolute'});		
+	this.$box.css({'border-width': this.border_width + 'px'});	
 	
 	// box is removed when double-clicked
 	this.$box.dblclick( function() { this.remove() });
@@ -68,15 +64,14 @@ Box.prototype.getFieldJSON = function() {
 	return f_info;
 };
 
-Box.prototype.saveJSON = function() {
+Box.prototype.getProperties = function() {
 	var fieldJSON = {};
 	
-	fieldJSON.field_type = this.field_type;
 	fieldJSON.left = this.$box.css('left');
 	fieldJSON.top = this.$box.css('top');
 	fieldJSON.box_width = this.$box.css('width');
 	fieldJSON.box_height = this.$box.css('height');
-	fieldJSON.border_width = this.border_width;
+	fieldJSON.border_width = this.border_width;	
 	
 	return fieldJSON;
 };
@@ -108,19 +103,46 @@ Box.prototype.copyField = function() {
 	$("#scan_doc").append($new_box);
 };
 
-function TextBox() {
-	Box.call(this); // call super constructor.	
+function EmptyBox(init_val) {
+	Box.call(this, init_val); // call super constructor.	
+}
+
+// subclass extends superclass
+EmptyBox.prototype = Object.create(Box.prototype);
+EmptyBox.prototype.constructor = EmptyBox;
+
+EmptyBox.prototype.saveJSON = function() {
+	var json = this.getProperties();
+	json.field_type = 'empty_box';
+	return json;
+}
+
+function TextBox(init_val) {
+	Box.call(this, init_val); // call super constructor.	
 	
 	this.$box.css({wordWrap: 'break-word',
-			border: '1px solid black',
-			fontSize: $("#text_size").val(),
 			fontFamily: "Times New Roman"});					
 						
-	var $text = $("<p/>").text($("#text_input").val());
+	var $text = $("<p/>");
+	
+	if (init_val) {
+		this.$box.css({border: init_val.border, fontSize: init_val.font_size});
+		$text.text(init_val.text);
+	} else {
+		$text.text($("#text_input").val());
+		this.$box.css({border: '1px solid black', fontSize: $("#text_size").val()});
+	}
 	this.$box.append($text);
-	this.field_type = 'text';
 }
 
 // subclass extends superclass
 TextBox.prototype = Object.create(Box.prototype);
 TextBox.prototype.constructor = TextBox;
+
+TextBox.prototype.saveJSON = function() {
+	var json = this.getProperties();
+	json.field_type = 'text_box';
+	json.text = this.$box.children('p').text();
+	json.font_size = this.$box.css('fontSize');
+	return json;
+}

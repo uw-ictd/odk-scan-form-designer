@@ -66,7 +66,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							var scanDoc = JSON.parse($("#uploaded_json").data("json"));
 							var images = scanDoc.images;
 							
-							if (images && !$("#uploaded_image").data("img_src")) {
+							if (images.length > 0 && !$("#uploaded_image").data("img_src")) {
 								// error case, no image was uploaded
 								console.log('error, no image file');
 							} else {							
@@ -133,15 +133,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								} else if (f_json.field_type == 'seg_num') {
 									var seg_num_field = new SegNumField(f_json);
 									seg_num_field.constructGrid();			
-								} else if (f_json.field_type == 'box') {
-									var box = new Box(f_json);
-									box.constructBox();		
-								} else if (f_json.field_type == 'text') {
-									var box = new TextBox(f_json);
-									box.constructBox();	
+								} else if (f_json.field_type == 'empty_box') {
+									var empty_box = new EmptyBox(f_json);
+									empty_box.constructBox();		
+								} else if (f_json.field_type == 'text_box') {
+									var text_box = new TextBox(f_json);
+									text_box.constructBox();	
 								} else if (f_json.field_type == 'form_num') {
-									var formNumField = new FormNumField(f_json);
-									formNumField.constructGrid();		
+									var form_num_field = new FormNumField(f_json);
+									form_num_field.constructGrid();		
 								} else {
 									console.log("unsupported field");
 								}
@@ -161,13 +161,28 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				modal: true,
 				buttons: {
 					"Ok": function() {
-						$("#zip_link").attr("download", $("#zip_name").val());
-						// trigger the file to be downloaded
-						document.getElementById("zip_link").click();
+						$("#scan_json_link").attr("download", $("#saved_scan_name").val() + ".json");
+						document.getElementById("scan_json_link").click();
 						$("#save_dialog").dialog("close");
 					},
 					"Cancel": function() {
 						$("#save_dialog").dialog("close");
+					}
+				}			
+			});
+						
+			$("#export_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {
+						$("#zip_link").attr("download", $("#zip_name").val());
+						// trigger the file to be downloaded
+						document.getElementById("zip_link").click();
+						$("#export_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#export_dialog").dialog("close");
 					}
 				}			
 			});
@@ -178,7 +193,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				buttons: {
 					"Ok": function() {
 						console.log("making box...");
-						var new_box = new Box();
+						var new_box = new EmptyBox();
 						new_box.constructBox();
 						$("#box_dialog").dialog("close");
 					},
@@ -406,7 +421,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				savedDoc.fields.push(json);				
 			});
 			
-			console.log(JSON.stringify(savedDoc, null, '\t'));
+			var json_output = JSON.stringify(savedDoc, null, '\t');
+			var filename = "saved_form.json"; // TODO: remove hardcoded filename			
+			
+			$("#scan_json_link").attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(json_output));	
+			$("#save_dialog").dialog("open");
 		},
 		exportZIP: function() {
 			// create a zip file for the form image and json
@@ -450,7 +469,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					$("#zip_link").attr('href', scanDoc);
 				}
 			});	
-			$("#save_dialog").dialog("open");
+			$("#export_dialog").dialog("open");
 		}
 	}
 });

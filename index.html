@@ -120,10 +120,11 @@
 		{{partial 'cbDialog'}}
 		{{partial 'bubbleDialog'}}
 		{{partial 'segNumDialog'}}
-		{{partial 'saveDialog'}}
+		{{partial 'exportDialog'}}
 		{{partial 'loadDialog'}}
 		{{partial 'textDialog'}}
 		{{partial 'formNumDialog'}}
+		{{partial 'saveDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -152,7 +153,7 @@
 	<script type="text/x-handlebars" data-template-name="_cbDialog">
 		<div id="checkbox_dialog" title="Create checkboxes">		
 			<label for="name">Checkbox size</label>
-			<select id="cb_size" class="drop_down"> 
+			<select id="cb_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
@@ -193,14 +194,14 @@
 	<script type="text/x-handlebars" data-template-name="_bubbleDialog">
 		<div id="bubble_dialog" title="Create fill-in bubbles">		
 			<label for="name">Bubble size</label>
-			<select id="bubb_size" class="drop_down"> 
+			<select id="bubb_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			
 			<label for="name">Bubble type</label>
-			<select id="bubb_type" class="drop_down"> 
+			<select id="bubb_type"> 
 				<option value="tally">Tally</option>
 				<option value="select1">Select</option>										
 			</select><br>
@@ -240,14 +241,14 @@
 	<script type="text/x-handlebars" data-template-name="_segNumDialog">
 		<div id="seg_num_dialog" title="Create segmented numbers">		
 			<label for="name">Number size</label>
-			<select id="seg_num_size" class="drop_down"> 
+			<select id="seg_num_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			
 			<label for="name">Dot size</label>
-			<select id="dot_size" class="drop_down"> 
+			<select id="dot_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
@@ -285,8 +286,8 @@
 		</div>
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="_saveDialog">
-		<div id="save_dialog" title="Save Scan Form">		
+	<script type="text/x-handlebars" data-template-name="_exportDialog">
+		<div id="export_dialog" title="Export Scan Form">		
 			<label for="name">Filename</label>
 			<input type="text" id="zip_name" class="ui-widget-content ui-corner-all">		
 			<a id="zip_link" download="odk_scan_output"></a>
@@ -305,7 +306,7 @@
 	<script type="text/x-handlebars" data-template-name="_textDialog">
 		<div id="text_dialog" title="Create text box">		
 			<label for="name">Text size</label>
-			<select id="text_size" class="drop_down"> 
+			<select id="text_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
@@ -318,21 +319,21 @@
 	<script type="text/x-handlebars" data-template-name="_formNumDialog">
 		<div id="form_num_dialog" title="Create formatted number">		
 			<label for="name">Number size</label>
-			<select id="form_num_size" class="drop_down"> 
+			<select id="form_num_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			
 			<label for="name">Dot size</label>
-			<select id="form_num_dot_size" class="drop_down"> 
+			<select id="form_num_dot_size"> 
 				<option value="small">Small</option>
 				<option value="medium">Medium</option>
 				<option value="large">Large</option>				
 			</select><br>
 			
 			<label for="name">Delimiter</label>
-			<select id="delim_type" class="drop_down"> 
+			<select id="delim_type"> 
 				<option value="/">/</option>
 				<option value="-">-</option>
 				<option value=".">.</option>				
@@ -369,5 +370,13 @@
 			<input type="number" id="form_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>			
 		</div>
 	</script>	
+	
+	<script type="text/x-handlebars" data-template-name="_saveDialog">
+		<div id="save_dialog" title="Save Scan Form">		
+			<label for="name">Filename</label>
+			<input type="text" id="saved_scan_name" class="ui-widget-content ui-corner-all">	
+			<a id="scan_json_link" download=""></a>			
+		</div>
+	</script>
   </body>
 </html>

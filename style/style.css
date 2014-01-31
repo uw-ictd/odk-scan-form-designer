@@ -52,8 +52,7 @@ box is open. */
 	margin-top: 20px;
 }
 
-/* 
-	Sidebar which allows the user to add/modify/delete
+/* 	Sidebar which allows the user to add/modify/delete
 	properties belonging to form elements and images
 	that are added to the ODK Scan doc.
 */
@@ -68,8 +67,6 @@ box is open. */
 
 /* A div container for the ODK Scan doc. */
 #scan_doc {
-	width: 8.5in; /* TODO: create pre-defined page size options */
-	height: 11in; /* TODO: create pre-defined page size options */
 	border: 2px solid black;
 	background-color: white;
 	float: left;
@@ -87,8 +84,7 @@ box is open. */
 	float: left;
 }
 
-/* 
-	Makes the area that surrounds the selected region darker
+/* 	Makes the area that surrounds the selected region darker
 	in order to highlight the selected region. 
 */
 .imgareaselect-outer {
@@ -128,6 +124,25 @@ select {
 input[type=text], input[type=number] {
 	float: right;
 	margin-left: 15px;
+}
+
+/************************************************************
+*  Scan Document Sizes
+************************************************************/
+
+.letter_size {
+	width: 8.5in;
+	height: 11in;
+}
+
+.legal_size {
+	width: 8.5in;
+	height: 14in;
+}
+
+.index_size {
+	width: 8in;
+	height: 5in;
 }
 
 /************************************************************

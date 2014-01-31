@@ -47,10 +47,49 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					reader.readAsText(selectedFile);					
 				}
 			);
+			
+			// NOTE: the Scan document is set to letter_size by default
+			$("#scan_doc").addClass("letter_size");
 						
 			/*
 				All dialog windows are initialized below.
 			*/
+			
+			$("#new_doc_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Ok": function() {
+						console.log("making new document...");
+						$("#scan_doc").children().remove();
+						$("#scan_doc").removeClass();
+						$("#scan_doc").addClass($("#doc_size").val());
+					
+						$("#new_doc_dialog").dialog("close");
+					},
+					"Cancel": function() {
+						$("#new_doc_dialog").dialog("close");
+					}
+				}
+			});			
+			
+			$("#save_check_dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				buttons: {
+					"Save": function() {
+						controller.send("saveDoc");
+						$("#save_check_dialog").dialog("close");
+					},
+					"Don't Save": function() {
+						$("#new_doc_dialog").dialog("open");
+						$("#save_check_dialog").dialog("close");
+					},
+					"Cancel": function() {						
+						$("#save_check_dialog").dialog("close");
+					}
+				}
+			});	
 			
 			$("#load_dialog").dialog({
 				autoOpen: false,
@@ -76,6 +115,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								
 								// remove all current fields in the Scan doc
 								$("#scan_doc").children().remove();
+								
+								$("#scan_doc").addClass(scanDoc.doc_info.page_size);
 								
 								var check_if_done = function(index) {
 									// check if all pics have been loaded
@@ -387,6 +428,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var selectedField = $(".selected_field").data('obj');
 			selectedField.copyField();		
 		},
+		newDoc: function() {
+			if ($("#scan_doc").children().length == 0) {
+				$("#new_doc_dialog").dialog("open");
+			} else {
+				$("#save_check_dialog").dialog("open");
+			}
+		},
 		loadDoc: function() {
 			console.log("loading document...");
 			$("#load_dialog").dialog("open");
@@ -396,8 +444,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				parameters that were used to make them) and images.
 			*/			
 			var savedDoc = {};
+			savedDoc.doc_info = {};
 			savedDoc.images = [];
 			savedDoc.fields = [];
+			
+			// save metadata about the page
+			savedDoc.doc_info.page_size = $("#scan_doc").attr("class");
 			
 			// save metadata about all images
 			$(".img_div").each(function() {

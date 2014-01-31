@@ -71,7 +71,7 @@
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
 					<ul class="dropdown-menu">
-						<li><a>New</a></li>
+						<li><a {{action 'newDoc'}}>New</a></li>
 						<li class="divider"></li>
 						<li><a {{action 'loadDoc'}}>Load</a></li>	
 						<li><a {{action 'saveDoc'}}>Save</a></li>			
@@ -125,6 +125,8 @@
 		{{partial 'textDialog'}}
 		{{partial 'formNumDialog'}}
 		{{partial 'saveDialog'}}
+		{{partial 'newDialog'}}
+		{{partial 'saveCheckDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -376,6 +378,23 @@
 			<label for="name">Filename</label>
 			<input type="text" id="saved_scan_name" class="ui-widget-content ui-corner-all">	
 			<a id="scan_json_link" download=""></a>			
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_newDialog">
+		<div id="new_doc_dialog" title="Create New">		
+			<label for="name">Page Size</label>
+			<select id="doc_size"> 
+				<option value="letter_size">Letter</option>
+				<option value="legal_size">Legal</option>		
+				<option value="index_size">Index</option>						
+			</select><br>		
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_saveCheckDialog">
+		<div id="save_check_dialog" title="ODK Scan">		
+			<label for="name">Do you want to save your changes?</label>
 		</div>
 	</script>
   </body>

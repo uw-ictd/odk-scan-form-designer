@@ -126,6 +126,12 @@ input[type=text], input[type=number] {
 	margin-left: 15px;
 }
 
+/* set default width on text input boxes */
+input[type=text]{
+	width: 160px;
+}
+
+
 /************************************************************
 *  Scan Document Sizes
 ************************************************************/

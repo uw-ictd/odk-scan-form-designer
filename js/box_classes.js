@@ -33,6 +33,17 @@ Box.prototype.constructBox = function() {
 																							
 	this.$box.css({'border-width': this.border_width + 'px'});	
 	
+	var border_width = this.border_width;
+	this.$box.on('resizestop', (function(event, ui) {
+		var curr_size = ui.size;
+		console.log("width: " + curr_size.width	+ ", height: " + curr_size.height);	
+		var nearest_width = Math.ceil(curr_size.width / GRID_X) * GRID_X;
+		var nearest_height = Math.ceil(curr_size.height / GRID_Y) * GRID_Y;
+		ui.element.width(nearest_width - border_width * 2);
+		ui.element.height(nearest_height - border_width * 2);
+		console.log("resized to --> width: " + ui.element.width()	+ ", height: " + ui.element.width());	
+	}));
+	
 	// box is removed when double-clicked
 	this.$box.dblclick( function() { this.remove() });
 	
@@ -120,8 +131,7 @@ EmptyBox.prototype.saveJSON = function() {
 function TextBox(init_val) {
 	Box.call(this, init_val); // call super constructor.	
 	
-	this.$box.css({wordWrap: 'break-word',
-			fontFamily: "Times New Roman"});					
+	this.$box.css({wordWrap: 'break-word'});					
 						
 	var $text = $("<p/>");
 	

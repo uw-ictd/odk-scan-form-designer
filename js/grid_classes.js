@@ -40,13 +40,12 @@ var DOT_LARGE = 7;
 		- cf_advanced (JSON)
 		- makeGridElement (function, returns jQuery object)
 */
-function GridField() {
-}
 
-// constructor for GridField object, passed in the
-// init_val constructor when the Scan doc is loaded
-// from a JSON file
-GridField.prototype.init = function(init_val) {
+/* 	Constructs GridField object, passed in the
+	init_val constructor when the Scan doc is loaded
+	from a JSON file.
+*/
+function GridField(init_val) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
 	
@@ -240,7 +239,7 @@ GridField.prototype.copyField = function() {
 
 // constructs a grid of checkboxes
 function CheckboxField(init_val) {
-	this.init(init_val); // essentially calling the superclass's constructor
+	GridField.call(this, init_val);
 	// Set all checkbox attributes
 	
 	// set the grid class
@@ -285,7 +284,7 @@ function CheckboxField(init_val) {
 }
 
 // inherit GridField
-CheckboxField.prototype = new GridField();
+CheckboxField.prototype = Object.create(GridField.prototype);
 
 // make the constructor point to the CheckboxField class
 CheckboxField.prototype.constructor = CheckboxField;
@@ -305,7 +304,7 @@ CheckboxField.prototype.saveJSON = function() {
 
 // constructs a grid of bubbles
 function BubbleField(init_val) {
-	this.init(init_val); // essentially calling the superclass's constructor
+	GridField.call(this, init_val);
 	// Set all bubble attributes
 	
 	// set the grid class
@@ -359,7 +358,7 @@ function BubbleField(init_val) {
 }
 
 // inherit GridField
-BubbleField.prototype = new GridField();
+BubbleField.prototype = Object.create(GridField.prototype);
 
 // make the constructor point to the BubbleField class
 BubbleField.prototype.constructor = BubbleField;
@@ -379,7 +378,7 @@ BubbleField.prototype.saveJSON = function() {
 }
 
 function SegNumField(init_val) {
-	this.init(init_val); // essentially calling the superclass's constructor
+	GridField.call(this, init_val);
 	// Set all segmented number attributes
 	
 	// set the grid class
@@ -443,7 +442,7 @@ function SegNumField(init_val) {
 }
 
 // inherit GridField
-SegNumField.prototype = new GridField();
+SegNumField.prototype = Object.create(GridField.prototype);
 
 // make the constructor point to the SegNumField class
 SegNumField.prototype.constructor = SegNumField;

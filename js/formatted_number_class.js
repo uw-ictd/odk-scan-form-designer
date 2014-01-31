@@ -1,11 +1,10 @@
-// TODO: add documentation about FormField
-function FormField() {
-}
+// TODO: add documentation for FormField class
 
-// constructor for FormField object, passed in the
-// init_val constructor when the Scan doc is loaded
-// from a JSON file
-FormField.prototype.init = function(init_val) {
+/* 	Constructs FormField object, passed in the
+	init_val constructor when the Scan doc is loaded
+	from a JSON file.
+*/
+function FormField(init_val) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
 	
@@ -168,7 +167,7 @@ FormField.prototype.copyField = function() {
 };
 
 function FormNumField(init_val) {
-	this.init(init_val); // essentially calling the superclass's constructor
+	FormField.call(this, init_val);
 	// Set all segmented number attributes
 	
 	// set the grid class

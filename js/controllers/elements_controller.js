@@ -52,6 +52,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#scan_doc").addClass("letter_size");		
 		});
 	},
+	editModeChanged: function() {
+		console.log("edit mode changed!!!");
+	}.observes('isImageEditing'),
 	actions: {
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
@@ -114,6 +117,14 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					}
 				});			
 			}
+		},
+		enableBorder: function() {
+			$(".border_width input").val(1); // set border with to one
+			$(".border_width").css('display', 'inline');
+		},
+		disableBorder: function() {
+			$(".border_width input").val(0); // set border with to zero
+			$(".border_width").css('display', 'none');
 		},
 		createBox: function() {
 			console.log("creating box");

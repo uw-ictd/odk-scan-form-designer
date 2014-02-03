@@ -1,4 +1,6 @@
-$(document).ready(function() {		
+$(document).ready(function() {			
+	/* Dialog menu initializations */
+
 	$("#new_doc_dialog").dialog({
 		autoOpen: false,
 		modal: true,
@@ -189,15 +191,23 @@ $(document).ready(function() {
 	});
 		
 	$("#checkbox_dialog").dialog({
+		open: function() {
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.CheckboxContainer.pushObject(ODKScan.CheckboxView);
+		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				console.log("making checkboxes...");
-				
+				console.log("making checkboxes...");			
 				var cbField = new CheckboxField();
-				cbField.constructGrid();						
-				
+				cbField.constructGrid();							
+
+				ODKScan.CheckboxContainer.popObject();
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);		
+								
 				$("#checkbox_dialog").dialog("close");
 			},
 			"Cancel": function() {
@@ -207,6 +217,11 @@ $(document).ready(function() {
 	});			
 	
 	$("#bubble_dialog").dialog({
+		open: function() {
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);
+		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -214,7 +229,11 @@ $(document).ready(function() {
 				console.log("making fill-in bubbles...");
 				
 				var bubbField = new BubbleField();
-				bubbField.constructGrid();						
+				bubbField.constructGrid();		
+
+				ODKScan.BubbleContainer.popObject();
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);						
 				
 				$("#bubble_dialog").dialog("close");
 			},
@@ -225,6 +244,11 @@ $(document).ready(function() {
 	});
 
 	$("#seg_num_dialog").dialog({
+		open: function() {
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			ODKScan.SegNumContainer.pushObject(ODKScan.SegNumView);
+		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -232,7 +256,11 @@ $(document).ready(function() {
 				console.log("making numbers...");
 				
 				var numField = new SegNumField();
-				numField.constructGrid();						
+				numField.constructGrid();
+
+				ODKScan.SegNumContainer.popObject();
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);					
 				
 				$("#seg_num_dialog").dialog("close");
 			},

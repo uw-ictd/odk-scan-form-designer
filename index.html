@@ -49,6 +49,7 @@
 	<!-- ODK Scan scripts -->
 		<script src="js/application.js"></script>
 		<script src="js/router.js"></script>
+		<script src="js/page_setup.js"></script>
 		<script src="js/grid_classes.js"></script>
 		<script src="js/formatted_number_class.js"></script>
 		<script src="js/box_classes.js"></script>
@@ -57,6 +58,7 @@
 		<script src="js/models/element.js"></script>
 		<script src="js/controllers/elements_controller.js"></script>
 		<script src="js/controllers/element_controller.js"></script>
+		<script src="js/views/field_views.js"></script>
 	<!---->
   </head>
   <body>    
@@ -108,13 +110,13 @@
 					</ul>
 				</li>	
 				<li><a {{action 'copyField'}}>Copy Field</a></li>
-			{{/if}}
+			{{/if}}				
 				<li><a>Help</a></li>
 			</ul>				
 		</nav>
 		
 		<!-- the content below the navbar is loaded depending on the current url of the website -->
-		{{outlet}}
+		{{outlet}}	
 		
 		<!-- the dialog menu html is separated and included below to keep the code more modular -->
 		{{partial 'boxDialog'}}
@@ -135,7 +137,13 @@
 		the user navigates to this website -->
 		<div id="page_body">
 			<div id="prop_sidebar">
-				<h3>Form Properties</h3>				
+				<h3>Form Properties</h3>	
+				<button id="load_prop">Load Field</button>
+				<br>
+				{{#view ODKScan.FieldContainer}}			
+				{{/view}}
+				<br>
+				<button id="update_prop">Update Field</button>
 			</div>
 			<div id="scan_doc">
 			</div>
@@ -143,149 +151,176 @@
 				<img id="loaded_image"></img>
 				<div id="processed_images"></div>
 			</div>
+		</div>	
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="default-prop-view">
+		<div id="default_prop_message">
+			<h4>Select a field in the document and click 'Load Field' to edit its properties.</h4>
 		</div>
 	</script>
 	
+	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
+	<script type="text/x-handlebars" data-template-name="cb-view">
+		<label for="name">Checkbox size</label>
+		<select id="cb_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		
+		<label for="name">Number of columns</label>
+		<input type="number" id="num_col_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<label for="name">Number of rows</label>
+		<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Horizontal spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="cb_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Vertical spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="cb_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Top Margin</label>
+		<input type="number" id="cb_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Bottom Margin</label>
+		<input type="number" id="cb_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+		
+		<label for="name">Left Margin</label>
+		<input type="number" id="cb_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Right Margin</label>
+		<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="bubbles-view">
+		<label for="name">Bubble size</label>
+		<select id="bubb_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		
+		<label for="name">Bubble type</label>
+		<select id="bubb_type"> 
+			<option value="tally">Tally</option>
+			<option value="select1">Select</option>										
+		</select><br>
+		
+		<label for="name">Number of columns</label>
+		<input type="number" id="num_col_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<label for="name">Number of rows</label>
+		<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Horizontal spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="bubble_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Vertical spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="bubble_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Top Margin</label>
+		<input type="number" id="bubble_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Bottom Margin</label>
+		<input type="number" id="bubble_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+		
+		<label for="name">Left Margin</label>
+		<input type="number" id="bubble_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Right Margin</label>
+		<input type="number" id="bubble_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="seg-num-view">
+		<label for="name">Number size</label>
+		<select id="seg_num_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		
+		<label for="name">Dot size</label>
+		<select id="dot_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		
+		<label for="name">Number of columns</label>
+		<input type="number" id="num_col_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<label for="name">Number of rows</label>
+		<input type="number" id="num_row_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Horizontal spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="seg_num_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Vertical spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="seg_num_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Top Margin</label>
+		<input type="number" id="seg_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Bottom Margin</label>
+		<input type="number" id="seg_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+		
+		<label for="name">Left Margin</label>
+		<input type="number" id="seg_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Right Margin</label>
+		<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+	</script>
+	
 	<script type="text/x-handlebars" data-template-name="_boxDialog">
-		<div id="box_dialog" title="Create blank box">		
-			<label for="name">Border</label>
-			<input type="number" id="box_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">					
+		<div id="box_dialog" title="Create blank box">	
+			<label for="name">Include Border?</label>
+			<input {{action 'enableBorder'}} type="radio" name="borderOption" value="yes">Yes
+			<input {{action 'disableBorder'}} type="radio" name="borderOption" value="no">No<br>
+			<div class="border_width">
+				<label for="name">Border</label>
+				<input type="number" id="box_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">		
+			</div>
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_cbDialog">
-		<div id="checkbox_dialog" title="Create checkboxes">		
-			<label for="name">Checkbox size</label>
-			<select id="cb_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			
-			<label for="name">Number of columns</label>
-			<input type="number" id="num_col_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-			
-			<label for="name">Number of rows</label>
-			<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Horizontal spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="cb_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Vertical spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="cb_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Top Margin</label>
-			<input type="number" id="cb_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Bottom Margin</label>
-			<input type="number" id="cb_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-			
-			<label for="name">Left Margin</label>
-			<input type="number" id="cb_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Right Margin</label>
-			<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		<div id="checkbox_dialog" title="Create checkboxes">
+		{{#view ODKScan.CheckboxContainer}}		
+		{{/view}}
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_bubbleDialog">
 		<div id="bubble_dialog" title="Create fill-in bubbles">		
-			<label for="name">Bubble size</label>
-			<select id="bubb_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			
-			<label for="name">Bubble type</label>
-			<select id="bubb_type"> 
-				<option value="tally">Tally</option>
-				<option value="select1">Select</option>										
-			</select><br>
-			
-			<label for="name">Number of columns</label>
-			<input type="number" id="num_col_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-			
-			<label for="name">Number of rows</label>
-			<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Horizontal spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="bubble_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Vertical spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="bubble_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Top Margin</label>
-			<input type="number" id="bubble_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Bottom Margin</label>
-			<input type="number" id="bubble_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-			
-			<label for="name">Left Margin</label>
-			<input type="number" id="bubble_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Right Margin</label>
-			<input type="number" id="bubble_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			{{#view ODKScan.BubbleContainer}}		
+			{{/view}}
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_segNumDialog">
 		<div id="seg_num_dialog" title="Create segmented numbers">		
-			<label for="name">Number size</label>
-			<select id="seg_num_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			
-			<label for="name">Dot size</label>
-			<select id="dot_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			
-			<label for="name">Number of columns</label>
-			<input type="number" id="num_col_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-			
-			<label for="name">Number of rows</label>
-			<input type="number" id="num_row_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Horizontal spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="seg_num_horiz_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Vertical spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="seg_num_vert_dy" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Top Margin</label>
-			<input type="number" id="seg_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Bottom Margin</label>
-			<input type="number" id="seg_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-			
-			<label for="name">Left Margin</label>
-			<input type="number" id="seg_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Right Margin</label>
-			<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+			{{#view ODKScan.SegNumContainer}}		
+			{{/view}}
 		</div>
 	</script>
 	
@@ -398,5 +433,7 @@
 			<label for="name">Do you want to save your changes?</label>
 		</div>
 	</script>
+	
+	<!-- Dialog menu html -->
   </body>
 </html>

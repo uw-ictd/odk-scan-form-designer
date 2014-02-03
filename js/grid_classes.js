@@ -146,11 +146,10 @@ GridField.prototype.constructGrid = function() {
 	}
 	
 	// grid fields are removed when double-clicked
-	this.$grid_div.dblclick( function() { this.remove() });
-	
-	this.$grid_div.click(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");
+	this.$grid_div.dblclick( function() { 
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+		this.remove() 
 	});
 
 	$(".selected_field").removeClass("selected_field");
@@ -221,10 +220,16 @@ GridField.prototype.copyField = function() {
 	var $new_grid = this.$grid_div.clone();
 	$new_grid.css({left: 0, top: 0});
 	$new_grid.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
-	$new_grid.dblclick(function() { this.remove() });
+	$new_grid.dblclick(function() { 
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+		this.remove() 
+	});
+	
 	$new_grid.click(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");
+		$("#update_prop").click();
 	});
 	
 	// copy the field object
@@ -241,6 +246,12 @@ GridField.prototype.copyField = function() {
 function CheckboxField(init_val) {
 	GridField.call(this, init_val);
 	// Set all checkbox attributes
+	this.$grid_div.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);	
+	});
 	
 	// set the grid class
 	this.grid_class = 'cb_div';
@@ -263,10 +274,10 @@ function CheckboxField(init_val) {
 		this.element_height = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
 							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
 		
-		// the horizontal spacing between the centers of checkboxes
+		// the horizontal spacing between the edges of checkboxes
 		this.horiz_dx = parseInt($("#cb_horiz_dx").val());
 		
-		// the vetical spacing between the centers of checkboxes
+		// the vetical spacing between the edges of checkboxes
 		this.vert_dy = parseInt($("#cb_vert_dy").val());
 		
 		// margin values
@@ -294,6 +305,38 @@ CheckboxField.prototype.makeGridElement = function() {
 	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
 
+// loads the properties of the checkbox into the checkbox view
+CheckboxField.prototype.loadProperties = function() {
+	// checkbox size
+	$("#cb_size").prop('selectedIndex', (this.element_width == CHECKBOX_SMALL) ? 0 :
+						(this.element_width == CHECKBOX_MEDIUM) ? 1 : 2);					
+	
+	// the horizontal spacing between the edges of checkboxes
+	$("#cb_horiz_dx").val(this.horiz_dx);
+	
+	// the vetical spacing between the edges of checkboxes
+	$("#cb_vert_dy").val(this.vert_dy);
+		
+	// margin values
+	$("#cb_margin_top").val(this.margin_top);
+	$("#cb_margin_bottom").val(this.margin_bottom);
+	$("#cb_margin_left").val(this.margin_left);
+	$("#cb_margin_right").val(this.margin_right);
+	
+	// number of rows
+	$("#num_row_cb").val(this.num_rows);
+	
+	// number of columns
+	$("#num_col_cb").val(this.num_cols);
+}
+
+// creates new checkbox with the properties in the
+// properties sidebar
+CheckboxField.prototype.updateProperties = function() {
+	var cbField = new CheckboxField();
+	cbField.constructGrid();	
+}
+
 // returns JSON containing the current state of 
 // the field (position, grid element type, etc.)
 CheckboxField.prototype.saveJSON = function() {
@@ -306,6 +349,12 @@ CheckboxField.prototype.saveJSON = function() {
 function BubbleField(init_val) {
 	GridField.call(this, init_val);
 	// Set all bubble attributes
+	this.$grid_div.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);	
+	});
 	
 	// set the grid class
 	this.grid_class = 'bubble_div';
@@ -337,10 +386,10 @@ function BubbleField(init_val) {
 		this.element_height = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
 							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
 		
-		// the horizontal spacing between the centers of bubbles
+		// the horizontal spacing between the edges of bubbles
 		this.horiz_dx = parseInt($("#bubble_horiz_dx").val());
 		
-		// the vetical spacing between the centers of bubbles
+		// the vetical spacing between the edges of bubbles
 		this.vert_dy = parseInt($("#bubble_vert_dy").val());
 		
 		// margin values
@@ -368,6 +417,38 @@ BubbleField.prototype.makeGridElement = function() {
 	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 }
 
+// loads the properties of the bubbles into the bubbles view
+BubbleField.prototype.loadProperties = function() {
+	// bubble size
+	$("#bubb_size").prop('selectedIndex', (this.element_width == BUBBLE_SMALL) ? 0 :
+						(this.element_width == BUBBLE_MEDIUM) ? 1 : 2);					
+	
+	// the horizontal spacing between the edges of bubbles
+	$("#bubble_horiz_dx").val(this.horiz_dx);
+	
+	// the vetical spacing between the edges of checkboxes
+	$("#bubble_vert_dy").val(this.vert_dy);
+		
+	// margin values
+	$("#bubble_margin_top").val(this.margin_top);
+	$("#bubble_margin_bottom").val(this.margin_bottom);
+	$("#bubble_margin_left").val(this.margin_left);
+	$("#bubble_margin_right").val(this.margin_right);
+	
+	// number of rows
+	$("#num_row_bubbles").val(this.num_rows);
+	
+	// number of columns
+	$("#num_col_bubbles").val(this.num_cols);
+}
+
+// creates new bubbles with the properties in the
+// properties sidebar
+BubbleField.prototype.updateProperties = function() {
+	var bubbField = new CheckboxField();
+	bubbField.constructGrid();	
+}
+
 // returns JSON containing the current state of 
 // the field (position, grid element type, etc.)
 BubbleField.prototype.saveJSON = function() {
@@ -380,6 +461,12 @@ BubbleField.prototype.saveJSON = function() {
 function SegNumField(init_val) {
 	GridField.call(this, init_val);
 	// Set all segmented number attributes
+	this.$grid_div.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);	
+	});
 	
 	// set the grid class
 	this.grid_class = 'num_div';
@@ -406,8 +493,6 @@ function SegNumField(init_val) {
 		
 		// TODO: allow user to modify the borders of grid elements?
 		this.border_offset = 2;
-		
-		this.param = $("#num_row_seg_num").val() * $("#num_col_seg_num").val();
 
 		// number size
 		this.element_width = ($("#seg_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
@@ -419,12 +504,12 @@ function SegNumField(init_val) {
 		this.dot_width = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
 							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
 		this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
-							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;;
+							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
 		
-		// the horizontal spacing between the centers of bubbles
+		// the horizontal spacing between the edges of segmented numbers
 		this.horiz_dx = parseInt($("#seg_num_horiz_dx").val());
 		
-		// the vetical spacing between the centers of bubbles
+		// the vetical spacing between the edges of segmented numbers
 		this.vert_dy = parseInt($("#seg_num_vert_dy").val());
 		
 		// margin values
@@ -438,6 +523,8 @@ function SegNumField(init_val) {
 		
 		// number of columns
 		this.num_cols = $("#num_col_seg_num").val();
+		
+		this.param = this.num_rows * this.num_cols;
 	}
 }
 
@@ -488,6 +575,46 @@ SegNumField.prototype.makeGridElement = function() {
 		$new_num.append($right_dot);
 	}
 	return $new_num;
+}
+
+// loads the properties of the segmented numbers into the segmented number view
+SegNumField.prototype.loadProperties = function() {
+	// NOTE: ASSUMING no duplicate values in first index of
+	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
+	$("#seg_num_size").prop('selectedIndex', (this.element_width == SEG_NUM_SMALL[0]) ? 0 :
+						(this.element_width == SEG_NUM_SMALL[1]) ? 1 : 2);					
+	
+	// NOTE: ASSUMING dot_width == dot_height
+	$("#dot_size").prop('selectedIndex', (this.dot_width == DOT_SMALL) ? 0 :
+						(this.dot_width == DOT_MEDIUM) ? 1 : 2);											
+	
+	this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
+					($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
+	
+	// the horizontal spacing between the edges of segmented numbers
+	$("#seg_num_horiz_dx").val(this.horiz_dx);
+	
+	// the vetical spacing between the edges of segmented numbers
+	$("#seg_num_vert_dy").val(this.vert_dy);
+		
+	// margin values
+	$("#seg_num_margin_top").val(this.margin_top);
+	$("#seg_num_margin_bottom").val(this.margin_bottom);
+	$("#seg_num_margin_left").val(this.margin_left);
+	$("#seg_num_margin_right").val(this.margin_right);
+	
+	// number of rows
+	$("#num_row_seg_num").val(this.num_rows);
+	
+	// number of columns
+	$("#num_col_seg_num").val(this.num_cols);
+}
+
+// creates new segmented numbers with the properties in the
+// properties sidebar
+SegNumField.prototype.updateProperties = function() {
+	var segNumField = new SegNumField();
+	segNumField.constructGrid();	
 }
 
 // returns JSON containing the current state of 

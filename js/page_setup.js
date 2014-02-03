@@ -5,14 +5,14 @@ $(document).ready(function() {
 
 	$("#update_prop").click(function() {
 		console.log("updating field properties");
-		if ($(".selected_field")) {
+		if ($(".selected_field").length != 0) {
 			$(".selected_field").data("obj").updateProperties();
 		}
 	});	
 	
 	$("#load_prop").click(function() {
 		console.log("loading field properties");
-		if ($(".selected_field")) {
+		if ($(".selected_field").length != 0) {
 			$(".selected_field").data("obj").loadProperties();
 		}
 	});	

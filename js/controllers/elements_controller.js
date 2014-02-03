@@ -159,8 +159,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			console.log('num groups is: ' + $("#num_col_form_num").val());
 		},
 		copyField: function() {
-			var selectedField = $(".selected_field").data('obj');
-			selectedField.copyField();		
+			if ($(".selected_field").length != 0) {
+				var selectedField = $(".selected_field").data('obj');
+				selectedField.copyField();		
+			}
 		},
 		newDoc: function() {
 			if ($("#scan_doc").children().length == 0) {

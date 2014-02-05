@@ -6,6 +6,7 @@ var GRID_X = 10;
 var GRID_Y = 10;
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
+	hasBorder: true,
 	groups: [1, 2],
 	isImageEditing: false,
 	imgSelect: null,
@@ -23,33 +24,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 								instance: true,
 								handles: true
 							});				
-			controller.set('imgSelect', ias);		
-									
-			$("#uploaded_image").change(
-				function (event) {
-					var selectedFile = event.target.files[0];
-					var reader = new FileReader();
-					reader.onload = function(event) {
-						$("#uploaded_image").data("img_src", event.target.result);													
-					};								
-					reader.readAsDataURL(selectedFile);					
-				}
-			);
-			
-			$("#uploaded_json").change(
-				function (event) {
-					var selectedFile = event.target.files[0];
-					var reader = new FileReader();
-					reader.onload = function(event) {
-						console.log('json file: ' + event.target.result);	
-						$("#uploaded_json").data("json", event.target.result);
-					};								
-					reader.readAsText(selectedFile);					
-				}
-			);
-			
-			// NOTE: the Scan document is set to letter_size by default
-			$("#scan_doc").addClass("letter_size");		
+			controller.set('imgSelect', ias);									
 		});
 	},
 	editModeChanged: function() {

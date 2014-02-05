@@ -206,7 +206,8 @@ input[type=text]{
 
 .cb_div {
 	display: inline-block;
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
 }
 
 .c_box {
@@ -216,7 +217,8 @@ input[type=text]{
 
 .bubble_div {
 	display: inline-block;
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
 }
 
 .bubble_small {
@@ -239,7 +241,8 @@ input[type=text]{
 
 .num_div {
 	display: inline-block;
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
 }
 
 .num {

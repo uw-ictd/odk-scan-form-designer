@@ -138,11 +138,10 @@
 		<div id="page_body">
 			<div id="prop_sidebar">
 				<h3>Form Properties</h3>	
-				<button id="load_prop">Load Field</button>
+				<!--<button id="load_prop">Load Field</button>-->
 				<br>
 				{{#view ODKScan.FieldContainer}}			
 				{{/view}}
-				<br>
 				<button id="update_prop">Update Field</button>
 			</div>
 			<div id="scan_doc">
@@ -156,7 +155,7 @@
 	
 	<script type="text/x-handlebars" data-template-name="default-prop-view">
 		<div id="default_prop_message">
-			<h4>Select a field in the document and click 'Load Field' to edit its properties.</h4>
+			<h4>Select a field in the document to edit its properties.</h4>
 		</div>
 	</script>
 	
@@ -174,6 +173,20 @@
 		
 		<label for="name">Number of rows</label>
 		<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
 		
 		<hr class="horz_divider">
 		
@@ -219,6 +232,20 @@
 		
 		<label for="name">Number of rows</label>
 		<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
 		
 		<hr class="horz_divider">
 		
@@ -266,6 +293,20 @@
 		<label for="name">Number of rows</label>
 		<input type="number" id="num_row_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
 		
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
+		
 		<hr class="horz_divider">
 		
 		<label for="name">Horizontal spacing</label>
@@ -291,15 +332,26 @@
 		<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="textbox-view">
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
+	</script>
+	
 	<script type="text/x-handlebars" data-template-name="_boxDialog">
 		<div id="box_dialog" title="Create blank box">	
-			<label for="name">Include Border?</label>
-			<input {{action 'enableBorder'}} type="radio" name="borderOption" value="yes">Yes
-			<input {{action 'disableBorder'}} type="radio" name="borderOption" value="no">No<br>
-			<div class="border_width">
-				<label for="name">Border</label>
-				<input type="number" id="box_border" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">		
-			</div>
+			{{#view ODKScan.TextBoxContainer}}		
+			{{/view}}
 		</div>
 	</script>
 	

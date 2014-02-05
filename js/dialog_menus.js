@@ -175,6 +175,11 @@ $(document).ready(function() {
 	});
 	
 	$("#box_dialog").dialog({
+		open: function() {
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
+		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -182,6 +187,11 @@ $(document).ready(function() {
 				console.log("making box...");
 				var new_box = new EmptyBox();
 				new_box.constructBox();
+				
+				ODKScan.TextBoxContainer.popObject();
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);		
+				
 				$("#box_dialog").dialog("close");
 			},
 			"Cancel": function() {
@@ -194,7 +204,8 @@ $(document).ready(function() {
 		open: function() {
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
-			ODKScan.CheckboxContainer.pushObject(ODKScan.CheckboxView);
+			ODKScan.CheckboxContainer.pushObject(ODKScan.CheckboxView);	
+			$(".selected_field").removeClass("selected_field");
 		},
 		autoOpen: false,
 		modal: true,
@@ -220,7 +231,8 @@ $(document).ready(function() {
 		open: function() {
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);
+			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);	
+			$(".selected_field").removeClass("selected_field");
 		},
 		autoOpen: false,
 		modal: true,
@@ -248,6 +260,7 @@ $(document).ready(function() {
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			ODKScan.SegNumContainer.pushObject(ODKScan.SegNumView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		autoOpen: false,
 		modal: true,

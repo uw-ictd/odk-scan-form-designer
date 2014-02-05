@@ -62,8 +62,10 @@ function GridField(init_val) {
 		this.element_width = init_val.element_width;
 		this.ele_class = init_val.ele_class;
 		this.$grid_div.css({top: init_val.top, left: init_val.left});
+		this.border_width = init_val.border_width;	
 	} else {
 		this.$grid_div.css({top: 0, left: 0});
+		this.border_width = $("#border_width").val();
 	}
 }
 
@@ -85,6 +87,7 @@ GridField.prototype.getProperties = function() {
 	json.ele_class = this.ele_class;
 	json.left = this.$grid_div.css('left');
 	json.top = this.$grid_div.css('top');
+	json.border_width = this.border_width;
 	
 	return json;
 }
@@ -95,7 +98,7 @@ GridField.prototype.constructGrid = function() {
 	this.$grid_div.addClass(this.grid_class).addClass('field');
 	
 	// the new field will be placed at the top left of the Scan doc
-	this.$grid_div.css({position: 'absolute'});																	
+	this.$grid_div.css({position: 'absolute', borderWidth: this.border_width});																	
 	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});			
 	
 	// construct the grid
@@ -150,6 +153,23 @@ GridField.prototype.constructGrid = function() {
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 		this.remove() 
+	});
+	
+	var obj = this;
+	this.$grid_div.click(function() {
+		$(".selected_field").removeClass("selected_field");	
+		$(this).addClass("selected_field");		
+		
+		ODKScan.FieldContainer.popObject();
+		if (obj.field_type == 'checkbox') {
+			ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);
+		} else if (obj.field_type == "bubble") {
+			ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);
+		} else if (obj.field_type == "seg_num") {
+			ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);
+		} else {
+			console.log("error - unsupported field type");
+		}		
 	});
 
 	$(".selected_field").removeClass("selected_field");
@@ -226,12 +246,22 @@ GridField.prototype.copyField = function() {
 		this.remove() 
 	});
 	
+	var obj = this;
 	$new_grid.click(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");
-		$("#update_prop").click();
+		
+		ODKScan.FieldContainer.popObject();
+		if (obj.field_type == 'checkbox') {
+			ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);
+		} else if (obj.field_type == "bubble") {
+			ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);
+		} else if (obj.field_type == "seg_num") {
+			ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);
+		} else {
+			console.log("error - unsupported field type");
+		}		
 	});
-	
 	// copy the field object
 	var $new_field = jQuery.extend({}, this);
 	$new_grid.data('obj', $new_field);
@@ -245,13 +275,9 @@ GridField.prototype.copyField = function() {
 // constructs a grid of checkboxes
 function CheckboxField(init_val) {
 	GridField.call(this, init_val);
+	this.field_type = "checkbox";
+	
 	// Set all checkbox attributes
-	this.$grid_div.click(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");
-		ODKScan.FieldContainer.popObject();
-		ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);	
-	});
 	
 	// set the grid class
 	this.grid_class = 'cb_div';
@@ -328,6 +354,19 @@ CheckboxField.prototype.loadProperties = function() {
 	
 	// number of columns
 	$("#num_col_cb").val(this.num_cols);
+	
+	// set border width
+	$("#border_width").val(this.border_width);
+	
+	if (this.border_width != "0") {
+		// set border option to 'yes'
+		$($("input[name=borderOption]")[0]).prop('checked', true);
+		$("#border_container").css('display', 'inline');
+	} else {		
+		// set border option to 'no'
+		$($("input[name=borderOption]")[1]).prop('checked', true);
+		$("#border_container").css('display', 'none');
+	}
 }
 
 // creates new checkbox with the properties in the
@@ -341,20 +380,16 @@ CheckboxField.prototype.updateProperties = function() {
 // the field (position, grid element type, etc.)
 CheckboxField.prototype.saveJSON = function() {
 	var json = this.getProperties();
-	json.field_type = 'checkbox';
+	json.field_type = this.field_type;
 	return json;
 }
 
 // constructs a grid of bubbles
 function BubbleField(init_val) {
 	GridField.call(this, init_val);
+	this.field_type = 'bubble';
+	
 	// Set all bubble attributes
-	this.$grid_div.click(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");
-		ODKScan.FieldContainer.popObject();
-		ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);	
-	});
 	
 	// set the grid class
 	this.grid_class = 'bubble_div';
@@ -421,7 +456,10 @@ BubbleField.prototype.makeGridElement = function() {
 BubbleField.prototype.loadProperties = function() {
 	// bubble size
 	$("#bubb_size").prop('selectedIndex', (this.element_width == BUBBLE_SMALL) ? 0 :
-						(this.element_width == BUBBLE_MEDIUM) ? 1 : 2);					
+						(this.element_width == BUBBLE_MEDIUM) ? 1 : 2);		
+
+	// bubble type
+	$("#bubb_type").prop('selectedIndex', (this.type == 'tally') ? 0 : 1);			
 	
 	// the horizontal spacing between the edges of bubbles
 	$("#bubble_horiz_dx").val(this.horiz_dx);
@@ -440,12 +478,25 @@ BubbleField.prototype.loadProperties = function() {
 	
 	// number of columns
 	$("#num_col_bubbles").val(this.num_cols);
+	
+	// set border width
+	$("#border_width").val(this.border_width);
+	
+	if (this.border_width != "0") {
+		// set border option to 'yes'
+		$($("input[name=borderOption]")[0]).prop('checked', true);
+		$("#border_container").css('display', 'inline');
+	} else {		
+		// set border option to 'no'
+		$($("input[name=borderOption]")[1]).prop('checked', true);
+		$("#border_container").css('display', 'none');
+	}
 }
 
 // creates new bubbles with the properties in the
 // properties sidebar
 BubbleField.prototype.updateProperties = function() {
-	var bubbField = new CheckboxField();
+	var bubbField = new BubbleField();
 	bubbField.constructGrid();	
 }
 
@@ -453,20 +504,16 @@ BubbleField.prototype.updateProperties = function() {
 // the field (position, grid element type, etc.)
 BubbleField.prototype.saveJSON = function() {
 	var json = this.getProperties();
-	json.field_type = 'bubble';
+	json.field_type = this.field_type;
 	json.param = this.param;
 	return json;
 }
 
 function SegNumField(init_val) {
 	GridField.call(this, init_val);
+	this.field_type = 'seg_num';
+	
 	// Set all segmented number attributes
-	this.$grid_div.click(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");
-		ODKScan.FieldContainer.popObject();
-		ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);	
-	});
 	
 	// set the grid class
 	this.grid_class = 'num_div';
@@ -525,6 +572,16 @@ function SegNumField(init_val) {
 		this.num_cols = $("#num_col_seg_num").val();
 		
 		this.param = this.num_rows * this.num_cols;
+		
+		if (this.border_width != "0") {
+			// set border option to 'yes'
+			$($("input[name=borderOption]")[0]).prop('checked', true);
+			$("#border_container").css('display', 'inline');
+		} else {		
+			// set border option to 'no'
+			$($("input[name=borderOption]")[1]).prop('checked', true);
+			$("#border_container").css('display', 'none');
+		}
 	}
 }
 
@@ -608,6 +665,16 @@ SegNumField.prototype.loadProperties = function() {
 	
 	// number of columns
 	$("#num_col_seg_num").val(this.num_cols);
+	
+	if (this.border_width != "0") {
+		// set border option to 'yes'
+		$($("input[name=borderOption]")[0]).prop('checked', true);
+		$("#border_container").css('display', 'inline');
+	} else {		
+		// set border option to 'no'
+		$($("input[name=borderOption]")[1]).prop('checked', true);
+		$("#border_container").css('display', 'none');
+	}
 }
 
 // creates new segmented numbers with the properties in the
@@ -621,7 +688,7 @@ SegNumField.prototype.updateProperties = function() {
 // the field (position, grid element type, etc.)
 SegNumField.prototype.saveJSON = function() {
 	var json = this.getProperties();
-	json.field_type = 'seg_num';
+	json.field_type = this.field_type;
 	json.param = this.param;
 	json.border_offset = this.border_offset;
 	json.dot_width = this.dot_width;

@@ -122,6 +122,9 @@ function EmptyBox(init_val) {
 EmptyBox.prototype = Object.create(Box.prototype);
 EmptyBox.prototype.constructor = EmptyBox;
 
+EmptyBox.prototype.loadProperties = function() {
+}
+
 EmptyBox.prototype.saveJSON = function() {
 	var json = this.getProperties();
 	json.field_type = 'empty_box';

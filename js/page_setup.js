@@ -6,7 +6,9 @@ $(document).ready(function() {
 	$("#update_prop").click(function() {
 		console.log("updating field properties");
 		if ($(".selected_field").length != 0) {
+			var origField = $(".selected_field");
 			$(".selected_field").data("obj").updateProperties();
+			origField.remove();
 		}
 	});	
 	

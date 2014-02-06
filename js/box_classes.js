@@ -10,13 +10,14 @@ function Box(init_val) {
 					top: init_val.top});
 		this.border_width = init_val.border_width;
 	} else {
+		this.border_width = $("#box_width").val();
 		// NOTE: initial width and height are aligned
 		// to the grid size
 		this.$box.css({width: GRID_X * 10, 
 					height: GRID_Y * 10,
 					left: 0,
-					top: 0});
-		this.border_width = $("#box_border").val();
+					top: 0,
+					borderWidth: this.border_width});
 	}
 	this.type = "box"; 
 	this.name = "none";	
@@ -39,8 +40,8 @@ Box.prototype.constructBox = function() {
 		console.log("width: " + curr_size.width	+ ", height: " + curr_size.height);	
 		var nearest_width = Math.ceil(curr_size.width / GRID_X) * GRID_X;
 		var nearest_height = Math.ceil(curr_size.height / GRID_Y) * GRID_Y;
-		ui.element.width(nearest_width - border_width * 2);
-		ui.element.height(nearest_height - border_width * 2);
+		ui.element.width(nearest_width - border_width * 2 * this.border_width);
+		ui.element.height(nearest_height - border_width * 2 * this.border_width);
 		console.log("resized to --> width: " + ui.element.width()	+ ", height: " + ui.element.width());	
 	}));
 	
@@ -134,16 +135,15 @@ EmptyBox.prototype.saveJSON = function() {
 function TextBox(init_val) {
 	Box.call(this, init_val); // call super constructor.	
 	
-	this.$box.css({wordWrap: 'break-word'});					
-						
+	this.$box.css({wordWrap: 'break-word'});											
 	var $text = $("<p/>");
 	
 	if (init_val) {
-		this.$box.css({border: init_val.border, fontSize: init_val.font_size});
+		this.$box.css({fontSize: init_val.font_size});
 		$text.text(init_val.text);
 	} else {
 		$text.text($("#text_input").val());
-		this.$box.css({border: '1px solid black', fontSize: $("#text_size").val()});
+		this.$box.css({fontSize: $("#text_size").val()});
 	}
 	this.$box.append($text);
 }
@@ -158,4 +158,26 @@ TextBox.prototype.saveJSON = function() {
 	json.text = this.$box.children('p').text();
 	json.font_size = this.$box.css('fontSize');
 	return json;
+}
+
+TextBox.prototype.loadProperties = function() {
+	// text
+	$("#text_input").val(this.text);
+	
+	// text size
+	$("#text_size").prop('selectedIndex', (this.fontSize == 'small') ? 0 :
+						(this.fontSize == 'medium') ? 1 : 2);			
+						
+	// border width
+	$("#border_width").val(this.border_width);
+						
+	if (this.border_width != "0") {
+		// set border option to 'yes'
+		$($("input[name=borderOption]")[0]).prop('checked', true);
+		$("#border_container").css('display', 'inline');
+	} else {		
+		// set border option to 'no'
+		$($("input[name=borderOption]")[1]).prop('checked', true);
+		$("#border_container").css('display', 'none');
+	}
 }

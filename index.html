@@ -333,6 +333,15 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
+		<label for="name">Text size</label>
+		<select id="text_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		<label for="name">Text</label>
+		<input type="text" id="text_input" class="ui-widget-content ui-corner-all">		
+		
 		<label for="name">Include Border?</label>
 		<label>
 			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
@@ -348,9 +357,25 @@
 		</div>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="empty-box-view">
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
+	</script>	
+	
 	<script type="text/x-handlebars" data-template-name="_boxDialog">
-		<div id="box_dialog" title="Create blank box">	
-			{{#view ODKScan.TextBoxContainer}}		
+		<div id="box_dialog" title="Create text box">	
+			{{#view ODKScan.EmptyBoxContainer}}		
 			{{/view}}
 		</div>
 	</script>
@@ -376,6 +401,13 @@
 		</div>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="_textDialog">
+		<div id="text_dialog" title="Create text field">		
+			{{#view ODKScan.TextBoxContainer}}		
+			{{/view}}	
+		</div>
+	</script>	
+	
 	<script type="text/x-handlebars" data-template-name="_exportDialog">
 		<div id="export_dialog" title="Export Scan Form">		
 			<label for="name">Filename</label>
@@ -392,19 +424,6 @@
 			<input type="file" id="uploaded_json" class="ui-corner-all">							
 		</div>
 	</script>
-	
-	<script type="text/x-handlebars" data-template-name="_textDialog">
-		<div id="text_dialog" title="Create text box">		
-			<label for="name">Text size</label>
-			<select id="text_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			<label for="name">Text</label>
-			<input type="text" id="text_input" class="ui-widget-content ui-corner-all">					
-		</div>
-	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="_formNumDialog">
 		<div id="form_num_dialog" title="Create formatted number">		

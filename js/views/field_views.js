@@ -2,7 +2,7 @@
 ODKScan.FieldContainer = Ember.ContainerView.create({
 });
 
-/*	These containers are hold views in their respectiev
+/*	These containers hold views in their respective
 	dialog menus.
 */	
 ODKScan.CheckboxContainer = Ember.ContainerView.create({
@@ -17,26 +17,23 @@ ODKScan.SegNumContainer = Ember.ContainerView.create({
 ODKScan.TextBoxContainer = Ember.ContainerView.create({
 });
 
-
-// Radio Buttons
+ODKScan.EmptyBoxContainer = Ember.ContainerView.create({
+});
 
 /*
-	Code provided from: http://thoughts.z-dev.org/2013/07/04/radio-buttons-in-ember-js/
+	Radio Button
+	Code used/modified from: http://thoughts.z-dev.org/2013/07/04/radio-buttons-in-ember-js/
 */
 Ember.RadioButton = Ember.View.extend({
     tagName : "input",
     type : "radio",
     attributeBindings : [ "name", "type", "value", "checked:checked:" ],
     click : function() {
-		console.log("radio button value: " + this.$().val());
-		console.log("parent view: " + this.get('parentView'));
 		if (this.$().val() == "1") {
-			console.log("enabling the border");
 			$("#border_width").val(1); // set border with to one
 			$("#border_container").css('display', 'inline');
 			this.get('parentView').set('hasBorder', true);
 		} else {		
-			console.log("disabling the border");
 			$("#border_width").val(0); // set border with to zero
 			$("#border_container").css('display', 'none');
 			this.get('parentView').set('hasBorder', false);
@@ -82,4 +79,8 @@ ODKScan.SegNumView = ODKScan.ViewController.create({
 
 ODKScan.TextBoxView = ODKScan.ViewController.create({
   templateName: 'textbox-view'
+});
+
+ODKScan.EmptyBoxView = ODKScan.ViewController.create({
+  templateName: 'empty-box-view'
 });

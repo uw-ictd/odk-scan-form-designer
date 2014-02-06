@@ -124,7 +124,7 @@ $(document).ready(function() {
 							var empty_box = new EmptyBox(f_json);
 							empty_box.constructBox();		
 						} else if (f_json.field_type == 'text_box') {
-							var text_box = new TextBox(f_json);
+							var text_box = new EmptyBox(f_json);
 							text_box.constructBox();	
 						} else if (f_json.field_type == 'form_num') {
 							var form_num_field = new FormNumField(f_json);
@@ -178,23 +178,22 @@ $(document).ready(function() {
 		open: function() {
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
-			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
+			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
 		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				console.log("making box...");
 				var new_box = new EmptyBox();
 				new_box.constructBox();
 				
-				ODKScan.TextBoxContainer.popObject();
+				ODKScan.EmptyBoxContainer.popObject();
 				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);		
-				
+				ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);						
 				$("#box_dialog").dialog("close");
 			},
 			"Cancel": function() {
+				ODKScan.EmptyBoxContainer.popObject();
 				$("#box_dialog").dialog("close");
 			}
 		}
@@ -217,11 +216,11 @@ $(document).ready(function() {
 
 				ODKScan.CheckboxContainer.popObject();
 				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);		
-								
+				ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);	
 				$("#checkbox_dialog").dialog("close");
 			},
 			"Cancel": function() {
+				ODKScan.CheckboxContainer.popObject();
 				$("#checkbox_dialog").dialog("close");
 			}
 		}
@@ -233,23 +232,21 @@ $(document).ready(function() {
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);	
 			$(".selected_field").removeClass("selected_field");
-		},
+		},	
 		autoOpen: false,
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				console.log("making fill-in bubbles...");
-				
 				var bubbField = new BubbleField();
 				bubbField.constructGrid();		
 
 				ODKScan.BubbleContainer.popObject();
 				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);						
-				
+				ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);										
 				$("#bubble_dialog").dialog("close");
 			},
 			"Cancel": function() {
+				ODKScan.BubbleContainer.popObject();
 				$("#bubble_dialog").dialog("close");
 			}
 		}
@@ -266,38 +263,46 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				console.log("making numbers...");
-				
 				var numField = new SegNumField();
 				numField.constructGrid();
-
+				
 				ODKScan.SegNumContainer.popObject();
 				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);					
-				
+				ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);									
 				$("#seg_num_dialog").dialog("close");
 			},
 			"Cancel": function() {
+				ODKScan.SegNumContainer.popObject();
 				$("#seg_num_dialog").dialog("close");
 			}
 		}
 	});		
 
 	$("#text_dialog").dialog({
+		open: function() {
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
+		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				var new_text_box = new TextBox();
-				new_text_box.constructBox();
+				var text_box = new EmptyBox();
+				text_box.constructBox();
 				
+				ODKScan.TextBoxContainer.popObject();
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);					
 				$("#text_dialog").dialog("close");
 			},
 			"Cancel": function() {
+				ODKScan.TextBoxContainer.popObject();
 				$("#text_dialog").dialog("close");
 			}
 		}
 	});			
+	
 	$("#form_num_dialog").dialog({
 		autoOpen: false,
 		modal: true,

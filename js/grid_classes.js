@@ -45,11 +45,16 @@ var DOT_LARGE = 7;
 	init_val constructor when the Scan doc is loaded
 	from a JSON file.
 */
-function GridField(init_val) {
+function GridField(init_val, top_pos, left_pos) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
+	console.log("initializing grid field, top_pos: " + top_pos + ", left_pos: " + left_pos);
 	
-	if (init_val) {
+	if ((top_pos != undefined) && (left_pos != undefined)) {
+		console.log("placing grid_div at: " + top_pos + ", " + left_pos);
+		this.$grid_div.css({top: top_pos, left: left_pos});
+		this.border_width = $("#border_width").val();
+	} else if (init_val) {
 		this.num_rows = init_val.num_rows;
 		this.num_cols = init_val.num_cols;
 		this.margin_top = init_val.margin_top;
@@ -64,6 +69,7 @@ function GridField(init_val) {
 		this.$grid_div.css({top: init_val.top, left: init_val.left});
 		this.border_width = init_val.border_width;	
 	} else {
+		console.log("constructing new grid field");
 		this.$grid_div.css({top: 0, left: 0});
 		this.border_width = $("#border_width").val();
 	}
@@ -273,8 +279,8 @@ GridField.prototype.copyField = function() {
 };
 
 // constructs a grid of checkboxes
-function CheckboxField(init_val) {
-	GridField.call(this, init_val);
+function CheckboxField(init_val, top_pos, left_pos) {
+	GridField.call(this, init_val, top_pos, left_pos);
 	this.field_type = "checkbox";
 	
 	// Set all checkbox attributes
@@ -372,7 +378,7 @@ CheckboxField.prototype.loadProperties = function() {
 // creates new checkbox with the properties in the
 // properties sidebar
 CheckboxField.prototype.updateProperties = function() {
-	var cbField = new CheckboxField();
+	var cbField = new CheckboxField(null, this.$grid_div.css('top'), this.$grid_div.css('left'));
 	cbField.constructGrid();	
 }
 
@@ -385,8 +391,8 @@ CheckboxField.prototype.saveJSON = function() {
 }
 
 // constructs a grid of bubbles
-function BubbleField(init_val) {
-	GridField.call(this, init_val);
+function BubbleField(init_val, top_pos, left_pos) {
+	GridField.call(this, init_val, top_pos, left_pos);
 	this.field_type = 'bubble';
 	
 	// Set all bubble attributes
@@ -496,7 +502,7 @@ BubbleField.prototype.loadProperties = function() {
 // creates new bubbles with the properties in the
 // properties sidebar
 BubbleField.prototype.updateProperties = function() {
-	var bubbField = new BubbleField();
+	var bubbField = new BubbleField(null, this.$grid_div.css('top'), this.$grid_div.css('left'));
 	bubbField.constructGrid();	
 }
 
@@ -509,8 +515,8 @@ BubbleField.prototype.saveJSON = function() {
 	return json;
 }
 
-function SegNumField(init_val) {
-	GridField.call(this, init_val);
+function SegNumField(init_val, top_pos, left_pos) {
+	GridField.call(this, init_val, top_pos, left_pos);
 	this.field_type = 'seg_num';
 	
 	// Set all segmented number attributes
@@ -528,7 +534,6 @@ function SegNumField(init_val) {
 					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
 	
 	if (init_val) {
-		console.log('loading from');
 		this.border_offset = init_val.border_offset;
 		this.param = init_val.param;
 		this.dot_width = init_val.dot_width;
@@ -572,16 +577,6 @@ function SegNumField(init_val) {
 		this.num_cols = $("#num_col_seg_num").val();
 		
 		this.param = this.num_rows * this.num_cols;
-		
-		if (this.border_width != "0") {
-			// set border option to 'yes'
-			$($("input[name=borderOption]")[0]).prop('checked', true);
-			$("#border_container").css('display', 'inline');
-		} else {		
-			// set border option to 'no'
-			$($("input[name=borderOption]")[1]).prop('checked', true);
-			$("#border_container").css('display', 'none');
-		}
 	}
 }
 
@@ -680,7 +675,7 @@ SegNumField.prototype.loadProperties = function() {
 // creates new segmented numbers with the properties in the
 // properties sidebar
 SegNumField.prototype.updateProperties = function() {
-	var segNumField = new SegNumField();
+	var segNumField = new SegNumField(null, this.$grid_div.css('top'), this.$grid_div.css('left'));
 	segNumField.constructGrid();	
 }
 

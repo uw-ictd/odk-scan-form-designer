@@ -102,10 +102,10 @@
 					<a class="dropdown-toggle" data-toggle="dropdown">Add Field <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a {{action 'createBox'}}>Text Box</a></li>
+						<li><a {{action 'createText'}}>Text</a></li>
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
 						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
-						<li><a {{action 'createNumbers'}}>Numbers</a></li>
-						<li><a {{action 'createText'}}>Text</a></li>
+						<li><a {{action 'createNumbers'}}>Segmented Numbers</a></li>
 						<li><a {{action 'createFormattedNumber'}}>Formatted Number</a></li>
 					</ul>
 				</li>	
@@ -119,14 +119,14 @@
 		{{outlet}}	
 		
 		<!-- the dialog menu html is separated and included below to keep the code more modular -->
-		{{partial 'boxDialog'}}
+		{{partial 'emptyBoxDialog'}}
+		{{partial 'textBoxDialog'}}
 		{{partial 'cbDialog'}}
 		{{partial 'bubbleDialog'}}
 		{{partial 'segNumDialog'}}
+		{{partial 'formNumDialog'}}
 		{{partial 'exportDialog'}}
 		{{partial 'loadDialog'}}
-		{{partial 'textDialog'}}
-		{{partial 'formNumDialog'}}
 		{{partial 'saveDialog'}}
 		{{partial 'newDialog'}}
 		{{partial 'saveCheckDialog'}}
@@ -156,6 +156,47 @@
 	<script type="text/x-handlebars" data-template-name="default-prop-view">
 		<div id="default_prop_message">
 			<h4>Select a field in the document to edit its properties.</h4>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="empty-box-view">
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
+	</script>	
+	
+	<script type="text/x-handlebars" data-template-name="textbox-view">
+		<label for="name">Text size</label>
+		<select id="text_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		<label for="name">Text</label>
+		<input type="text" id="text_input" class="ui-widget-content ui-corner-all">		
+		
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
 		</div>
 	</script>
 	
@@ -332,53 +373,19 @@
 		<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="textbox-view">
-		<label for="name">Text size</label>
-		<select id="text_size"> 
-			<option value="small">Small</option>
-			<option value="medium">Medium</option>
-			<option value="large">Large</option>				
-		</select><br>
-		<label for="name">Text</label>
-		<input type="text" id="text_input" class="ui-widget-content ui-corner-all">		
-		
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
-	</script>
-	
-	<script type="text/x-handlebars" data-template-name="empty-box-view">
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
-	</script>	
-	
-	<script type="text/x-handlebars" data-template-name="_boxDialog">
+	<script type="text/x-handlebars" data-template-name="_emptyBoxDialog">
 		<div id="box_dialog" title="Create text box">	
 			{{#view ODKScan.EmptyBoxContainer}}		
 			{{/view}}
 		</div>
 	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_textBoxDialog">
+		<div id="text_dialog" title="Create text field">		
+			{{#view ODKScan.TextBoxContainer}}		
+			{{/view}}	
+		</div>
+	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="_cbDialog">
 		<div id="checkbox_dialog" title="Create checkboxes">
@@ -400,13 +407,6 @@
 			{{/view}}
 		</div>
 	</script>
-	
-	<script type="text/x-handlebars" data-template-name="_textDialog">
-		<div id="text_dialog" title="Create text field">		
-			{{#view ODKScan.TextBoxContainer}}		
-			{{/view}}	
-		</div>
-	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="_exportDialog">
 		<div id="export_dialog" title="Export Scan Form">		

@@ -288,7 +288,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				var text_box = new EmptyBox();
+				var text_box = new TextBox();
 				text_box.constructBox();
 				
 				ODKScan.TextBoxContainer.popObject();

@@ -49,12 +49,8 @@ function GridField(init_val, top_pos, left_pos) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
 	console.log("initializing grid field, top_pos: " + top_pos + ", left_pos: " + left_pos);
-	
-	if ((top_pos != undefined) && (left_pos != undefined)) {
-		console.log("placing grid_div at: " + top_pos + ", " + left_pos);
-		this.$grid_div.css({top: top_pos, left: left_pos});
-		this.border_width = $("#border_width").val();
-	} else if (init_val) {
+
+	if (init_val) {
 		this.num_rows = init_val.num_rows;
 		this.num_cols = init_val.num_cols;
 		this.margin_top = init_val.margin_top;
@@ -70,7 +66,11 @@ function GridField(init_val, top_pos, left_pos) {
 		this.border_width = init_val.border_width;	
 	} else {
 		console.log("constructing new grid field");
-		this.$grid_div.css({top: 0, left: 0});
+		if ((top_pos != undefined) && (left_pos != undefined)) {
+			this.$grid_div.css({top: top_pos, left: left_pos});
+		} else {
+			this.$grid_div.css({top: 0, left: 0});
+		}
 		this.border_width = $("#border_width").val();
 	}
 }

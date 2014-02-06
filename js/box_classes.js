@@ -1,5 +1,5 @@
 // class for Box objects
-function Box(init_val) {
+function Box(init_val, top_pos, left_pos) {
 	this.$box = $('<div/>');	
 	this.$box.data("obj", this);
 	
@@ -10,13 +10,16 @@ function Box(init_val) {
 					top: init_val.top});
 		this.border_width = init_val.border_width;
 	} else {
-		this.border_width = $("#box_width").val();
+		this.border_width = $("#border_width").val();
 		// NOTE: initial width and height are aligned
 		// to the grid size
+		if ((top_pos != undefined) && (left_pos != undefined)) {
+			this.$box.css({top: top_pos, left: left_pos});
+		} else {
+			this.$box.css({top: 0, left: 0});
+		}
 		this.$box.css({width: GRID_X * 10, 
 					height: GRID_Y * 10,
-					left: 0,
-					top: 0,
 					borderWidth: this.border_width});
 	}
 	this.type = "box"; 
@@ -132,8 +135,8 @@ EmptyBox.prototype.saveJSON = function() {
 	return json;
 }
 
-function TextBox(init_val) {
-	Box.call(this, init_val); // call super constructor.	
+function TextBox(init_val, top_pos, left_pos) {
+	Box.call(this, init_val, top_pos, left_pos); // call super constructor.	
 	
 	this.$box.css({wordWrap: 'break-word'});											
 	var $text = $("<p/>");
@@ -142,8 +145,11 @@ function TextBox(init_val) {
 		this.$box.css({fontSize: init_val.font_size});
 		$text.text(init_val.text);
 	} else {
-		$text.text($("#text_input").val());
-		this.$box.css({fontSize: $("#text_size").val()});
+		this.text = $("#text_input").val();
+		$text.text(this.text);
+		this.font_size = $("#text_size").val();
+		this.$box.css({fontSize: this.font_size});
+		
 	}
 	this.$box.append($text);
 }
@@ -155,18 +161,20 @@ TextBox.prototype.constructor = TextBox;
 TextBox.prototype.saveJSON = function() {
 	var json = this.getProperties();
 	json.field_type = 'text_box';
-	json.text = this.$box.children('p').text();
+	json.text = this.text
 	json.font_size = this.$box.css('fontSize');
 	return json;
 }
 
+// loads the properties of the textbox into the textbox view
 TextBox.prototype.loadProperties = function() {
+	console.log("loading field properties");
 	// text
 	$("#text_input").val(this.text);
 	
 	// text size
-	$("#text_size").prop('selectedIndex', (this.fontSize == 'small') ? 0 :
-						(this.fontSize == 'medium') ? 1 : 2);			
+	$("#text_size").prop('selectedIndex', (this.font_size == 'small') ? 0 :
+						(this.font_size == 'medium') ? 1 : 2);			
 						
 	// border width
 	$("#border_width").val(this.border_width);
@@ -180,4 +188,11 @@ TextBox.prototype.loadProperties = function() {
 		$($("input[name=borderOption]")[1]).prop('checked', true);
 		$("#border_container").css('display', 'none');
 	}
+}
+
+// creates new textbox field with the properties listed 
+// in the properties sidebar
+TextBox.prototype.updateProperties = function() {
+	var text_field = new TextBox(null, this.$box.css('top'), this.$box.css('left'));
+	text_field.constructBox();	
 }

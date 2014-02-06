@@ -7,9 +7,12 @@ html, body {
 
 /* Makes dialog boxes appear above other elements, 
 also makes the background inactive while a dialog
-box is open. */
+box is open. Manually adjusts top to set it to
+auto because they can sometimes open up toward the 
+bottom of the page rather than the center (started 
+happening after using views within dialog menus). */
 .ui-dialog, .ui-front {
-
+	top: auto !important;
 	z-index: 10000 !important;
 }
 

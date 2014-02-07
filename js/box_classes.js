@@ -48,9 +48,19 @@ Box.prototype.addEventHandlers = function($box) {
 	$box.dblclick( function() { this.remove() });
 	
 	// highlight only this box when clicked
+	var obj = this;
 	$box.click(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");
+		
+		ODKScan.FieldContainer.popObject();
+		if (obj.field_type == 'text_box') {
+			ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);
+		} else if (obj.field_type == "empty_box") {
+			ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);
+		} else {
+			console.log("error - unsupported field type");
+		}		
 	});
 }
 
@@ -102,6 +112,7 @@ Box.prototype.getProperties = function() {
 	fieldJSON.box_width = this.$box.css('width');
 	fieldJSON.box_height = this.$box.css('height');
 	fieldJSON.border_width = this.border_width;	
+	fieldJSON.field_type = this.field_type;	
 	
 	return fieldJSON;
 };
@@ -137,6 +148,7 @@ Box.prototype.copyField = function() {
 */
 function EmptyBox(json_init, update_init) {
 	Box.call(this, json_init, update_init); // call super constructor.	
+	this.field_type = 'empty_box';
 }
 
 // subclass extends superclass
@@ -164,9 +176,7 @@ EmptyBox.prototype.updateProperties = function() {
 	the document.
 */
 EmptyBox.prototype.saveJSON = function() {
-	var json = this.getProperties();
-	json.field_type = 'empty_box';
-	return json;
+	return this.getProperties();
 }
 
 /*	Represents a text box field.
@@ -175,6 +185,7 @@ EmptyBox.prototype.saveJSON = function() {
 */
 function TextBox(json_init, update_init) {
 	Box.call(this, json_init, update_init); // call super constructor.	
+	this.field_type = 'text_box';
 	
 	// add textbox specific properties to this.$box
 	this.$box.css({wordWrap: 'break-word'});											
@@ -227,8 +238,7 @@ TextBox.prototype.updateProperties = function() {
 */
 TextBox.prototype.saveJSON = function() {
 	var json = this.getProperties();
-	json.field_type = 'text_box';
-	json.text = this.text
+	json.text = this.text;
 	json.font_size = this.$box.css('fontSize');
 	return json;
 }

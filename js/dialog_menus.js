@@ -179,6 +179,7 @@ $(document).ready(function() {
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
 			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		autoOpen: false,
 		modal: true,
@@ -283,6 +284,7 @@ $(document).ready(function() {
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
 			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		autoOpen: false,
 		modal: true,

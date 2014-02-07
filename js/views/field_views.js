@@ -39,19 +39,31 @@ Ember.RadioButton = Ember.View.extend({
 			this.get('parentView').set('hasBorder', false);
 		}
         this.set("selection", this.$().val())
-    },
+    }.observes('selection'),
     checked : function() {
         return this.get("value") == this.get("selection");   
     }.property('selection'),
 });
-
+var yesView;
+var noView;
 // All views below inherit from this view controller
 ODKScan.ViewController = Ember.View.extend({
 	didInsertElement: function() {
 		console.log("inserted view");		
+		yesView = this.get('borderYesView');
+		noView = this.get('borderNoView');
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar
 			$(".selected_field").data("obj").loadProperties();
+			
+			// check if the selected shape has a border
+			var border_val = $(".selected_field").data("obj").border_width;
+			if (border_val > 0) {
+				this.get('borderYesView').set('selection', 1);
+				$("#border_width").val(border_val); 
+			} else {
+				this.get('borderNoView').set('selection', 0);
+			}
 		} else {
 			// loading view into a dialog menu, default border set to 'Yes'
 			this.get('borderYesView').set('selection', 1);

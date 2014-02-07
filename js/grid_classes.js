@@ -363,16 +363,6 @@ CheckboxField.prototype.loadProperties = function() {
 	
 	// set border width
 	$("#border_width").val(this.border_width);
-	
-	if (this.border_width != "0") {
-		// set border option to 'yes'
-		$($("input[name=borderOption]")[0]).prop('checked', true);
-		$("#border_container").css('display', 'inline');
-	} else {		
-		// set border option to 'no'
-		$($("input[name=borderOption]")[1]).prop('checked', true);
-		$("#border_container").css('display', 'none');
-	}
 }
 
 // creates new checkbox with the properties in the
@@ -487,16 +477,6 @@ BubbleField.prototype.loadProperties = function() {
 	
 	// set border width
 	$("#border_width").val(this.border_width);
-	
-	if (this.border_width != "0") {
-		// set border option to 'yes'
-		$($("input[name=borderOption]")[0]).prop('checked', true);
-		$("#border_container").css('display', 'inline');
-	} else {		
-		// set border option to 'no'
-		$($("input[name=borderOption]")[1]).prop('checked', true);
-		$("#border_container").css('display', 'none');
-	}
 }
 
 // creates new bubbles with the properties in the
@@ -660,16 +640,9 @@ SegNumField.prototype.loadProperties = function() {
 	
 	// number of columns
 	$("#num_col_seg_num").val(this.num_cols);
-	
-	if (this.border_width != "0") {
-		// set border option to 'yes'
-		$($("input[name=borderOption]")[0]).prop('checked', true);
-		$("#border_container").css('display', 'inline');
-	} else {		
-		// set border option to 'no'
-		$($("input[name=borderOption]")[1]).prop('checked', true);
-		$("#border_container").css('display', 'none');
-	}
+			
+	// set border width
+	$("#border_width").val(this.border_width);
 }
 
 // creates new segmented numbers with the properties in the

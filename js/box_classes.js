@@ -149,17 +149,6 @@ EmptyBox.prototype.constructor = EmptyBox;
 EmptyBox.prototype.loadProperties = function() {
 	// set border width
 	$("#border_width").val(this.border_width);
-
-	// set border option
-	if (this.border_width != "0") {
-		// set border option to 'yes'
-		$($("input[name=borderOption]")[0]).prop('checked', true);
-		$("#border_container").css('display', 'inline');
-	} else {		
-		// set border option to 'no'
-		$($("input[name=borderOption]")[1]).prop('checked', true);
-		$("#border_container").css('display', 'none');
-	}
 }
 
 /*	Creates a new empty box field with the updated
@@ -221,17 +210,6 @@ TextBox.prototype.loadProperties = function() {
 						
 	// set border width
 	$("#border_width").val(this.border_width);
-	
-	// set border option
-	if (this.border_width != "0") {
-		// set border option to 'yes'
-		$($("input[name=borderOption]")[0]).prop('checked', true);
-		$("#border_container").css('display', 'inline');
-	} else {		
-		// set border option to 'no'
-		$($("input[name=borderOption]")[1]).prop('checked', true);
-		$("#border_container").css('display', 'none');
-	}
 }
 
 

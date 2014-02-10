@@ -19,6 +19,7 @@ function FormField(init_val) {
 		this.ele_class = init_val.ele_class;
 		this.$grid_div.css({top: init_val.top, left: init_val.left});
 	} else {
+		this.border_width = parseInt($("#border_width").val());
 		this.$grid_div.css({top: 0, left: 0});
 	}
 }
@@ -28,6 +29,7 @@ function FormField(init_val) {
 FormField.prototype.getProperties = function() {
 	var json = {};
 	
+	json.field_type = this.field_type;
 	json.num_rows = this.num_rows;
 	json.num_cols = this.num_cols;
 	json.margin_top = this.margin_top;
@@ -77,9 +79,17 @@ FormField.prototype.constructGrid = function() {
 	// grid fields are removed when double-clicked
 	this.$grid_div.dblclick( function() { this.remove() });
 	
+	var obj = this;
 	this.$grid_div.click(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");
+
+		ODKScan.FieldContainer.popObject();
+		if (obj.field_type == 'form_num') {
+			ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);
+		} else {
+			console.log("error - unsupported field type");
+		}	
 	});
 
 	$(".selected_field").removeClass("selected_field");
@@ -181,6 +191,7 @@ function FormNumField(init_val) {
 	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
 	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
 					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
+	this.field_type = 'form_num';
 	
 	if (init_val) {
 		console.log('loading from');
@@ -315,9 +326,10 @@ FormNumField.prototype.makeGridElement = function(num_digits, group_num) {
 }
 
 FormNumField.prototype.makeGridDelim = function(num_digits) {
-	var $new_delim = $("<div/>");
-	$new_delim.addClass(this.ele_class);
-	$new_delim.css({width: this.element_width, 
+	var $delim_div = $("<div/>");
+	$delim_div.addClass(this.ele_class);
+	$delim_div.css({border: 'none',
+					width: this.element_width, 
 					height: this.element_height,
 					marginTop: this.margin_top,
 					marginBottom: this.margin_bottom,
@@ -325,15 +337,92 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 					marginRight: this.group_dx / 2,
 					textAlign: 'center'});
 	var $delim_text = $("<p/>").text(this.delim_type);
-	$new_delim.append($delim_text);
-	return $new_delim;
+	//$delim_div.append($delim_text);
+	
+	//	DEBUG test - adds horizontal and vertical line to the div
+	//	to indicate the center of the number. 
+	/*
+	var border_offset = 1;
+	var $horiz_line = $("<div/>");
+	var hz_line_length = this.element_width;
+	var hz_vert_trans = (this.element_height / 2) - border_offset;
+	$horiz_line.css({border: "1px solid black", 
+					width: hz_line_length, 
+					height: "1px",
+					position: "absolute"});
+	$horiz_line.css('webkitTransform', 'translate(0px, ' + hz_vert_trans + "px)");
+	$delim_div.append($horiz_line);
+	
+	var $vert_line = $("<div/>");
+	var vt_line_length = this.element_height;
+	var vt_horiz_trans = (this.element_width / 2) - border_offset;
+	$vert_line.css({border: "1px solid black", 
+					width: "1px", 
+					height: vt_line_length,
+					position: "absolute"});
+	$vert_line.css('webkitTransform', 'translate(' + vt_horiz_trans + "px, 0px)");
+	$delim_div.append($vert_line);
+	*/
+
+	/* NOTE: this assumes that this.border_width is the width
+	of the border around the 'num' class. */ 
+	var $delim = $("<div/>");
+	if (this.delim_type == "/") {
+		// calculate size, translation, rotation of slash symbol
+		var slash_width = 1;
+		var inner_width = this.element_width;
+		var inner_height = this.element_height;
+		var slash_length = Math.sqrt(Math.pow(inner_width, 2) + Math.pow(inner_height, 2));
+		var horiz_trans = ((slash_length / 2) - (inner_width / 2));
+		var vert_trans = (inner_height / 2) - slash_width;
+		var rot_angle = Math.atan2(inner_height, inner_width) * 180 / Math.PI;
+		
+		$delim.css({border: "1px solid black", 
+					width: slash_length, 
+					height: slash_width});
+		$delim.css('webkitTransform', 'translate(-' + horiz_trans + 'px, ' + vert_trans + "px) " + 'rotate(-' + rot_angle + 'deg)');		
+	} else if (this.delim_type == "-") {	
+		var dash_width = 1;
+		var dash_length = this.element_width;
+		var inner_height = this.element_height;
+		var vert_trans = (inner_height / 2) - dash_width;
+		
+		$delim.css({border: "1px solid black", 
+					width: dash_length, 
+					height: dash_width});
+		$delim.css('webkitTransform', "translate(0px, " + vert_trans + "px)");		
+	} else if (this.delim_type == ".") {		
+		var inner_width = this.element_width;
+		var inner_height = this.element_height;
+		var circle_radius = 7;
+		// must compensate for circle radius to center the circle vertically witin the div
+		var vert_trans = (inner_height / 2) - circle_radius; 
+		var circle_border = 1;
+		var horiz_trans = (inner_width / 2) - circle_radius;		
+		
+		$delim.addClass("dot_delim");
+		$delim.css({borderWidth: circle_border, 
+					backgroundColor: "black",
+					position: "absolute",
+					bottom: "0px",
+					borderColor: "black",
+					borderStyle: "solid",
+					borderRadius: circle_radius + "px",
+					height: circle_radius * 2,
+					width: circle_radius * 2});
+		$delim.css('webkitTransform', "translate(" + horiz_trans + "px, 0px)");		
+	} else {
+		console.log("error, unsupported delimeter type for formatted numbers");
+	}
+	
+	$delim_div.append($delim);
+	return $delim_div;
 }
 
 // returns JSON containing the current state of 
 // the field (position, grid element type, etc.)
 FormNumField.prototype.saveJSON = function() {
 	var json = this.getProperties();
-	json.field_type = 'form_num';
 	json.param = this.param;
 	json.border_offset = this.border_offset;
 	json.dot_width = this.dot_width;
@@ -343,4 +432,51 @@ FormNumField.prototype.saveJSON = function() {
 	json.group_sizes = this.group_sizes;
 	json.delim_type = this.delim_type;
 	return json;
+}
+
+FormNumField.prototype.loadProperties = function() {
+	// NOTE: ASSUMING no duplicate values in first index of
+	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
+	$("#form_num_size").prop('selectedIndex', (this.element_width == SEG_NUM_SMALL[0]) ? 0 :
+						(this.element_width == SEG_NUM_SMALL[1]) ? 1 : 2);					
+	
+	// NOTE: ASSUMING dot_width == dot_height
+	$("#form_num_dot_size").prop('selectedIndex', (this.dot_width == DOT_SMALL) ? 0 :
+						(this.dot_width == DOT_MEDIUM) ? 1 : 2);											
+	
+	// the horizontal spacing between the edges of numbers
+	$("#form_num_dx").val(this.num_dx);
+	
+	// the horizontal spacing between the edges of groups
+	$("#form_num_group_dx").val(this.group_dx);
+	
+	// margin values
+	$("#form_num_margin_top").val(this.margin_top);
+	$("#form_num_margin_bottom").val(this.margin_bottom);
+	$("#form_num_margin_left").val(this.margin_left);
+	$("#form_num_margin_right").val(this.margin_right);
+	
+	// set the delimeter type between groups of adjacent numbers
+	$("#delim_type").val(this.delim_type);
+			
+	// set border width
+	$("#border_width").val(this.border_width);
+	
+	// set number of groups
+	var arr = [];
+	for (var i = 1; i <= this.group_sizes.length; i++) {
+		arr.push(i);
+	}
+	ODKScan.FormNumView.set('groups', arr);
+	
+	$("#num_col_form_num").val(this.group_sizes.length);
+	
+	// set group sizes
+	var obj = this;
+	console.log($(".num_groups"));
+	$(".num_groups").each(function(index, group_div) {
+		console.log("num_group set to: " + obj.group_sizes[index]);
+		console.log($(group_div));
+		$(group_div).val(obj.group_sizes[index]);
+	});
 }

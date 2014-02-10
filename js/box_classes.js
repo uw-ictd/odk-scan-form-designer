@@ -45,7 +45,11 @@ Box.prototype.addEventHandlers = function($box) {
 	}));
 	
 	// box is removed when double-clicked
-	$box.dblclick( function() { this.remove() });
+	$box.dblclick( function() {
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+		this.remove() 
+	});
 	
 	// highlight only this box when clicked
 	var obj = this;

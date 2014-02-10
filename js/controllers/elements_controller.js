@@ -7,7 +7,6 @@ var GRID_Y = 10;
 
 ODKScan.ElementsController = Ember.ArrayController.extend({
 	hasBorder: true,
-	groups: [1, 2],
 	isImageEditing: false,
 	imgSelect: null,
 	init: function() {
@@ -124,14 +123,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		createFormattedNumber: function() {
 			console.log("creating formatted number");
 			$("#form_num_dialog").dialog("open");
-		},
-		updateNumGroups: function() {	
-			var arr = [];
-			for (var i = 1; i <= $("#num_col_form_num").val(); i++) {
-				arr.push(i);
-			}
-			this.set('groups', arr);
-			console.log('num groups is: ' + $("#num_col_form_num").val());
 		},
 		copyField: function() {
 			if ($(".selected_field").length != 0) {

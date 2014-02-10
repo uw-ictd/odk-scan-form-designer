@@ -373,6 +373,75 @@
 		<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="form-num-view">
+		<label for="name">Number size</label>
+		<select id="form_num_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		
+		<label for="name">Dot size</label>
+		<select id="form_num_dot_size"> 
+			<option value="small">Small</option>
+			<option value="medium">Medium</option>
+			<option value="large">Large</option>				
+		</select><br>
+		
+		<label for="name">Delimiter</label>
+		<select id="delim_type"> 
+			<option value="/">/</option>
+			<option value="-">-</option>
+			<option value=".">.</option>				
+		</select><br>
+		
+		<label for="name">Include Border?</label>
+		<label>
+			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
+
+		<hr class="horz_divider">
+		
+		<label for="name">Number of groups</label>
+		<input type="number" id="num_col_form_num" value="2" class="int_input ui-widget-content ui-corner-all" min="2" {{action 'updateNumGroups' target="view"}}><br>
+		{{#each view.groups}}
+			&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{this}}</label>
+			<input type="number" value="1" class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
+		{{/each}}
+		<hr class="horz_divider">
+		
+		<label for="name">Number spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="form_num_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Group spacing</label>
+		<!-- TODO: remove hardcoded min value -->
+		<input type="number" id="form_num_group_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<hr class="horz_divider">
+		
+		<label for="name">Top Margin</label>
+		<input type="number" id="form_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Bottom Margin</label>
+		<input type="number" id="form_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+		
+		<label for="name">Left Margin</label>
+		<input type="number" id="form_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Right Margin</label>
+		<input type="number" id="form_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>		
+	</script>
+	
 	<script type="text/x-handlebars" data-template-name="_emptyBoxDialog">
 		<div id="box_dialog" title="Create text box">	
 			{{#view ODKScan.EmptyBoxContainer}}		
@@ -408,6 +477,13 @@
 		</div>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="_formNumDialog">
+		<div id="form_num_dialog" title="Create formatted number">		
+			{{#view ODKScan.FormNumContainer}}		
+			{{/view}}
+		</div>
+	</script>	
+	
 	<script type="text/x-handlebars" data-template-name="_exportDialog">
 		<div id="export_dialog" title="Export Scan Form">		
 			<label for="name">Filename</label>
@@ -424,61 +500,6 @@
 			<input type="file" id="uploaded_json" class="ui-corner-all">							
 		</div>
 	</script>
-	
-	<script type="text/x-handlebars" data-template-name="_formNumDialog">
-		<div id="form_num_dialog" title="Create formatted number">		
-			<label for="name">Number size</label>
-			<select id="form_num_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			
-			<label for="name">Dot size</label>
-			<select id="form_num_dot_size"> 
-				<option value="small">Small</option>
-				<option value="medium">Medium</option>
-				<option value="large">Large</option>				
-			</select><br>
-			
-			<label for="name">Delimiter</label>
-			<select id="delim_type"> 
-				<option value="/">/</option>
-				<option value="-">-</option>
-				<option value=".">.</option>				
-			</select><br>
-
-			<label for="name">Number of groups</label>
-			<input type="number" id="num_col_form_num" value="2" class="int_input ui-widget-content ui-corner-all" min="2" {{action 'updateNumGroups'}}><br>
-			{{#each groups}}
-				&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{this}}</label>
-				<input type="number" value="1" class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
-			{{/each}}
-			<hr class="horz_divider">
-			
-			<label for="name">Number spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="form_num_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Group spacing</label>
-			<!-- TODO: remove hardcoded min value -->
-			<input type="number" id="form_num_group_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<hr class="horz_divider">
-			
-			<label for="name">Top Margin</label>
-			<input type="number" id="form_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Bottom Margin</label>
-			<input type="number" id="form_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-			
-			<label for="name">Left Margin</label>
-			<input type="number" id="form_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-			
-			<label for="name">Right Margin</label>
-			<input type="number" id="form_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>			
-		</div>
-	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="_saveDialog">
 		<div id="save_dialog" title="Save Scan Form">		

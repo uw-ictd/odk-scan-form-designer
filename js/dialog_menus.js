@@ -306,15 +306,26 @@ $(document).ready(function() {
 	});			
 	
 	$("#form_num_dialog").dialog({
+		open: function() {
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.FormNumContainer.pushObject(ODKScan.FormNumView);
+			$(".selected_field").removeClass("selected_field");
+		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
 			"Ok": function() {					
 				var formNumField = new FormNumField();
-				formNumField.constructGrid();							
+				formNumField.constructGrid();		
+				
+				ODKScan.FormNumContainer.popObject();
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);						
 				$("#form_num_dialog").dialog("close");
 			},
 			"Cancel": function() {
+				ODKScan.FormNumContainer.popObject();
 				$("#form_num_dialog").dialog("close");
 			}
 		}

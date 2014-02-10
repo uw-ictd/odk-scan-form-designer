@@ -5,6 +5,12 @@ ODKScan.FieldContainer = Ember.ContainerView.create({
 /*	These containers hold views in their respective
 	dialog menus.
 */	
+ODKScan.EmptyBoxContainer = Ember.ContainerView.create({
+});
+
+ODKScan.TextBoxContainer = Ember.ContainerView.create({
+});
+
 ODKScan.CheckboxContainer = Ember.ContainerView.create({
 });
 
@@ -14,10 +20,7 @@ ODKScan.BubbleContainer = Ember.ContainerView.create({
 ODKScan.SegNumContainer = Ember.ContainerView.create({
 });
 
-ODKScan.TextBoxContainer = Ember.ContainerView.create({
-});
-
-ODKScan.EmptyBoxContainer = Ember.ContainerView.create({
+ODKScan.FormNumContainer = Ember.ContainerView.create({
 });
 
 /*
@@ -69,12 +72,31 @@ ODKScan.ViewController = Ember.View.extend({
 			this.get('borderYesView').set('selection', 1);
 		}
 	},
-	radioView: Ember.RadioButton
+	radioView: Ember.RadioButton,
+	groups: [1, 2],
+	actions: {
+		updateNumGroups: function() {	
+			var arr = [];
+			for (var i = 1; i <= $("#num_col_form_num").val(); i++) {
+				arr.push(i);
+			}
+			this.set('groups', arr);
+			console.log('num groups is: ' + $("#num_col_form_num").val());
+		}
+	}
 });
 
 // These views below are rendered in the FieldContainer view created above.
 ODKScan.DefaultPropView = Ember.View.create({
   templateName: 'default-prop-view'
+});
+
+ODKScan.EmptyBoxView = ODKScan.ViewController.create({
+  templateName: 'empty-box-view'
+});
+
+ODKScan.TextBoxView = ODKScan.ViewController.create({
+  templateName: 'textbox-view'
 });
 
 ODKScan.CheckboxView = ODKScan.ViewController.create({
@@ -89,10 +111,6 @@ ODKScan.SegNumView = ODKScan.ViewController.create({
   templateName: 'seg-num-view'
 });
 
-ODKScan.TextBoxView = ODKScan.ViewController.create({
-  templateName: 'textbox-view'
-});
-
-ODKScan.EmptyBoxView = ODKScan.ViewController.create({
-  templateName: 'empty-box-view'
+ODKScan.FormNumView = ODKScan.ViewController.create({
+  templateName: 'form-num-view'
 });

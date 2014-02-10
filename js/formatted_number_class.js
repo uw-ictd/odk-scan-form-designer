@@ -1,26 +1,34 @@
 // TODO: add documentation for FormField class
 
 /* 	Constructs FormField object, passed in the
-	init_val constructor when the Scan doc is loaded
+	json_init constructor when the Scan doc is loaded
 	from a JSON file.
 */
-function FormField(init_val) {
+function FormField(json_init, update_init) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
 	
-	if (init_val) {
-		this.num_cols = init_val.num_cols;
-		this.margin_top = init_val.margin_top;
-		this.margin_bottom = init_val.margin_bottom;
-		this.margin_left = init_val.margin_left;
-		this.margin_right = init_val.margin_right;
-		this.element_height = init_val.element_height;
-		this.element_width = init_val.element_width;
-		this.ele_class = init_val.ele_class;
-		this.$grid_div.css({top: init_val.top, left: init_val.left});
+	if (json_init) {
+		// invoke by Load button
+		this.num_cols = json_init.num_cols;
+		this.margin_top = json_init.margin_top;
+		this.margin_bottom = json_init.margin_bottom;
+		this.margin_left = json_init.margin_left;
+		this.margin_right = json_init.margin_right;
+		this.element_height = json_init.element_height;
+		this.element_width = json_init.element_width;
+		this.ele_class = json_init.ele_class;
+		this.$grid_div.css({top: json_init.top, left: json_init.left});
+		this.border_width = json_init.border_width;
 	} else {
+		if (update_init) {
+			// invoked from Update Field button
+			this.$grid_div.css({top: update_init.top, left: update_init.left, borderWidth: update_init.border_width});
+		} else {
+			// invoked by Dialog menu
+			this.$grid_div.css({top: 0, left: 0});
+		}
 		this.border_width = parseInt($("#border_width").val());
-		this.$grid_div.css({top: 0, left: 0});
 	}
 }
 
@@ -41,6 +49,7 @@ FormField.prototype.getProperties = function() {
 	json.ele_class = this.ele_class;
 	json.left = this.$grid_div.css('left');
 	json.top = this.$grid_div.css('top');
+	json.border_width = this.border_width;
 	
 	return json;
 }
@@ -91,6 +100,20 @@ FormField.prototype.constructGrid = function() {
 		ODKScan.FieldContainer.popObject();
 		if (obj.field_type == 'form_num') {
 			ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);
+			
+			var arr = [];
+			for (var i = 1; i <= obj.group_sizes.length; i++) {
+				arr.push(i);
+			}
+			ODKScan.FormNumView.set('groups', arr);
+			
+			$(".num_groups").each(function(index, group_div) {
+				console.log("num_group set to: " + obj.group_sizes[index]);
+				console.log($(group_div));
+				$(group_div).val(obj.group_sizes[index]);
+				//group_div.value = obj.group_sizes[index];
+			});
+					
 		} else {
 			console.log("error - unsupported field type");
 		}	
@@ -180,8 +203,8 @@ FormField.prototype.copyField = function() {
 	$("#scan_doc").append($new_grid);
 };
 
-function FormNumField(init_val) {
-	FormField.call(this, init_val);
+function FormNumField(json_init, update_init) {
+	FormField.call(this, json_init, update_init);
 	// Set all segmented number attributes
 	
 	// set the grid class
@@ -197,17 +220,17 @@ function FormNumField(init_val) {
 					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
 	this.field_type = 'form_num';
 	
-	if (init_val) {
+	if (json_init) {
 		console.log('loading from');
-		this.border_offset = init_val.border_offset;
-		this.param = init_val.param;
-		this.dot_width = init_val.dot_width;
-		this.dot_height = init_val.dot_height;
-		this.group_dx = init_val.group_dx;
-		this.num_dx = init_val.num_dx;
-		this.num_group = init_val.num_group;
-		this.group_sizes = init_val.group_sizes;
-		this.delim_type = init_val.delim_type;
+		this.border_offset = json_init.border_offset;
+		this.param = json_init.param;
+		this.dot_width = json_init.dot_width;
+		this.dot_height = json_init.dot_height;
+		this.group_dx = json_init.group_dx;
+		this.num_dx = json_init.num_dx;
+		this.num_group = json_init.num_group;
+		this.group_sizes = json_init.group_sizes;
+		this.delim_type = json_init.delim_type;
 	} else {
 		// set the class of the grid elements
 		this.ele_class = 'num';
@@ -254,6 +277,9 @@ function FormNumField(init_val) {
 		
 		// number of columns
 		this.num_cols = $("#num_col_form_num").val();
+		
+		// set border width
+		this.border_width = $("#border_width").val();
 	}
 }
 
@@ -474,7 +500,14 @@ FormNumField.prototype.loadProperties = function() {
 	$(".num_groups").each(function(index, group_div) {
 		console.log("num_group set to: " + obj.group_sizes[index]);
 		console.log($(group_div));
-		//$(group_div).val(obj.group_sizes[index]);
-		group_div.value = obj.group_sizes[index];
+		$(group_div).val(obj.group_sizes[index]);
+		//group_div.value = obj.group_sizes[index];
 	});
+}
+
+// creates new formatted numbers field with the properties in the
+// properties sidebar
+FormNumField.prototype.updateProperties = function() {
+	var formNumField = new FormNumField(null, this.getProperties());
+	formNumField.constructGrid();	
 }

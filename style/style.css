@@ -149,7 +149,7 @@ input[type=text], input[type=number] {
 
 /* set default width on text input boxes */
 input[type=text]{
-	width: 160px;
+	width: 130px;
 }
 
 #update_prop, #load_prop {

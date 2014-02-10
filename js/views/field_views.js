@@ -57,6 +57,15 @@ ODKScan.ViewController = Ember.View.extend({
 			// loading view into the properties sidebar
 			$(".selected_field").data("obj").loadProperties();
 			
+			// check if field is a formatted number
+			if ($(".selected_field").data("obj").field_type == 'form_num') {
+				var arr = [];
+				for (var i = 1; i <= this.group_sizes.length; i++) {
+					arr.push(i);
+				}
+				this.set('groups', arr);
+			}
+			
 			// check if the selected shape has a border
 			var border_val = $(".selected_field").data("obj").border_width;
 			if (border_val > 0) {
@@ -75,13 +84,14 @@ ODKScan.ViewController = Ember.View.extend({
 	groups: [1, 2],
 	actions: {
 		updateNumGroups: function() {	
+			console.log("UPDATE NUM GROUPS");
 			var arr = [];
 			for (var i = 1; i <= $("#num_col_form_num").val(); i++) {
 				arr.push(i);
 			}
 			this.set('groups', arr);
 			console.log('num groups is: ' + $("#num_col_form_num").val());
-		}
+		}.observes('groups')
 	}
 });
 

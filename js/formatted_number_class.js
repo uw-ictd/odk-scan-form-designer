@@ -77,7 +77,11 @@ FormField.prototype.constructGrid = function() {
 	});				
 	
 	// grid fields are removed when double-clicked
-	this.$grid_div.dblclick( function() { this.remove() });
+	this.$grid_div.dblclick( function() { 
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+		this.remove() 
+	});
 	
 	var obj = this;
 	this.$grid_div.click(function() {
@@ -461,19 +465,12 @@ FormNumField.prototype.loadProperties = function() {
 			
 	// set border width
 	$("#border_width").val(this.border_width);
-	
-	// set number of groups
-	var arr = [];
-	for (var i = 1; i <= this.group_sizes.length; i++) {
-		arr.push(i);
-	}
-	ODKScan.FormNumView.set('groups', arr);
-	
+
+	// set number of columns
 	$("#num_col_form_num").val(this.group_sizes.length);
 	
 	// set group sizes
 	var obj = this;
-	console.log($(".num_groups"));
 	$(".num_groups").each(function(index, group_div) {
 		console.log("num_group set to: " + obj.group_sizes[index]);
 		console.log($(group_div));

@@ -477,6 +477,7 @@ FormNumField.prototype.loadProperties = function() {
 	$(".num_groups").each(function(index, group_div) {
 		console.log("num_group set to: " + obj.group_sizes[index]);
 		console.log($(group_div));
-		$(group_div).val(obj.group_sizes[index]);
+		//$(group_div).val(obj.group_sizes[index]);
+		group_div.value = obj.group_sizes[index];
 	});
 }

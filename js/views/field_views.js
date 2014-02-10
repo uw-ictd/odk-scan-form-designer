@@ -53,8 +53,6 @@ var noView;
 ODKScan.ViewController = Ember.View.extend({
 	didInsertElement: function() {
 		console.log("inserted view");		
-		yesView = this.get('borderYesView');
-		noView = this.get('borderNoView');
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar
 			$(".selected_field").data("obj").loadProperties();
@@ -68,6 +66,7 @@ ODKScan.ViewController = Ember.View.extend({
 				this.get('borderNoView').set('selection', 0);
 			}
 		} else {
+			this.set('groups', [1, 2]);
 			// loading view into a dialog menu, default border set to 'Yes'
 			this.get('borderYesView').set('selection', 1);
 		}

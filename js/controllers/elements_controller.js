@@ -130,6 +130,21 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				selectedField.copyField();		
 			}
 		},
+		copyImage: function() {
+			if ($(".selected_field").hasClass('img_div')) {
+				var $img_div = $(".selected_field");
+				var $img = $img_div.children("img");
+				load_into_scan($img.attr('src'), 
+							$img_div.height(), 
+							$img_div.width(), 
+							$img.data('orig_height'), 
+							$img.data('orig_width'), 
+							$img.data('top'), 
+							$img.data('left'), 
+							0, 
+							0);		
+			}
+		},
 		newDoc: function() {
 			if ($("#scan_doc").children().length == 0) {
 				$("#new_doc_dialog").dialog("open");

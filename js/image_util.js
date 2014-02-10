@@ -52,6 +52,12 @@ var load_into_scan = function(img_src, img_height, img_width, orig_height, orig_
 	$img_draggable.draggable({containment: 'parent'});
 	$img_draggable.resizable({containment: 'parent', 
 							aspectRatio: true, handles: 'all'});	
+	$img_draggable.click(function() {
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);	
+		$(".selected_field").removeClass("selected_field");
+		$(this).addClass("selected_field");
+	});
 	$img_draggable.addClass('img_div').append($img);		
 	// NOTE: image removed when double-clicked
 	$img_draggable.dblclick(function() { $(this).remove() });

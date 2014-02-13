@@ -614,7 +614,7 @@ SegNumField.prototype.loadProperties = function() {
 	// NOTE: assuming no duplicate values in first index of
 	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
 	$("#seg_num_size").prop('selectedIndex', (this.element_width == SEG_NUM_SMALL[0]) ? 0 :
-						(this.element_width == SEG_NUM_SMALL[1]) ? 1 : 2);					
+						(this.element_width == SEG_NUM_MEDIUM[0]) ? 1 : 2);					
 	
 	// NOTE: assuming dot_width == dot_height
 	$("#dot_size").prop('selectedIndex', (this.dot_width == DOT_SMALL) ? 0 :

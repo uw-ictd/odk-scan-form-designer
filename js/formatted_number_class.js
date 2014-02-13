@@ -468,7 +468,7 @@ FormNumField.prototype.loadProperties = function() {
 	// NOTE: ASSUMING no duplicate values in first index of
 	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
 	$("#form_num_size").prop('selectedIndex', (this.element_width == SEG_NUM_SMALL[0]) ? 0 :
-						(this.element_width == SEG_NUM_SMALL[1]) ? 1 : 2);					
+						(this.element_width == SEG_NUM_MEDIUM[0]) ? 1 : 2);					
 	
 	// NOTE: ASSUMING dot_width == dot_height
 	$("#form_num_dot_size").prop('selectedIndex', (this.dot_width == DOT_SMALL) ? 0 :

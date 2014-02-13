@@ -23,7 +23,7 @@ function FormField(json_init, update_init) {
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
-			this.$grid_div.css({top: update_init.top, left: update_init.left, borderWidth: update_init.border_width});
+			this.$grid_div.css({top: update_init.top, left: update_init.left});
 		} else {
 			// invoked by Dialog menu
 			this.$grid_div.css({top: 0, left: 0});
@@ -59,7 +59,7 @@ FormField.prototype.constructGrid = function() {
 	// NOTE: initial width and height are aligned to the grid size
 	this.$grid_div.addClass(this.grid_class).addClass('field');
 	
-	this.$grid_div.css({position: 'absolute'});																	
+	this.$grid_div.css({position: 'absolute', borderWidth: this.border_width});																	
 	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});		
 	
 	var fieldObj = this;

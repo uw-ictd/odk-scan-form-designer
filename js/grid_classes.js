@@ -121,8 +121,10 @@ GridField.prototype.constructGrid = function() {
 			var $g_element = this.makeGridElement();
 			$g_element.css({marginTop: this.margin_top, marginBottom: this.margin_bottom, 
 							marginLeft: this.margin_left, marginRight: this.margin_right});
-
-			if (j == 0) { // edge case, first grid element in the row				
+			
+			if (this.num_cols == 1) { // special case: only one columne
+				$g_element.addClass(row_pos).addClass('first_col last_col');
+			} else if (j == 0) { // edge case, first grid element in the row				
 				$g_element.addClass(row_pos).addClass('first_col');
 			} else if (j < this.num_cols - 1) {
 				$g_element.addClass(row_pos).addClass('middle_col');

@@ -86,8 +86,8 @@ $(document).ready(function() {
 							html2canvas($img_container, {   
 								logging:true,
 								onrendered : function(canvas) {												
-									var cropped_img_src = canvas.toDataURL("image/jpeg");															// get image position/size information
-									var img_json = img_pos[img_index];											
+									var cropped_img_src = canvas.toDataURL("image/jpeg"); 
+									var img_json = img_pos[img_index]; // get image position/size information					
 									load_into_scan(cropped_img_src, 
 												img_json.height, 
 												img_json.width, 
@@ -124,7 +124,7 @@ $(document).ready(function() {
 							var empty_box = new EmptyBox(f_json);
 							empty_box.constructBox();		
 						} else if (f_json.field_type == 'text_box') {
-							var text_box = new EmptyBox(f_json);
+							var text_box = new TextBox(f_json);
 							text_box.constructBox();	
 						} else if (f_json.field_type == 'form_num') {
 							var form_num_field = new FormNumField(f_json);

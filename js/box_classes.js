@@ -198,6 +198,7 @@ function TextBox(json_init, update_init) {
 	if (json_init) {
 		this.$box.css({fontSize: json_init.font_size});
 		$text.text(json_init.text);
+		this.text = json_init.text;
 	} else {
 		this.text = $("#text_input").val();
 		$text.text(this.text);

@@ -393,7 +393,6 @@ function BubbleField(json_init, update_init) {
 	this.grid_class = 'bubble_div';
 	
 	// TODO: find out what these values should actually be
-	this.type = $("#bubb_type").val();
 	this.name = "circle_bubbles";	
 	this.label = "circle_bubbles";		
 	this.data_uri = "bubbles";
@@ -402,10 +401,14 @@ function BubbleField(json_init, update_init) {
 	
 	if (json_init) {
 		this.param = json_init.param;
+		this.type = json_init.type;
 	} else {
 		// set the class of the grid elements
 		this.ele_class = ($("#bubb_size").val() == 'small') ? 'bubble_small' : 
 							($("#bubb_size").val() == 'medium') ? 'bubble_med' : 'bubble_large';
+		
+		// set the bubble type
+		this.type = $("#bubb_type").val();
 		
 		// set param according to the type
 		if (this.type == 'tally') {
@@ -488,6 +491,7 @@ BubbleField.prototype.saveJSON = function() {
 	var json = this.getProperties();
 	json.field_type = this.field_type;
 	json.param = this.param;
+	json.type = this.type;
 	return json;
 }
 

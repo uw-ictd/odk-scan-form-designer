@@ -1,8 +1,23 @@
-// TODO: add documentation for FormField class
-
-/* 	Constructs FormField object, passed in the
-	json_init constructor when the Scan doc is loaded
-	from a JSON file.
+/*	FormField class acts similar to an abstract class
+	in Java, it has to be subclassed in order to invoke
+	the constructGrid function.
+	
+	Each subclass requires the following fields to be 
+	initialized:
+		- num_rows (int) 
+		- num_cols (int)
+		- margin_top (int)
+		- margin_bottom (int)
+		- margin_left (int)
+		- margin_right (int)
+		- element_height (int)
+		- element_width (int)
+		- ele_class (string)
+		- grid_class (string)
+		- data_uri (string)
+		- cf_map (JSON)
+		- cf_advanced (JSON)
+		- makeGridElement (function, returns jQuery object)
 */
 function FormField(json_init, update_init) {
 	this.$grid_div = $('<div/>');
@@ -32,8 +47,9 @@ function FormField(json_init, update_init) {
 	}
 }
 
-// returns the properties which are common
-// to all of the subclasses of FormField
+/* 	Returns properties of the field which are 
+	common to all of the subclasses of GridField.
+*/
 FormField.prototype.getProperties = function() {
 	var json = {};
 	
@@ -54,11 +70,12 @@ FormField.prototype.getProperties = function() {
 	return json;
 }
 
+/*	Creates the formatted numbers and adds them
+	to the Scan document.
+*/
 FormField.prototype.constructGrid = function() {
-	console.log("making grid...");
 	// NOTE: initial width and height are aligned to the grid size
 	this.$grid_div.addClass(this.grid_class).addClass('field');
-	
 	this.$grid_div.css({position: 'absolute', borderWidth: this.border_width});																	
 	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});		
 	
@@ -69,6 +86,7 @@ FormField.prototype.constructGrid = function() {
 
 		if (index == 0) { // edge case, first grid element in the row
 			$g_element.css({marginLeft: fieldObj.margin_left, marginRight: fieldObj.group_dx / 2});
+			$g_element.addClass('first_col');
 			fieldObj.$grid_div.append($g_element);
 			
 			var delim = fieldObj.makeGridDelim();
@@ -81,19 +99,59 @@ FormField.prototype.constructGrid = function() {
 			fieldObj.$grid_div.append(delim.clone());
 		} else { // edge case, last grid element in the row
 			$g_element.css({marginLeft: fieldObj.group_dx / 2, marginRight: fieldObj.margin_right});
+			$g_element.addClass('last_col');
 			fieldObj.$grid_div.append($g_element);
 		}
-	});				
-	
+	});			
+	$("#scan_doc").append(this.$grid_div);
+
+	this.alignToGrid();
+	this.addEventHandlers(this.$grid_div);
+
+	$(".selected_field").removeClass("selected_field");
+	this.$grid_div.addClass("selected_field");
+};
+
+/*	Aligns the formatted number field to the grid in the 
+	horizontal and vertical directions.
+*/
+FormField.prototype.alignToGrid = function() {
+	// Rounds up the width of the grid to the nearest multiple
+	// of GRID_X (ex: if GRID_X is 10 and width of grid is 
+	// initially 132 then it gets rounded up to 140).
+	var width_diff = (Math.ceil(this.$grid_div.outerWidth() / GRID_X) * GRID_X) - this.$grid_div.outerWidth();
+	if (width_diff != 0) {
+		var left_pad = width_diff / 2;
+		this.$grid_div.children('.first_col').css('marginLeft', this.margin_left + left_pad);
+		var right_pad = width_diff - left_pad;
+		this.$grid_div.children('.last_col').css('marginRight', this.margin_right + right_pad);
+	}
+
+	// Rounds up the height of the grid to the nearest multiple
+	// of GRID_Y (ex: if GRID_Y is 10 and height of grid is 
+	// initially 132 then it gets rounded up to 140).
+	var height_diff = (Math.ceil(this.$grid_div.outerHeight() / GRID_Y) * GRID_Y) - this.$grid_div.outerHeight();
+	if (height_diff != 0) {
+		var top_pad = height_diff / 2;
+		this.$grid_div.children('div').css('marginTop', this.margin_top + top_pad);
+		var bottom_pad = height_diff - top_pad;
+		this.$grid_div.children('div').css('marginBottom', this.margin_bottom + bottom_pad);
+	}
+}
+
+/*	Adds event handlers (on click, on double click) to $grid.
+	$grid: jQuery div representing the box
+*/
+FormField.prototype.addEventHandlers = function($grid) {
 	// grid fields are removed when double-clicked
-	this.$grid_div.dblclick( function() { 
+	$grid.dblclick( function() { 
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 		this.remove() 
 	});
 	
 	var obj = this;
-	this.$grid_div.click(function() {
+	$grid.click(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");
 
@@ -108,22 +166,18 @@ FormField.prototype.constructGrid = function() {
 			ODKScan.FormNumView.set('groups', arr);
 			
 			$(".num_groups").each(function(index, group_div) {
-				console.log("num_group set to: " + obj.group_sizes[index]);
-				console.log($(group_div));
 				$(group_div).val(obj.group_sizes[index]);
-				//group_div.value = obj.group_sizes[index];
 			});
-					
 		} else {
 			console.log("error - unsupported field type");
 		}	
 	});
+}
 
-	$(".selected_field").removeClass("selected_field");
-	this.$grid_div.addClass("selected_field");
-	$("#scan_doc").append(this.$grid_div);
-};
-
+/*	Returns JSON containing DOM properties
+	of this box, formatted for exporting 
+	the document.
+*/
 FormField.prototype.getFieldJSON = function() {
 	var f_info = {};
 	f_info.type = this.type;
@@ -182,16 +236,15 @@ FormField.prototype.getFieldJSON = function() {
 	return f_info;
 };
 
+/*	Makes a copy of the grid, adds event handlers to it,
+	and adds it to the Scan document.
+*/
 FormField.prototype.copyField = function() {
 	// make a new copy of the $grid_div
 	var $new_grid = this.$grid_div.clone();
 	$new_grid.css({left: 0, top: 0});
 	$new_grid.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
-	$new_grid.dblclick(function() { this.remove() });
-	$new_grid.click(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");
-	});
+	this.addEventHandlers($new_grid);
 	
 	// copy the field object
 	var $new_field = jQuery.extend({}, this);
@@ -203,9 +256,13 @@ FormField.prototype.copyField = function() {
 	$("#scan_doc").append($new_grid);
 };
 
+/*	Represents a group of formatted numbers.
+	json_init: JSON 	// initialization values that come from a JSON file
+	update_init: JSON 	// initialization values that come from updating the field
+*/
 function FormNumField(json_init, update_init) {
 	FormField.call(this, json_init, update_init);
-	// Set all segmented number attributes
+	/* Set all segmented number attributes. */
 	
 	// set the grid class
 	this.grid_class = 'num_div';
@@ -221,7 +278,6 @@ function FormNumField(json_init, update_init) {
 	this.field_type = 'form_num';
 	
 	if (json_init) {
-		console.log('loading from');
 		this.border_offset = json_init.border_offset;
 		this.param = json_init.param;
 		this.dot_width = json_init.dot_width;
@@ -237,8 +293,6 @@ function FormNumField(json_init, update_init) {
 		
 		// TODO: allow user to modify the borders of grid elements?
 		this.border_offset = 2;
-		
-		//this.param = $("#num_row_seg_num").val() * $("#num_col_seg_num").val();
 
 		// number size
 		this.element_width = ($("#form_num_size").val() == 'small') ? SEG_NUM_SMALL[0] : 
@@ -258,6 +312,10 @@ function FormNumField(json_init, update_init) {
 		// the horizontal spacing between the edges of groups
 		this.group_dx = parseInt($("#form_num_group_dx").val());
 		
+		/*	Each index corresponds to each group (index = 0 --> group 1, index = 1 --> group 1, etc.).
+			The value at each index corresponds to the number of segmented numbers in that group.
+			(group_sizes[0] = 3 --> size of group 1 is 3, etc.)
+		*/
 		var group_sizes = [];
 		
 		$(".num_groups").each(function() {
@@ -289,21 +347,27 @@ FormNumField.prototype = new FormField();
 // make the constructor point to the FormNumField class
 FormNumField.prototype.constructor = FormNumField;
 
-// creates the div for each segmented number
+/* 	Returns a div representing a group of segmented numbers. */
 FormNumField.prototype.makeGridElement = function(num_digits, group_num) {
 	var $new_num = $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
 	
-	/*	NOTE: Dots are spaced out evenly - 
-	
-		1st row is placed 1/6 of the height from 
-		the top of the number, 2nd row is 3/6 of
-		the height from the top, and the 3rd row 
-		is 5/6 of the height from the top of the
-		number.
+	/*	NOTE: About dot position:
+		Let y = 0 be located at the top of the
+		segmented number, values of y increase
+		downward. Let num_h be the height of 
+		the number.
+		
+		1st row of dots is at y = num_h * 1/6
+		2nd row of dots is at y = num_h * 3/6
+		3rd row of dots is at y = num_h * 5/6
 
-		1st column is placed 1/4 of the width from
-		the left side of the number, and the 2nd 
-		column is 3/4 of the width from the left.
+		Let x = 0 be located at the left of the
+		segmented number, values of x increase
+		toward the right. Let num_w be the width 
+		of the number.
+
+		1st column of dots is at x = num_w * 1/4
+		2nd column of dots is at x = num_w * 3/4
 	*/
 	
 	var y_pos = (this.element_height - this.border_offset) / 6;
@@ -355,6 +419,7 @@ FormNumField.prototype.makeGridElement = function(num_digits, group_num) {
 	return $form_num_group;
 }
 
+/* Returns a div representing a formatted number delimeter. */
 FormNumField.prototype.makeGridDelim = function(num_digits) {
 	var $delim_div = $("<div/>");
 	$delim_div.addClass(this.ele_class);
@@ -366,9 +431,7 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 					marginLeft: this.group_dx / 2, 
 					marginRight: this.group_dx / 2,
 					textAlign: 'center'});
-	var $delim_text = $("<p/>").text(this.delim_type);
-	//$delim_div.append($delim_text);
-	
+					
 	//	DEBUG test - adds horizontal and vertical line to the div
 	//	to indicate the center of the number. 
 	/*
@@ -393,42 +456,36 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 	$vert_line.css('webkitTransform', 'translate(' + vt_horiz_trans + "px, 0px)");
 	$delim_div.append($vert_line);
 	*/
-
-	/* NOTE: this assumes that this.border_width is the width
-	of the border around the 'num' class. */ 
+	
 	var $delim = $("<div/>");
 	if (this.delim_type == "/") {
 		// calculate size, translation, rotation of slash symbol
-		var slash_width = 1;
-		var inner_width = this.element_width;
-		var inner_height = this.element_height;
-		var slash_length = Math.sqrt(Math.pow(inner_width, 2) + Math.pow(inner_height, 2));
-		var horiz_trans = ((slash_length / 2) - (inner_width / 2));
-		var vert_trans = (inner_height / 2) - slash_width;
-		var rot_angle = Math.atan2(inner_height, inner_width) * 180 / Math.PI;
+		var slash_width = 1; // NOTE: hardcoded constant
+		var slash_length = Math.sqrt(Math.pow(this.element_width, 2) + Math.pow(this.element_height, 2));
+		var horiz_trans = ((slash_length / 2) - (this.element_width / 2));
+		var vert_trans = (this.element_height / 2) - slash_width;
+		var rot_angle = Math.atan2(this.element_height, this.element_width) * 180 / Math.PI;
 		
 		$delim.css({border: "1px solid black", 
 					width: slash_length, 
 					height: slash_width});
 		$delim.css('webkitTransform', 'translate(-' + horiz_trans + 'px, ' + vert_trans + "px) " + 'rotate(-' + rot_angle + 'deg)');		
 	} else if (this.delim_type == "-") {	
-		var dash_width = 1;
+		var dash_width = 1; // NOTE: hardcoded constant
 		var dash_length = this.element_width;
-		var inner_height = this.element_height;
-		var vert_trans = (inner_height / 2) - dash_width;
+		var vert_trans = (this.element_height / 2) - dash_width;
 		
 		$delim.css({border: "1px solid black", 
 					width: dash_length, 
 					height: dash_width});
 		$delim.css('webkitTransform', "translate(0px, " + vert_trans + "px)");		
 	} else if (this.delim_type == ".") {		
-		var inner_width = this.element_width;
-		var inner_height = this.element_height;
-		var circle_radius = 7;
+		var circle_radius = (this.element_width == SEG_NUM_SMALL[0]) ? 3 :
+							(this.element_width == SEG_NUM_MEDIUM[0]) ? 4 : 6;
 		// must compensate for circle radius to center the circle vertically witin the div
-		var vert_trans = (inner_height / 2) - circle_radius; 
+		var vert_trans = (this.element_height / 2) - circle_radius; 
 		var circle_border = 1;
-		var horiz_trans = (inner_width / 2) - circle_radius;		
+		var horiz_trans = (this.element_width / 2) - circle_radius;		
 		
 		$delim.addClass("dot_delim");
 		$delim.css({borderWidth: circle_border, 
@@ -437,7 +494,7 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 					bottom: "0px",
 					borderColor: "black",
 					borderStyle: "solid",
-					borderRadius: circle_radius + "px",
+					borderRadius: circle_radius,
 					height: circle_radius * 2,
 					width: circle_radius * 2});
 		$delim.css('webkitTransform', "translate(" + horiz_trans + "px, 0px)");		
@@ -449,8 +506,10 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 	return $delim_div;
 }
 
-// returns JSON containing the current state of 
-// the field (position, grid element type, etc.)
+/*	Returns JSON containing DOM properties
+	of this bubble field, formatted for saving 
+	the document.
+*/
 FormNumField.prototype.saveJSON = function() {
 	var json = this.getProperties();
 	json.param = this.param;
@@ -464,6 +523,9 @@ FormNumField.prototype.saveJSON = function() {
 	return json;
 }
 
+/* 	Loads the properties of the formatted number
+	into the properties toolbar.
+*/
 FormNumField.prototype.loadProperties = function() {
 	// NOTE: ASSUMING no duplicate values in first index of
 	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
@@ -505,8 +567,10 @@ FormNumField.prototype.loadProperties = function() {
 	});
 }
 
-// creates new formatted numbers field with the properties in the
-// properties sidebar
+/*	Creates a new formatted number field with 
+	the updated properties listed in the 
+	properties sidebar.
+*/
 FormNumField.prototype.updateProperties = function() {
 	var formNumField = new FormNumField(null, this.getProperties());
 	formNumField.constructGrid();	

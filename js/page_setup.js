@@ -1,6 +1,5 @@
 $(document).ready(function() {		
 	// general page setup
-
 	ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 
 	$("#update_prop").click(function() {
@@ -9,14 +8,6 @@ $(document).ready(function() {
 			var origField = $(".selected_field");
 			$(".selected_field").data("obj").updateProperties();
 			origField.remove();
-		}
-	});	
-	
-	$("#load_prop").click(function() {
-		console.log("loading field properties");
-		if ($(".selected_field").length != 0) {
-			console.log("field is currently selected");
-			$(".selected_field").data("obj").loadProperties();
 		}
 	});	
 	

@@ -139,7 +139,6 @@
 		<div id="page_body">
 			<div id="prop_sidebar">
 				<h3>Form Properties</h3>	
-				<!--<button id="load_prop">Load Field</button>-->
 				<br>
 				{{#view ODKScan.FieldContainer}}			
 				{{/view}}
@@ -154,10 +153,57 @@
 		</div>	
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="grid-size-view">
+		<label for="name">Number of columns</label>
+		<input type="number" id="num_col" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+		
+		<label for="name">Number of rows</label>
+		<input type="number" id="num_row" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="border-options-view">
+		<label for="name">Include Border?</label>
+		<label>
+			{{view Ember.RadioButton type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+		</label>
+    
+		<label>
+			{{view Ember.RadioButton type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+		</label>
+		
+		<div id="border_container">
+			<label for="name">Border</label>
+			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="margin-options-view">
+		<label for="name">Top Margin</label>
+		<input type="number" id="margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Bottom Margin</label>
+		<input type="number" id="margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
+		
+		<label for="name">Left Margin</label>
+		<input type="number" id="margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+		
+		<label for="name">Right Margin</label>
+		<input type="number" id="margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
+	</script>
+	
 	<script type="text/x-handlebars" data-template-name="default-prop-view">
 		<div id="default_prop_message">
 			<h4>Select a field in the document to edit its properties.</h4>
 		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="field-layout">
+		{{yield}}
+		{{view GridSize}} 
+		<hr class="horz_divider">		
+		{{view BorderOptions viewName='bdOptions'}}	
+		<hr class="horz_divider">
+		{{view MarginOptions}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="empty-box-view">
@@ -211,40 +257,6 @@
 			<option value="medium">Medium</option>
 			<option value="large">Large</option>				
 		</select><br>
-		
-		<label for="name">Number of columns</label>
-		<input type="number" id="num_col_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-		
-		<label for="name">Number of rows</label>
-		<input type="number" id="num_row_cb" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-		
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
-		
-		<hr class="horz_divider">
-		
-		<label for="name">Top Margin</label>
-		<input type="number" id="cb_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Bottom Margin</label>
-		<input type="number" id="cb_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-		
-		<label for="name">Left Margin</label>
-		<input type="number" id="cb_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Right Margin</label>
-		<input type="number" id="cb_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="bubbles-view">
@@ -260,40 +272,6 @@
 			<option value="tally">Tally</option>
 			<option value="select1">Select</option>										
 		</select><br>
-		
-		<label for="name">Number of columns</label>
-		<input type="number" id="num_col_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-		
-		<label for="name">Number of rows</label>
-		<input type="number" id="num_row_bubbles" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-		
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
-		
-		<hr class="horz_divider">
-		
-		<label for="name">Top Margin</label>
-		<input type="number" id="bubble_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Bottom Margin</label>
-		<input type="number" id="bubble_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-		
-		<label for="name">Left Margin</label>
-		<input type="number" id="bubble_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Right Margin</label>
-		<input type="number" id="bubble_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="seg-num-view">
@@ -310,40 +288,6 @@
 			<option value="medium">Medium</option>
 			<option value="large">Large</option>				
 		</select><br>
-		
-		<label for="name">Number of columns</label>
-		<input type="number" id="num_col_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-		
-		<label for="name">Number of rows</label>
-		<input type="number" id="num_row_seg_num" value="1" class="int_input ui-widget-content ui-corner-all" min="1"><br>
-		
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
-		
-		<hr class="horz_divider">
-		
-		<label for="name">Top Margin</label>
-		<input type="number" id="seg_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Bottom Margin</label>
-		<input type="number" id="seg_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-		
-		<label for="name">Left Margin</label>
-		<input type="number" id="seg_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Right Margin</label>
-		<input type="number" id="seg_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="form-num-view">
@@ -370,11 +314,11 @@
 		
 		<label for="name">Include Border?</label>
 		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
+			{{view view.radioView viewName="borderYesView" value="1"}} Yes					
 		</label>
     
 		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
+			{{view view.radioView viewName="borderNoView" value="0"}} No
 		</label>
 		
 		<div id="border_container">

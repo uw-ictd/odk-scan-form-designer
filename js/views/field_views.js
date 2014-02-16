@@ -30,16 +30,15 @@ ODKScan.FormNumContainer = Ember.ContainerView.create({
 Ember.RadioButton = Ember.View.extend({
     tagName : "input",
     type : "radio",
+	name: "borderOption",
     attributeBindings : [ "name", "type", "value", "checked:checked:" ],
     click : function() {
 		if (this.$().val() == "1") {
 			$("#border_width").val(1); // set border with to one
 			$("#border_container").css('display', 'inline');
-			this.get('parentView').set('hasBorder', true);
 		} else {		
 			$("#border_width").val(0); // set border with to zero
 			$("#border_container").css('display', 'none');
-			this.get('parentView').set('hasBorder', false);
 		}
         this.set("selection", this.$().val())
     }.observes('selection'),
@@ -47,42 +46,50 @@ Ember.RadioButton = Ember.View.extend({
         return this.get("value") == this.get("selection");   
     }.property('selection'),
 });
-var yesView;
-var noView;
+
+GridSize = Ember.View.extend({
+	templateName: 'grid-size-view'
+});
+
+BorderOptions = Ember.View.extend({
+	templateName: 'border-options-view'
+});
+
+MarginOptions = Ember.View.extend({
+	templateName: 'margin-options-view'
+});
+
 // All views below inherit from this view controller
 ODKScan.ViewController = Ember.View.extend({
-	didInsertElement: function() {
-		console.log("inserted view");		
+	layoutName: "field-layout",
+	didInsertElement: function() {		
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar
 			var field_obj = $(".selected_field").data("obj");			
 			field_obj.loadProperties();
 			
 			// check if the selected shape has a border
-			var border_val = field_obj.border_width;
-			if (border_val > 0) {
-				this.get('borderYesView').set('selection', 1);
-				$("#border_width").val(border_val); 
+			if (field_obj.border_width > 0) {
+				this.get('bdOptions').get('borderYesView').set('selection', 1);
+				$("#border_width").val(field_obj.border_width); 
 			} else {
-				this.get('borderNoView').set('selection', 0);
+				this.get('bdOptions').get('borderNoView').set('selection', 0);
 			}
 		} else {
+			// loading view into a dialog menu, default border set to 'Yes',
+			// default number of groups is 2
 			this.set('groups', [1, 2]);
-			// loading view into a dialog menu, default border set to 'Yes'
-			this.get('borderYesView').set('selection', 1);
+			this.get('bdOptions').get('borderYesView').set('selection', 1);
 		}
 	},
-	radioView: Ember.RadioButton,
 	groups: [1, 2],
 	actions: {
 		updateNumGroups: function() {	
-			console.log("UPDATE NUM GROUPS");
 			var arr = [];
 			for (var i = 1; i <= $("#num_col_form_num").val(); i++) {
 				arr.push(i);
 			}
 			this.set('groups', arr);
-			console.log('num groups is: ' + $("#num_col_form_num").val());
 		}
 	}
 });

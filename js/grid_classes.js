@@ -67,6 +67,18 @@ function GridField(init_val, update_init) {
 			// invoked by Dialog menu
 			this.$grid_div.css({top: 0, left: 0});
 		}
+		
+		// margin values
+		this.margin_top = parseInt($("#margin_top").val());
+		this.margin_bottom = parseInt($("#margin_bottom").val());
+		this.margin_left = parseInt($("#margin_left").val());
+		this.margin_right = parseInt($("#margin_right").val());
+		
+		// number of rows
+		this.num_rows = $("#num_row").val();
+		
+		// number of columns
+		this.num_cols = $("#num_col").val();
 		this.border_width = $("#border_width").val();
 	}
 }
@@ -122,7 +134,7 @@ GridField.prototype.constructGrid = function() {
 			$g_element.css({marginTop: this.margin_top, marginBottom: this.margin_bottom, 
 							marginLeft: this.margin_left, marginRight: this.margin_right});
 			
-			if (this.num_cols == 1) { // special case: only one columne
+			if (this.num_cols == 1) { // special case: only one column
 				$g_element.addClass(row_pos).addClass('first_col last_col');
 			} else if (j == 0) { // edge case, first grid element in the row				
 				$g_element.addClass(row_pos).addClass('first_col');
@@ -224,8 +236,8 @@ GridField.prototype.getFieldJSON = function() {
 		
 	f_info.classifier = cf;
 	
-	// check if the field has a 'param'
-	// attribute (only bubbles require it)
+	// check if fields have 'type' or 'param'
+	// attribtues
 	if (this.param) {
 		f_info.param = this.param;
 	}
@@ -285,6 +297,26 @@ GridField.prototype.copyField = function() {
 	$("#scan_doc").append($new_grid);
 };
 
+/*	Loads properties that are common to all GridField
+	subclasses into the properties sidebar.
+*/
+GridField.prototype.loadGridProp = function() {
+	// margin values
+	$("#margin_top").val(this.margin_top);
+	$("#margin_bottom").val(this.margin_bottom);
+	$("#margin_left").val(this.margin_left);
+	$("#margin_right").val(this.margin_right);
+	
+	// number of rows
+	$("#num_row").val(this.num_rows);
+	
+	// number of columns
+	$("#num_col").val(this.num_cols);
+	
+	// set border width
+	$("#border_width").val(this.border_width);
+}
+
 /*	Represents a grid of checkboxes.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
@@ -314,18 +346,6 @@ function CheckboxField(json_init, update_init) {
 							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
 		this.element_height = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
 							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
-		
-		// margin values
-		this.margin_top = parseInt($("#cb_margin_top").val());
-		this.margin_bottom = parseInt($("#cb_margin_bottom").val());
-		this.margin_left = parseInt($("#cb_margin_left").val());
-		this.margin_right = parseInt($("#cb_margin_right").val());
-		
-		// number of rows
-		this.num_rows = $("#num_row_cb").val();
-		
-		// number of columns
-		this.num_cols = $("#num_col_cb").val();
 	}
 }
 
@@ -344,24 +364,12 @@ CheckboxField.prototype.makeGridElement = function() {
 	the properties toolbar.
 */
 CheckboxField.prototype.loadProperties = function() {
+	// load properties that are common to all GridFields
+	this.loadGridProp();
+
 	// checkbox size
 	$("#cb_size").prop('selectedIndex', (this.element_width == CHECKBOX_SMALL) ? 0 :
-						(this.element_width == CHECKBOX_MEDIUM) ? 1 : 2);					
-		
-	// margin values
-	$("#cb_margin_top").val(this.margin_top);
-	$("#cb_margin_bottom").val(this.margin_bottom);
-	$("#cb_margin_left").val(this.margin_left);
-	$("#cb_margin_right").val(this.margin_right);
-	
-	// number of rows
-	$("#num_row_cb").val(this.num_rows);
-	
-	// number of columns
-	$("#num_col_cb").val(this.num_cols);
-	
-	// set border width
-	$("#border_width").val(this.border_width);
+						(this.element_width == CHECKBOX_MEDIUM) ? 1 : 2);
 }
 
 /*	Creates a new checkbox field with the updated
@@ -422,18 +430,6 @@ function BubbleField(json_init, update_init) {
 							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
 		this.element_height = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
 							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
-		
-		// margin values
-		this.margin_top = parseInt($("#bubble_margin_top").val());
-		this.margin_bottom = parseInt($("#bubble_margin_bottom").val());
-		this.margin_left = parseInt($("#bubble_margin_left").val());
-		this.margin_right = parseInt($("#bubble_margin_right").val());
-		
-		// number of rows
-		this.num_rows = $("#num_row_bubbles").val();
-		
-		// number of columns
-		this.num_cols = $("#num_col_bubbles").val();
 	}
 }
 
@@ -452,27 +448,15 @@ BubbleField.prototype.makeGridElement = function() {
 	the properties toolbar.
 */
 BubbleField.prototype.loadProperties = function() {
+	// load properties that are common to all GridFields
+	this.loadGridProp();
+
 	// bubble size
 	$("#bubb_size").prop('selectedIndex', (this.element_width == BUBBLE_SMALL) ? 0 :
 						(this.element_width == BUBBLE_MEDIUM) ? 1 : 2);		
 
 	// bubble type
 	$("#bubb_type").prop('selectedIndex', (this.type == 'tally') ? 0 : 1);			
-		
-	// margin values
-	$("#bubble_margin_top").val(this.margin_top);
-	$("#bubble_margin_bottom").val(this.margin_bottom);
-	$("#bubble_margin_left").val(this.margin_left);
-	$("#bubble_margin_right").val(this.margin_right);
-	
-	// number of rows
-	$("#num_row_bubbles").val(this.num_rows);
-	
-	// number of columns
-	$("#num_col_bubbles").val(this.num_cols);
-	
-	// set border width
-	$("#border_width").val(this.border_width);
 }
 
 /*	Creates a new bubble field with the updated
@@ -501,9 +485,8 @@ BubbleField.prototype.saveJSON = function() {
 */
 function SegNumField(init_val, update_init) {
 	GridField.call(this, init_val, update_init);
-	this.field_type = 'seg_num';
-	
 	// Set all segmented number attributes
+	this.field_type = 'seg_num';
 	
 	// set the grid class
 	this.grid_class = 'num_div';
@@ -522,7 +505,6 @@ function SegNumField(init_val, update_init) {
 		this.param = init_val.param;
 		this.dot_width = init_val.dot_width;
 		this.dot_height = init_val.dot_height;
-		return; // the rest of the values have already been set by init()
 	} else {
 		// set the class of the grid elements
 		this.ele_class = 'num';
@@ -541,19 +523,7 @@ function SegNumField(init_val, update_init) {
 							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
 		this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
 							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
-		
-		// margin values
-		this.margin_top = parseInt($("#seg_num_margin_top").val());
-		this.margin_bottom = parseInt($("#seg_num_margin_bottom").val());
-		this.margin_left = parseInt($("#seg_num_margin_left").val());
-		this.margin_right = parseInt($("#seg_num_margin_right").val());
-		
-		// number of rows
-		this.num_rows = $("#num_row_seg_num").val();
-		
-		// number of columns
-		this.num_cols = $("#num_col_seg_num").val();
-		
+							
 		this.param = this.num_rows * this.num_cols;
 	}
 }
@@ -617,6 +587,9 @@ SegNumField.prototype.makeGridElement = function() {
 	into the properties toolbar.
 */
 SegNumField.prototype.loadProperties = function() {
+	// load properties that are common to all GridFields
+	this.loadGridProp();
+
 	// NOTE: assuming no duplicate values in first index of
 	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
 	$("#seg_num_size").prop('selectedIndex', (this.element_width == SEG_NUM_SMALL[0]) ? 0 :
@@ -625,21 +598,6 @@ SegNumField.prototype.loadProperties = function() {
 	// NOTE: assuming dot_width == dot_height
 	$("#dot_size").prop('selectedIndex', (this.dot_width == DOT_SMALL) ? 0 :
 						(this.dot_width == DOT_MEDIUM) ? 1 : 2);											
-						
-	// margin values
-	$("#seg_num_margin_top").val(this.margin_top);
-	$("#seg_num_margin_bottom").val(this.margin_bottom);
-	$("#seg_num_margin_left").val(this.margin_left);
-	$("#seg_num_margin_right").val(this.margin_right);
-	
-	// number of rows
-	$("#num_row_seg_num").val(this.num_rows);
-	
-	// number of columns
-	$("#num_col_seg_num").val(this.num_cols);
-			
-	// set border width
-	$("#border_width").val(this.border_width);
 }
 
 /*	Creates a new segmented number field with 

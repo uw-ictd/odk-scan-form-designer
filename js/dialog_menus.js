@@ -10,6 +10,8 @@ $(document).ready(function() {
 				$("#scan_doc").children().remove();
 				$("#scan_doc").removeClass();
 				$("#scan_doc").addClass($("#doc_size").val());
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			
 				$("#new_doc_dialog").dialog("close");
 			},
@@ -24,7 +26,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Save": function() {
-				controller.send("saveDoc");
+				$("#save_dialog").dialog("open");
 				$("#save_check_dialog").dialog("close");
 			},
 			"Don't Save": function() {

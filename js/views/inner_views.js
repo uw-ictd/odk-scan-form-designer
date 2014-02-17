@@ -32,3 +32,7 @@ BorderOptions = Ember.View.extend({
 MarginOptions = Ember.View.extend({
 	templateName: 'margin-options-view'
 });
+
+AttributeOptions = Ember.View.extend({
+	templateName: 'field-attributes-view'
+});

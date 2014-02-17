@@ -43,22 +43,24 @@ var DOT_LARGE = 7;
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
 */
-function GridField(init_val, update_init) {
+function GridField(json_init, update_init) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
 	
-	if (init_val) {
-		this.num_rows = init_val.num_rows;
-		this.num_cols = init_val.num_cols;
-		this.margin_top = init_val.margin_top;
-		this.margin_bottom = init_val.margin_bottom;
-		this.margin_left = init_val.margin_left;
-		this.margin_right = init_val.margin_right;
-		this.element_height = init_val.element_height;
-		this.element_width = init_val.element_width;
-		this.ele_class = init_val.ele_class;
-		this.$grid_div.css({top: init_val.top, left: init_val.left});
-		this.border_width = init_val.border_width;	
+	if (json_init) {
+		this.num_rows = json_init.num_rows;
+		this.num_cols = json_init.num_cols;
+		this.margin_top = json_init.margin_top;
+		this.margin_bottom = json_init.margin_bottom;
+		this.margin_left = json_init.margin_left;
+		this.margin_right = json_init.margin_right;
+		this.element_height = json_init.element_height;
+		this.element_width = json_init.element_width;
+		this.ele_class = json_init.ele_class;
+		this.$grid_div.css({top: json_init.top, left: json_init.left});
+		this.border_width = json_init.border_width;	
+		this.name = json_init.name;
+		this.label = json_init.label;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
@@ -79,7 +81,13 @@ function GridField(init_val, update_init) {
 		
 		// number of columns
 		this.num_cols = $("#num_col").val();
+		
+		// set border with
 		this.border_width = $("#border_width").val();
+		
+		// set other field attributes
+		this.name = $("#field_name").val();
+		this.label = $("#field_label").val();
 	}
 }
 
@@ -102,6 +110,8 @@ GridField.prototype.getProperties = function() {
 	json.top = this.$grid_div.css('top');
 	json.border_width = this.border_width;
 	json.field_type = this.field_type;
+	json.name = this.name;
+	json.label = this.label;
 	
 	return json;
 }
@@ -315,6 +325,10 @@ GridField.prototype.loadGridProp = function() {
 	
 	// set border width
 	$("#border_width").val(this.border_width);
+	
+	// set field attributes
+	$("#field_name").val(this.name);
+	$("#field_label").val(this.label);
 }
 
 /*	Represents a grid of checkboxes.
@@ -325,14 +339,9 @@ function CheckboxField(json_init, update_init) {
 	GridField.call(this, json_init, update_init);
 	/* Set all checkbox attributes. */
 	this.field_type = "checkbox";
-	
-	// set the grid class
 	this.grid_class = 'cb_div';
 	
-	// TODO: find out how these values should be set
-	this.type = 'int';
-	this.name = "square_checkboxes";	
-	this.label = "square_checkboxes";		
+	this.type = 'int';	
 	this.data_uri = "checkboxes";
 	this.cf_advanced = {flip_training_data : false};
 	this.cf_map = {empty : false};
@@ -345,7 +354,7 @@ function CheckboxField(json_init, update_init) {
 		this.element_width = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
 							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
 		this.element_height = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
-							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
+							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;							
 	}
 }
 
@@ -396,13 +405,8 @@ function BubbleField(json_init, update_init) {
 	GridField.call(this, json_init, update_init);
 	/* Set all bubble attributes. */
 	this.field_type = 'bubble';
-	
-	// set the grid class
 	this.grid_class = 'bubble_div';
-	
-	// TODO: find out what these values should actually be
-	this.name = "circle_bubbles";	
-	this.label = "circle_bubbles";		
+		
 	this.data_uri = "bubbles";
 	this.cf_advanced = {flip_training_data : false};
 	this.cf_map = {empty : false};
@@ -473,7 +477,6 @@ BubbleField.prototype.updateProperties = function() {
 */
 BubbleField.prototype.saveJSON = function() {
 	var json = this.getProperties();
-	json.field_type = this.field_type;
 	json.param = this.param;
 	json.type = this.type;
 	return json;
@@ -483,28 +486,23 @@ BubbleField.prototype.saveJSON = function() {
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
 */
-function SegNumField(init_val, update_init) {
-	GridField.call(this, init_val, update_init);
+function SegNumField(json_init, update_init) {
+	GridField.call(this, json_init, update_init);
 	// Set all segmented number attributes
 	this.field_type = 'seg_num';
-	
-	// set the grid class
 	this.grid_class = 'num_div';
 	
-	// TODO: find out what these values should actually be
-	this.type = 'string';
-	this.name = "seg_number";	
-	this.label = "seg_number";		
+	this.type = 'string';		
 	this.data_uri = "numbers";
 	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
 	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
 					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
 	
-	if (init_val) {
-		this.border_offset = init_val.border_offset;
-		this.param = init_val.param;
-		this.dot_width = init_val.dot_width;
-		this.dot_height = init_val.dot_height;
+	if (json_init) {
+		this.border_offset = json_init.border_offset;
+		this.param = json_init.param;
+		this.dot_width = json_init.dot_width;
+		this.dot_height = json_init.dot_height;
 	} else {
 		// set the class of the grid elements
 		this.ele_class = 'num';

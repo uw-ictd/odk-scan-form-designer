@@ -25,6 +25,16 @@ function FormField(json_init, update_init) {
 	
 	if (json_init) {
 		// invoke by Load button
+		this.border_offset = json_init.border_offset;
+		this.param = json_init.param;
+		this.dot_width = json_init.dot_width;
+		this.dot_height = json_init.dot_height;
+		this.group_dx = json_init.group_dx;
+		this.num_dx = json_init.num_dx;
+		this.num_group = json_init.num_group;
+		this.group_sizes = json_init.group_sizes;
+		this.delim_type = json_init.delim_type;
+		
 		this.num_cols = json_init.num_cols;
 		this.margin_top = json_init.margin_top;
 		this.margin_bottom = json_init.margin_bottom;
@@ -35,6 +45,8 @@ function FormField(json_init, update_init) {
 		this.ele_class = json_init.ele_class;
 		this.$grid_div.css({top: json_init.top, left: json_init.left});
 		this.border_width = json_init.border_width;
+		this.name = json_init.name;
+		this.label = json_init.label;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
@@ -52,6 +64,10 @@ function FormField(json_init, update_init) {
 		
 		// set border width
 		this.border_width = parseInt($("#border_width").val());
+		
+		// set other field attributes
+		this.name = $("#field_name").val();
+		this.label = $("#field_label").val();
 	}
 }
 
@@ -74,6 +90,17 @@ FormField.prototype.getProperties = function() {
 	json.left = this.$grid_div.css('left');
 	json.top = this.$grid_div.css('top');
 	json.border_width = this.border_width;
+	
+	json.param = this.param;
+	json.border_offset = this.border_offset;
+	json.dot_width = this.dot_width;
+	json.dot_height = this.dot_height;
+	json.num_dx = this.num_dx;
+	json.group_dx = this.group_dx;
+	json.group_sizes = this.group_sizes;
+	json.delim_type = this.delim_type;
+	json.name = this.name;
+	json.label = this.label;
 	
 	return json;
 }
@@ -277,25 +304,13 @@ function FormNumField(json_init, update_init) {
 	this.grid_class = 'num_div';
 	
 	// TODO: find out what these values should actually be
-	this.type = 'string';
-	this.name = "seg_number";	
-	this.label = "seg_number";		
+	this.type = 'string';		
 	this.data_uri = "numbers";
 	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
 	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
 					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
 	
-	if (json_init) {
-		this.border_offset = json_init.border_offset;
-		this.param = json_init.param;
-		this.dot_width = json_init.dot_width;
-		this.dot_height = json_init.dot_height;
-		this.group_dx = json_init.group_dx;
-		this.num_dx = json_init.num_dx;
-		this.num_group = json_init.num_group;
-		this.group_sizes = json_init.group_sizes;
-		this.delim_type = json_init.delim_type;
-	} else {
+	if (!json_init) {
 		// set the class of the grid elements
 		this.ele_class = 'num';
 		
@@ -510,16 +525,7 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 	the document.
 */
 FormNumField.prototype.saveJSON = function() {
-	var json = this.getProperties();
-	json.param = this.param;
-	json.border_offset = this.border_offset;
-	json.dot_width = this.dot_width;
-	json.dot_height = this.dot_height;
-	json.num_dx = this.num_dx;
-	json.group_dx = this.group_dx;
-	json.group_sizes = this.group_sizes;
-	json.delim_type = this.delim_type;
-	return json;
+	return this.getProperties();
 }
 
 /* 	Loads the properties of the formatted number
@@ -564,6 +570,10 @@ FormNumField.prototype.loadProperties = function() {
 		$(group_div).val(obj.group_sizes[index]);
 		//group_div.value = obj.group_sizes[index];
 	});
+	
+	// set field attributes
+	$("#field_name").val(this.name);
+	$("#field_label").val(this.label);
 }
 
 /*	Creates a new formatted number field with 

@@ -198,6 +198,14 @@
 		<input type="number" id="margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="field-attributes-view">
+		<label for="name">Name</label>
+		<input type="text" id="field_name" class="ui-widget-content ui-corner-all"><br>
+		
+		<label for="name">Label</label>
+		<input type="text" id="field_label" class="ui-widget-content ui-corner-all"><br>
+	</script>
+	
 	<script type="text/x-handlebars" data-template-name="default-prop-view">
 		<div id="default_prop_message">
 			<h4>Select a field in the document to edit its properties.</h4>
@@ -211,10 +219,14 @@
 		{{view BorderOptions viewName='bdOptions'}}	
 		<hr class="horz_divider">
 		{{view MarginOptions}}
+		<hr class="horz_divider">
+		{{view AttributeOptions}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="empty-box-view">
 		{{view BorderOptions viewName='bdOptions'}}
+		<hr class="horz_divider">
+		{{view AttributeOptions}}
 	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
@@ -226,10 +238,10 @@
 		</select><br>
 		<label for="name">Text</label>
 		<input type="text" id="text_input" class="ui-widget-content ui-corner-all">		
-		
 		<hr class="horz_divider">
-		
 		{{view BorderOptions viewName='bdOptions'}}
+		<hr class="horz_divider">
+		{{view AttributeOptions}}
 	</script>
 	
 	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
@@ -318,8 +330,12 @@
 		<hr class="horz_divider">
 		
 		{{view MarginOptions}}
+		
+		<hr class="horz_divider">
+		{{view AttributeOptions}}
 	</script>
 	
+	<!-- Dialog menu html -->
 	<script type="text/x-handlebars" data-template-name="_emptyBoxDialog">
 		<div id="box_dialog" title="Create text box">	
 			{{#view ODKScan.EmptyBoxContainer}}		
@@ -403,7 +419,5 @@
 			<label for="name">Do you want to save your changes?</label>
 		</div>
 	</script>
-	
-	<!-- Dialog menu html -->
   </body>
 </html>

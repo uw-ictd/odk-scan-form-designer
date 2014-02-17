@@ -6,6 +6,7 @@ function Box(json_init, update_init) {
 	this.$box = $('<div/>');	
 	this.$box.data("obj", this);
 	this.$box.css('position', 'absolute');
+	this.type = "box"; 
 	
 	if(json_init) {
 		this.$box.css({width: json_init.box_width, 
@@ -13,6 +14,8 @@ function Box(json_init, update_init) {
 					left: json_init.left,
 					top: json_init.top});
 		this.border_width = json_init.border_width;
+		this.name = json_init.name;
+		this.label = json_init.label;
 	} else {	
 		if (update_init) {
 			this.$box.css({top: update_init.top, left: update_init.left, 
@@ -20,14 +23,15 @@ function Box(json_init, update_init) {
 		} else {
 			// NOTE: initial width and height are aligned
 			// to the grid size
-			this.$box.css({top: 0, left: 0, 
-						width: GRID_X * 10, height: GRID_Y * 10});
+			this.$box.css({top: 0, left: 0, width: GRID_X * 10, height: GRID_Y * 10});
 		}
 		this.border_width = $("#border_width").val();
 		this.$box.css({borderWidth: this.border_width});
+		
+		// set other field attributes
+		this.name = $("#field_name").val();
+		this.label = $("#field_label").val();
 	}
-	this.type = "box"; 
-	this.name = "none";	
 }
 
 /*	Adds event handlers (on click, on double click, on resize)
@@ -93,6 +97,7 @@ Box.prototype.getFieldJSON = function() {
 	var f_info = {};
 	f_info.type = this.type;
 	f_info.name = this.name;
+	f_info.label = this.label;
 	f_info.segments = [];
 
 	var seg = {};
@@ -117,6 +122,8 @@ Box.prototype.getProperties = function() {
 	fieldJSON.box_height = this.$box.css('height');
 	fieldJSON.border_width = this.border_width;	
 	fieldJSON.field_type = this.field_type;	
+	fieldJSON.name = this.name;
+	fieldJSON.label = this.label;
 	
 	return fieldJSON;
 };
@@ -146,6 +153,18 @@ Box.prototype.copyField = function() {
 	$("#scan_doc").append($new_box);
 };
 
+/*	Loads properties that are common to all Box
+	subclasses into the properties sidebar.
+*/
+Box.prototype.loadBoxProp = function() {
+	// set border width
+	$("#border_width").val(this.border_width);
+	
+	// set field attributes
+	$("#field_name").val(this.name);
+	$("#field_label").val(this.label);
+}
+
 /*	Represents an empty box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
@@ -163,8 +182,8 @@ EmptyBox.prototype.constructor = EmptyBox;
 	the properties toolbar.
 */
 EmptyBox.prototype.loadProperties = function() {
-	// set border width
-	$("#border_width").val(this.border_width);
+	// load properties that are common to all Box fields
+	this.loadBoxProp();
 }
 
 /*	Creates a new empty box field with the updated
@@ -217,15 +236,15 @@ TextBox.prototype.constructor = TextBox;
 	the properties toolbar.
 */
 TextBox.prototype.loadProperties = function() {
+	// load properties that are common to all Box fields
+	this.loadBoxProp();
+
 	// set text
 	$("#text_input").val(this.text);
 	
 	// set text size
 	$("#text_size").prop('selectedIndex', (this.font_size == 'small') ? 0 :
 						(this.font_size == 'medium') ? 1 : 2);			
-						
-	// set border width
-	$("#border_width").val(this.border_width);
 }
 
 

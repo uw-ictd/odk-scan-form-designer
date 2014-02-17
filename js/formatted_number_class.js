@@ -43,6 +43,14 @@ function FormField(json_init, update_init) {
 			// invoked by Dialog menu
 			this.$grid_div.css({top: 0, left: 0});
 		}
+		
+		// margin values
+		this.margin_top = parseInt($("#margin_top").val());
+		this.margin_bottom = parseInt($("#margin_bottom").val());
+		this.margin_left = parseInt($("#margin_left").val());
+		this.margin_right = parseInt($("#margin_right").val());
+		
+		// set border width
 		this.border_width = parseInt($("#border_width").val());
 	}
 }
@@ -263,6 +271,7 @@ FormField.prototype.copyField = function() {
 function FormNumField(json_init, update_init) {
 	FormField.call(this, json_init, update_init);
 	/* Set all segmented number attributes. */
+	this.field_type = 'form_num';
 	
 	// set the grid class
 	this.grid_class = 'num_div';
@@ -275,7 +284,6 @@ function FormNumField(json_init, update_init) {
 	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
 	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 
 					"5":"5", "6":"6", "7":"7", "8":"8", "9":"9"};
-	this.field_type = 'form_num';
 	
 	if (json_init) {
 		this.border_offset = json_init.border_offset;
@@ -322,22 +330,13 @@ function FormNumField(json_init, update_init) {
 			group_sizes.push(parseInt($(this).val()));
 		});
 		
-		// stores the size of each respective group
+		// stores the size of each respective group of numbers
 		this.group_sizes = group_sizes;
 		
 		this.delim_type = $("#delim_type").val();
-		
-		// margin values
-		this.margin_top = parseInt($("#form_num_margin_top").val());
-		this.margin_bottom = parseInt($("#form_num_margin_bottom").val());
-		this.margin_left = parseInt($("#form_num_margin_left").val());
-		this.margin_right = parseInt($("#form_num_margin_right").val());
-		
+				
 		// number of columns
 		this.num_cols = $("#num_col_form_num").val();
-		
-		// set border width
-		this.border_width = $("#border_width").val();
 	}
 }
 
@@ -543,10 +542,10 @@ FormNumField.prototype.loadProperties = function() {
 	$("#form_num_group_dx").val(this.group_dx);
 	
 	// margin values
-	$("#form_num_margin_top").val(this.margin_top);
-	$("#form_num_margin_bottom").val(this.margin_bottom);
-	$("#form_num_margin_left").val(this.margin_left);
-	$("#form_num_margin_right").val(this.margin_right);
+	$("#margin_top").val(this.margin_top);
+	$("#margin_bottom").val(this.margin_bottom);
+	$("#margin_left").val(this.margin_left);
+	$("#margin_right").val(this.margin_right);
 	
 	// set the delimeter type between groups of adjacent numbers
 	$("#delim_type").val(this.delim_type);

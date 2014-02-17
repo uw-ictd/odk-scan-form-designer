@@ -58,7 +58,14 @@
 		<script src="js/models/element.js"></script>
 		<script src="js/controllers/elements_controller.js"></script>
 		<script src="js/controllers/element_controller.js"></script>
-		<script src="js/views/field_views.js"></script>
+		<script src="js/views/view_containers.js"></script> 
+		<!--NOTE: field_view.js must be loaded before all subsequent views-->
+		<script src="js/views/field_view.js"></script> 
+		<script src="js/views/grid_field_views.js"></script>
+		<script src="js/views/box_views.js"></script>
+		<script src="js/views/inner_views.js"></script>
+		<script src="js/views/form_num_view.js"></script>
+		<script src="js/views/default_prop_view.js"></script>
 	<!---->
   </head>
   <body>    
@@ -197,7 +204,7 @@
 		</div>
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="field-layout">
+	<script type="text/x-handlebars" data-template-name="grid-field-layout">
 		{{yield}}
 		{{view GridSize}} 
 		<hr class="horz_divider">		
@@ -207,19 +214,7 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="empty-box-view">
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
+		{{view BorderOptions viewName='bdOptions'}}
 	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
@@ -234,19 +229,7 @@
 		
 		<hr class="horz_divider">
 		
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView type="radio" viewName="borderYesView" name="borderOption" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
-		</label>
-		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
+		{{view BorderOptions viewName='bdOptions'}}
 	</script>
 	
 	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
@@ -312,20 +295,8 @@
 			<option value=".">.</option>				
 		</select><br>
 		
-		<label for="name">Include Border?</label>
-		<label>
-			{{view view.radioView viewName="borderYesView" value="1"}} Yes					
-		</label>
-    
-		<label>
-			{{view view.radioView viewName="borderNoView" value="0"}} No
-		</label>
+		{{view BorderOptions viewName="bdOptions"}}
 		
-		<div id="border_container">
-			<label for="name">Border</label>
-			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	
-		</div>
-
 		<hr class="horz_divider">
 		
 		<label for="name">Number of groups</label>
@@ -346,17 +317,7 @@
 		
 		<hr class="horz_divider">
 		
-		<label for="name">Top Margin</label>
-		<input type="number" id="form_num_margin_top" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Bottom Margin</label>
-		<input type="number" id="form_num_margin_bottom" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>	
-		
-		<label for="name">Left Margin</label>
-		<input type="number" id="form_num_margin_left" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
-		
-		<label for="name">Right Margin</label>
-		<input type="number" id="form_num_margin_right" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>		
+		{{view MarginOptions}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_emptyBoxDialog">

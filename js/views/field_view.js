@@ -14,9 +14,7 @@ ODKScan.FieldController = Ember.View.extend({
 				this.get('bdOptions').get('borderNoView').set('selection', 0);
 			}
 		} else {
-			// loading view into a dialog menu, default border set to 'Yes',
-			// default number of groups is 2
-			this.set('groups', [1, 2]);
+			// loading view into a dialog menu, default border set to 'Yes'
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
 		}
 	}

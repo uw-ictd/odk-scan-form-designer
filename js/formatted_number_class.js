@@ -193,16 +193,6 @@ FormField.prototype.addEventHandlers = function($grid) {
 		ODKScan.FieldContainer.popObject();
 		if (obj.field_type == 'form_num') {
 			ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);
-			
-			var arr = [];
-			for (var i = 1; i <= obj.group_sizes.length; i++) {
-				arr.push(i);
-			}
-			ODKScan.FormNumView.set('groups', arr);
-			
-			$(".num_groups").each(function(index, group_div) {
-				$(group_div).val(obj.group_sizes[index]);
-			});
 		} else {
 			console.log("error - unsupported field type");
 		}	

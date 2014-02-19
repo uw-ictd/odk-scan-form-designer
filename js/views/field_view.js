@@ -17,5 +17,6 @@ ODKScan.FieldController = Ember.View.extend({
 			// loading view into a dialog menu, default border set to 'Yes'
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
 		}
+		console.log("done in field controller");
 	}
 });

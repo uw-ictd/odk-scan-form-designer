@@ -522,6 +522,9 @@ FormNumField.prototype.saveJSON = function() {
 	into the properties toolbar.
 */
 FormNumField.prototype.loadProperties = function() {
+	// NOTE: FormNumController takes care of loading the
+	// group sizes of the formatted number.
+
 	// NOTE: ASSUMING no duplicate values in first index of
 	// SEG_NUM_SMALL, SEG_NUM_MEDIUM, and SEG_NUM_LARGE 
 	$("#form_num_size").prop('selectedIndex', (this.element_width == SEG_NUM_SMALL[0]) ? 0 :
@@ -551,15 +554,6 @@ FormNumField.prototype.loadProperties = function() {
 
 	// set number of columns
 	$("#num_col_form_num").val(this.group_sizes.length);
-	
-	// set group sizes
-	var obj = this;
-	$(".num_groups").each(function(index, group_div) {
-		console.log("num_group set to: " + obj.group_sizes[index]);
-		console.log($(group_div));
-		$(group_div).val(obj.group_sizes[index]);
-		//group_div.value = obj.group_sizes[index];
-	});
 	
 	// set field attributes
 	$("#field_name").val(this.name);

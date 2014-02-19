@@ -314,8 +314,8 @@
 		<label for="name">Number of groups</label>
 		<input type="number" id="num_col_form_num" value="2" class="int_input ui-widget-content ui-corner-all" min="2" {{action 'updateNumGroups' target="view"}}><br>
 		{{#each view.formNumGroups}}
-			&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{this}}</label>
-			<input type="number" value="1" class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{groupNum}}</label>
+			<input type="number" {{bind-attr value=size}} class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
 		{{/each}}
 		<hr class="horz_divider">
 		

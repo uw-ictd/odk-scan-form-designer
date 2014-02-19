@@ -133,7 +133,20 @@ Box.prototype.getProperties = function() {
 */
 Box.prototype.copyField = function() {
 	// make a new copy of the $box
+	
+	// Calling clone() first on $box causes a bug that 
+	// makes it so $new_box cannot be resizable. As a 
+	// workaround to this issue, the resizable attribute
+	// of $box is destroyed before the clone and then
+	// added back to $box.
+	
+	this.$box.resizable('destroy');
 	var $new_box = this.$box.clone();
+	this.$box.resizable({handles: 'all', 
+						containment: 'parent', 
+						grid: [GRID_X, GRID_Y],
+						minWidth: GRID_X * 1,
+						minHeight: GRID_Y * 1});
 	$new_box.css({left: 0, top: 0});
 	$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	$new_box.resizable({handles: 'all', 

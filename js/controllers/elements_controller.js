@@ -126,8 +126,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		copyField: function() {
 			if ($(".selected_field").length != 0) {
-				var selectedField = $(".selected_field").data('obj');
-				selectedField.copyField();		
+				var selected_field = $(".selected_field").data('obj');
+				selected_field.copyField();		
+				var $new_field = $(".selected_field");
+				// change the name of the new field so it's not a 
+				// duplicate of the original field's name
+				$new_field.data('obj').name += "_copy";
+				// load properties of the new field into
+				// the properties sidebar
+				$new_field.click();				
 			}
 		},
 		copyImage: function() {

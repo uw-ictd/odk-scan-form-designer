@@ -1,5 +1,16 @@
 $(document).ready(function() {			
 	/* Dialog menu initializations */
+	var check_name_unique = function() {
+		var is_name_unique = true;
+		$(".field").each(function() {
+			console.log("curr field name: " + $(this).data('obj').name);
+			if ($(this).data('obj').name == $("#field_name").val()) {
+				console.log("field name is a duplicate");
+				is_name_unique = false
+			}
+		});
+		return is_name_unique;
+	};
 
 	$("#new_doc_dialog").dialog({
 		autoOpen: false,
@@ -187,13 +198,17 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				var new_box = new EmptyBox();
-				new_box.constructBox();
-				
-				ODKScan.EmptyBoxContainer.popObject();
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);						
-				$("#box_dialog").dialog("close");
+				if (check_name_unique()) {	
+					var new_box = new EmptyBox();
+					new_box.constructBox();
+					
+					ODKScan.EmptyBoxContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);						
+					$("#box_dialog").dialog("close");
+				} else {
+					alert($("#field_name").val() + " is a duplicate field name.");
+				}
 			},
 			"Cancel": function() {
 				ODKScan.EmptyBoxContainer.popObject();
@@ -213,14 +228,18 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				console.log("making checkboxes...");			
-				var cbField = new CheckboxField();
-				cbField.constructGrid();							
+				console.log("making checkboxes...");		
+				if (check_name_unique()) {				
+					var cbField = new CheckboxField();
+					cbField.constructGrid();							
 
-				ODKScan.CheckboxContainer.popObject();
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);	
-				$("#checkbox_dialog").dialog("close");
+					ODKScan.CheckboxContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);	
+					$("#checkbox_dialog").dialog("close");
+				} else {
+					alert($("#field_name").val() + " is a duplicate field name.");
+				}
 			},
 			"Cancel": function() {
 				ODKScan.CheckboxContainer.popObject();
@@ -240,13 +259,17 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				var bubbField = new BubbleField();
-				bubbField.constructGrid();		
+				if (check_name_unique()) {		
+					var bubbField = new BubbleField();
+					bubbField.constructGrid();		
 
-				ODKScan.BubbleContainer.popObject();
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);										
-				$("#bubble_dialog").dialog("close");
+					ODKScan.BubbleContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);										
+					$("#bubble_dialog").dialog("close");
+				} else {
+					alert($("#field_name").val() + " is a duplicate field name.");
+				}
 			},
 			"Cancel": function() {
 				ODKScan.BubbleContainer.popObject();
@@ -266,13 +289,17 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				var numField = new SegNumField();
-				numField.constructGrid();
-				
-				ODKScan.SegNumContainer.popObject();
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);									
-				$("#seg_num_dialog").dialog("close");
+				if (check_name_unique()) {	
+					var numField = new SegNumField();
+					numField.constructGrid();
+					
+					ODKScan.SegNumContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);									
+					$("#seg_num_dialog").dialog("close");
+				} else {
+					alert($("#field_name").val() + " is a duplicate field name.");
+				}
 			},
 			"Cancel": function() {
 				ODKScan.SegNumContainer.popObject();
@@ -292,13 +319,17 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				var text_box = new TextBox();
-				text_box.constructBox();
-				
-				ODKScan.TextBoxContainer.popObject();
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);					
-				$("#text_dialog").dialog("close");
+				if (check_name_unique()) {		
+					var text_box = new TextBox();
+					text_box.constructBox();
+					
+					ODKScan.TextBoxContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);					
+					$("#text_dialog").dialog("close");
+				} else {
+					alert($("#field_name").val() + " is a duplicate field name.");
+				}
 			},
 			"Cancel": function() {
 				ODKScan.TextBoxContainer.popObject();
@@ -317,14 +348,18 @@ $(document).ready(function() {
 		autoOpen: false,
 		modal: true,
 		buttons: {
-			"Ok": function() {					
-				var formNumField = new FormNumField();
-				formNumField.constructGrid();		
-				
-				ODKScan.FormNumContainer.popObject();
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);						
-				$("#form_num_dialog").dialog("close");
+			"Ok": function() {	
+				if (check_name_unique()) {
+					var formNumField = new FormNumField();
+					formNumField.constructGrid();		
+					
+					ODKScan.FormNumContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);						
+					$("#form_num_dialog").dialog("close");
+				} else {
+					alert($("#field_name").val() + " is a duplicate field name.");
+				}
 			},
 			"Cancel": function() {
 				ODKScan.FormNumContainer.popObject();

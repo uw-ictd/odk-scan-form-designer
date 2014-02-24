@@ -237,24 +237,27 @@ FormField.prototype.getFieldJSON = function() {
 	
 	// seg.items contains list of locations of all grid elements
 	seg.items = [];
-
-	this.$grid_div.children('div').each(function() {
-		var ele_loc = {}; // stores location of the grid element
-		
-		/* 	NOTE: The element location is given with
-			respect to its center. Also, position().left
-			and position().right do not take into account
-			the margins around the div, we have to add
-			horiz_offset to account for the margin.
-		*/								
-		var horiz_offset = parseInt($(this).css('margin-left'));
-		var vert_offset = parseInt($(this).css('margin-top'));
-		
-		// we use outerWidth() and outerHeight() because they take borders into account
-		ele_loc.item_x = horiz_offset + $(this).position().left + ($(this).outerWidth() / 2);
-		ele_loc.item_y = vert_offset + $(this).position().top + ($(this).outerHeight() / 2);
-		
-		seg.items.push(ele_loc);
+	var number_groups = this.$grid_div.children('.num_group');
+	
+	number_groups.each(function() {
+		$(this).children('.num').each(function() {
+			var ele_loc = {}; // stores location of the grid element
+			
+			/* 	NOTE: The element location is given with
+				respect to its center. Also, position().left
+				and position().right do not take into account
+				the margins around the div, we have to add
+				horiz_offset to account for the margin.
+			*/								
+			var horiz_offset = parseInt($(this).css('margin-left'));
+			var vert_offset = parseInt($(this).css('margin-top'));
+			
+			// we use outerWidth() and outerHeight() because they take borders into account
+			ele_loc.item_x = horiz_offset + $(this).position().left + ($(this).outerWidth() / 2);
+			ele_loc.item_y = vert_offset + $(this).position().top + ($(this).outerHeight() / 2);
+			
+			seg.items.push(ele_loc);
+		});
 	});
 	
 	f_info.segments.push(seg);

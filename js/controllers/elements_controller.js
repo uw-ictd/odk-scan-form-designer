@@ -1,10 +1,3 @@
-/*
-	Constants
-*/
-
-var GRID_X = 10;
-var GRID_Y = 10;
-
 ODKScan.ElementsController = Ember.ArrayController.extend({
 	hasBorder: true,
 	isImageEditing: false,

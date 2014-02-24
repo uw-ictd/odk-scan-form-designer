@@ -20,15 +20,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				based on interaction from the user.
 			*/
 			var ias = $('#image_area img').imgAreaSelect({
-								instance: true,
-								handles: true
-							});				
+											instance: true,
+											handles: true});				
 			controller.set('imgSelect', ias);									
 		});
 	},
-	editModeChanged: function() {
-		console.log("edit mode changed!!!");
-	}.observes('isImageEditing'),
 	actions: {
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
@@ -58,26 +54,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				}
 			);
 		},
-		saveImage: function() {
-			html2canvas($("#scan_doc"), {   
-				logging:true,
-				onrendered : function(canvas) {
-					canvas.toBlob(function(blob) {
-						var fname = "scan_output"					
-						saveAs(blob, fname);
-					});	
-				}
-			});
-		},
 		addSelection: function() {
 			var ias = this.get('imgSelect');
 			var reg = ias.getSelection();
-			if (reg.width == 0 && reg.height == 0) {
-				// indicates that no region is currently selected
-				// do nothing
-				console.log("no region selected");
-			} else {
-				console.log("region selected!");
+			// check that a region is actually selected
+			if (!(reg.width == 0 && reg.height == 0)) {
 				// load the image into the dom
 				var img_src = $("#loaded_image").attr('src');
 				var $img_container = load_into_dom(img_src, reg.height, reg.width, -reg.y1, -reg.x1);				
@@ -92,36 +73,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				});			
 			}
 		},
-		enableBorder: function() {
-			$(".border_width input").val(1); // set border with to one
-			$(".border_width").css('display', 'inline');
-		},
-		disableBorder: function() {
-			$(".border_width input").val(0); // set border with to zero
-			$(".border_width").css('display', 'none');
-		},
 		createBox: function() {
-			console.log("creating box");
 			$("#box_dialog").dialog("open");
 		},
 		createCheckbox: function() {
-			console.log("creating checkboxes");
 			$("#checkbox_dialog").dialog("open");
 		},
 		createBubbles: function() {
-			console.log("creating fill-in bubbles");
 			$("#bubble_dialog").dialog("open");
 		},
 		createNumbers: function() {
-			console.log("creating segmented numbers");
 			$("#seg_num_dialog").dialog("open");
 		},
 		createText: function() {
-			console.log("creating text");
 			$("#text_dialog").dialog("open");
 		},
 		createFormattedNumber: function() {
-			console.log("creating formatted number");
 			$("#form_num_dialog").dialog("open");
 		},
 		copyField: function() {
@@ -160,7 +127,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}
 		},
 		loadDoc: function() {
-			console.log("loading document...");
 			$("#load_dialog").dialog("open");
 		},
 		saveDoc: function() {
@@ -198,8 +164,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			});
 			
 			var json_output = JSON.stringify(savedDoc, null, '\t');
-			var filename = "saved_form.json"; // TODO: remove hardcoded filename			
-			
 			$("#scan_json_link").attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(json_output));	
 			$("#save_dialog").dialog("open");
 		},

@@ -256,8 +256,8 @@ TextBox.prototype.loadProperties = function() {
 	$("#text_input").val(this.text);
 	
 	// set text size
-	$("#text_size").prop('selectedIndex', (this.font_size == 'small') ? 0 :
-						(this.font_size == 'medium') ? 1 : 2);			
+	$("#text_size").prop('selectedIndex', (this.font_size == '13px') ? 0 :
+						(this.font_size == '16px') ? 1 : 2);			
 }
 
 

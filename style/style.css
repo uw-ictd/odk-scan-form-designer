@@ -160,14 +160,29 @@ input[type=text]{
 *  Scan Document Sizes
 ************************************************************/
 
-.letter_size {
+.letter_portrait {
 	width: 8.5in;
 	height: 11in;
 }
 
+.letter_landscape{
+	width: 11in;
+	height: 8.5in;
+}
+
+.a4_portrait{
+	width: 8.27in;
+	height: 11.69in;
+}
+
+.a4_landscape {
+	width: 11.69in;
+	height: 8.27in;
+}
+
 .legal_size {
-	width: 8.5in;
-	height: 14in;
+	width: 11.69in;
+	height: 8.27in;
 }
 
 .index_size {

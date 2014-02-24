@@ -35,5 +35,5 @@ $(document).ready(function() {
 	);
 	
 	// NOTE: the Scan document is set to letter_size by default
-	$("#scan_doc").addClass("letter_size");		
+	$("#scan_doc").addClass("letter_portrait");		
 });

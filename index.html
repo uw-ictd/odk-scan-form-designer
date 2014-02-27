@@ -97,8 +97,8 @@
 				  <li><a {{action "enableFieldEdit"}}>Field Layer</a></li>				  
 				</ul>
 			  </li>
-			{{#if isImageEditing}}
-				<input id="image_select" type="file"></input>
+			  <input id="image_select" type="file"></input> <!--NOTE: this element is hidden. -->
+			{{#if isImageEditing}}				
 				<li><a id="image_button" {{action 'selectImage'}}>Select Image</a></li>
 				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
 			{{else}}

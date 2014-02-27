@@ -31,21 +31,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.set('isImageEditing', false);
 		},
 		selectImage: function() {
+			/* 	NOTE: Pressing 'Select Image' triggers a hidden html 
+				file input button #image_select. The button is hidden
+				in order to override its appearance. 
+			*/
 			$("#image_select").click();
-
-			$("#image_select").change(
-				function (event) {
-					var selectedFile = event.target.files[0];
-					var reader = new FileReader();
-
-					reader.onload = function(event) {
-						// set properties of the image
-						$("#loaded_image").attr('src', event.target.result);																	
-					};
-					
-					reader.readAsDataURL(selectedFile);					
-				}
-			);
 		},
 		addSelection: function() {
 			var ias = this.get('imgSelect');

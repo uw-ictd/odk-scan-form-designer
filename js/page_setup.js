@@ -38,6 +38,18 @@ $(document).ready(function() {
 		}
 	);
 	
+	$("#image_select").change(
+		function (event) {
+			var selectedFile = event.target.files[0];
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				// set properties of the image
+				$("#loaded_image").attr('src', event.target.result);																	
+			};					
+			reader.readAsDataURL(selectedFile);					
+		}
+	);
+	
 	// NOTE: the Scan document is set to letter_size by default
 	$("#scan_doc").addClass("letter_portrait");		
 });

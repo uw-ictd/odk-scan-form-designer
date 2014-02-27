@@ -25,6 +25,10 @@ GridSize = Ember.View.extend({
 	templateName: 'grid-size-view'
 });
 
+GridValues = Ember.View.extend({
+	templateName: 'grid-values-view'
+});
+
 BorderOptions = Ember.View.extend({
 	templateName: 'border-options-view'
 });

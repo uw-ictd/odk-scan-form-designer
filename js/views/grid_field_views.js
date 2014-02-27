@@ -8,9 +8,9 @@ ODKScan.CheckboxView = ODKScan.GridFieldController.create({
 });
 
 ODKScan.BubblesView = ODKScan.GridFieldController.create({
-  templateName: 'bubbles-view'
+	templateName: 'bubbles-view'
 });
 
 ODKScan.SegNumView = ODKScan.GridFieldController.create({
-  templateName: 'seg-num-view'
+	templateName: 'seg-num-view'
 });

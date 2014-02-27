@@ -67,22 +67,46 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}
 		},
 		createBox: function() {
-			$("#box_dialog").dialog("open");
+			this.set('newFieldType', 'empty_box');
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		createCheckbox: function() {
-			$("#checkbox_dialog").dialog("open");
+			this.set('newFieldType', 'checkbox');
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.CheckboxContainer.pushObject(ODKScan.CheckboxView);	
+			$(".selected_field").removeClass("selected_field");
 		},
 		createBubbles: function() {
-			$("#bubble_dialog").dialog("open");
+			this.set('newFieldType', 'bubble');
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);	
+			$(".selected_field").removeClass("selected_field");
 		},
 		createNumbers: function() {
-			$("#seg_num_dialog").dialog("open");
+			this.set('newFieldType', 'seg_num');
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			ODKScan.SegNumContainer.pushObject(ODKScan.SegNumView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		createText: function() {
-			$("#text_dialog").dialog("open");
+			this.set('newFieldType', 'text_box');
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);			
+			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		createFormattedNumber: function() {
-			$("#form_num_dialog").dialog("open");
+			this.set('newFieldType', 'form_num');
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			ODKScan.FormNumContainer.pushObject(ODKScan.FormNumView);
+			$(".selected_field").removeClass("selected_field");
 		},
 		copyField: function() {
 			if ($(".selected_field").length != 0) {

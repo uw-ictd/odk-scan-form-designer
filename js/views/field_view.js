@@ -1,6 +1,5 @@
 ODKScan.FieldController = Ember.View.extend({
 	didInsertElement: function() {		
-		console.log('field controller initiallizing');
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar
 			var field_obj = $(".selected_field").data("obj");			
@@ -16,7 +15,25 @@ ODKScan.FieldController = Ember.View.extend({
 		} else {
 			// loading view into a dialog menu, default border set to 'Yes'
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
+			
+			// the html for the dialog menu has finished loading, now the
+			// dialog menu can be opened
+			var new_field_type = this.get('controller.newFieldType');			
+			if (new_field_type == 'checkbox') {
+				$("#checkbox_dialog").dialog("open");
+			} else if (new_field_type == 'bubble') {
+				$("#bubble_dialog").dialog("open");
+			} else if (new_field_type == 'seg_num') {
+				$("#seg_num_dialog").dialog("open");
+			} else if (new_field_type == 'empty_box') {
+				$("#box_dialog").dialog("open");
+			} else if (new_field_type == 'text_box') {
+				$("#text_dialog").dialog("open");
+			} else if (new_field_type == 'form_num') {
+				$("#form_num_dialog").dialog("open");
+			} else {
+				console.log("error no dialog menu to open, unsupported field field type");
+			}
 		}
-		console.log("done in field controller");
 	}
 });

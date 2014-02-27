@@ -1,15 +1,14 @@
 ODKScan.FormNumController = ODKScan.FieldController.extend({
-	/*	formNumGroups is a non-decreasing array of values from [1, 2,...,n] 
-		where n is the total number of groups and each value represents 
-		the position of a group within the number (i.e. 1 = first group, 
-		2 = second group, ..., n = nth group)
+	/*	formNumGroups is an array of JSON objects that contain
+		information about the size of each group in the formatted
+		number 
 	*/
-	formNumGroups: [1, 2],
+	formNumGroups: [{groupNum:1, size:1}, {groupNum:2, size:1}],
 	didInsertElement: function() {
 		this._super();
 		if ($(".selected_field").length == 0) {
-			// loading view into a dialog menu, default number of groups is 2
-			this.set('formNumGroups', [{groupNum:1, size:1}, {groupNum:2, size:1}]);
+			// loading view into a dialog menu, default number of groups is 2			
+			this.set('formNumGroups', [{groupNum:1, size:1}, {groupNum:2, size:1}]);			
 		} else {
 			// loading view into a properties sidebar
 			var group_sizes = $(".selected_field").data('obj').group_sizes;
@@ -32,5 +31,5 @@ ODKScan.FormNumController = ODKScan.FieldController.extend({
 });
 
 ODKScan.FormNumView = ODKScan.FormNumController.create({
-  templateName: 'form-num-view'
+	templateName: 'form-num-view'
 });

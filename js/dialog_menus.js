@@ -176,12 +176,6 @@ $(document).ready(function() {
 	});
 	
 	$("#box_dialog").dialog({
-		open: function() {
-			ODKScan.FieldContainer.popObject();
-			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
-			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
-			$(".selected_field").removeClass("selected_field");
-		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -202,16 +196,16 @@ $(document).ready(function() {
 				ODKScan.EmptyBoxContainer.popObject();
 				$("#box_dialog").dialog("close");
 			}
+		},
+		close: function(event) {
+			// check if the dialog menu was closed with the 'close' button
+			if (event.originalEvent) {				
+				ODKScan.EmptyBoxContainer.popObject();
+			}
 		}
 	});
 		
 	$("#checkbox_dialog").dialog({
-		open: function() {
-			ODKScan.FieldContainer.popObject();
-			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
-			ODKScan.CheckboxContainer.pushObject(ODKScan.CheckboxView);	
-			$(".selected_field").removeClass("selected_field");
-		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -233,16 +227,16 @@ $(document).ready(function() {
 				ODKScan.CheckboxContainer.popObject();
 				$("#checkbox_dialog").dialog("close");
 			}
+		},
+		close: function(event) {
+			// check if the dialog menu was closed with the 'close' button
+			if (event.originalEvent) {				
+				ODKScan.CheckboxContainer.popObject();
+			}
 		}
 	});			
 	
 	$("#bubble_dialog").dialog({
-		open: function() {
-			ODKScan.FieldContainer.popObject();
-			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);	
-			$(".selected_field").removeClass("selected_field");
-		},	
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -263,16 +257,16 @@ $(document).ready(function() {
 				ODKScan.BubbleContainer.popObject();
 				$("#bubble_dialog").dialog("close");
 			}
+		},
+		close: function(event) {
+			// check if the dialog menu was closed with the 'close' button
+			if (event.originalEvent) {				
+				ODKScan.BubbleContainer.popObject();
+			}
 		}
 	});
 
 	$("#seg_num_dialog").dialog({
-		open: function() {
-			ODKScan.FieldContainer.popObject();
-			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-			ODKScan.SegNumContainer.pushObject(ODKScan.SegNumView);
-			$(".selected_field").removeClass("selected_field");
-		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -292,17 +286,17 @@ $(document).ready(function() {
 			"Cancel": function() {
 				ODKScan.SegNumContainer.popObject();
 				$("#seg_num_dialog").dialog("close");
+			},
+		}, 
+		close: function(event) {
+			// check if the dialog menu was closed with the 'close' button
+			if (event.originalEvent) {				
+				ODKScan.SegNumContainer.popObject();
 			}
 		}
 	});		
 
 	$("#text_dialog").dialog({
-		open: function() {
-			ODKScan.FieldContainer.popObject();
-			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
-			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
-			$(".selected_field").removeClass("selected_field");
-		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -323,16 +317,16 @@ $(document).ready(function() {
 				ODKScan.TextBoxContainer.popObject();
 				$("#text_dialog").dialog("close");
 			}
+		},
+		close: function(event) {
+			// check if the dialog menu was closed with the 'close' button
+			if (event.originalEvent) {				
+				ODKScan.TextBoxContainer.popObject();
+			}
 		}
 	});			
 	
 	$("#form_num_dialog").dialog({
-		open: function() {
-			ODKScan.FieldContainer.popObject();
-			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
-			ODKScan.FormNumContainer.pushObject(ODKScan.FormNumView);
-			$(".selected_field").removeClass("selected_field");
-		},
 		autoOpen: false,
 		modal: true,
 		buttons: {
@@ -352,6 +346,12 @@ $(document).ready(function() {
 			"Cancel": function() {
 				ODKScan.FormNumContainer.popObject();
 				$("#form_num_dialog").dialog("close");
+			}
+		},
+		close: function(event) {
+			// check if the dialog menu was closed with the 'close' button
+			if (event.originalEvent) {	
+				ODKScan.FormNumContainer.popObject();
 			}
 		}
 	});			

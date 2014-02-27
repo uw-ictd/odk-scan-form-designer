@@ -12,7 +12,7 @@ auto because they can sometimes open up toward the
 bottom of the page rather than the center (started 
 happening after using views within dialog menus). */
 .ui-dialog, .ui-front {
-	top: auto !important;
+	/* top: auto !important; */
 	z-index: 10000 !important;
 }
 

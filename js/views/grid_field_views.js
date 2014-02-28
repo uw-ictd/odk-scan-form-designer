@@ -64,8 +64,8 @@ ODKScan.GridFieldWithValues = ODKScan.FieldController.extend({
 			var curr_field = $(".selected_field").data('obj');
 			var grid_values = curr_field.grid_values;
 			// set # of rows, columns
-			this.set('numRow', curr_field.num_rows);
-			this.set('numCol', curr_field.num_cols);
+			this.set('numRow', parseInt(curr_field.num_rows));
+			this.set('numCol', parseInt(curr_field.num_cols));
 			
 			var new_grid = [];
 			var arr_index = 0;

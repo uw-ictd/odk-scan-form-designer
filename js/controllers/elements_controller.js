@@ -56,6 +56,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				});			
 			}
 		},
+		deleteField: function() {
+			var $curr_field = $(".selected_field");
+			if ($curr_field.length != 0) {
+				$curr_field.remove();
+				// update view in the field properties sidebar
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			}
+		},
 		createBox: function() {
 			this.set('newFieldType', 'empty_box');
 			ODKScan.FieldContainer.popObject();

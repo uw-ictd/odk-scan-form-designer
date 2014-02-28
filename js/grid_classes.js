@@ -199,13 +199,6 @@ GridField.prototype.alignToGrid = function() {
 	$grid: jQuery div representing the box
 */
 GridField.prototype.addEventHandlers = function($grid) {
-	// grid fields are removed when double-clicked
-	$grid.dblclick( function() { 
-		ODKScan.FieldContainer.popObject();
-		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-		this.remove() 
-	});
-	
 	var obj = this;
 	$grid.click(function() {
 		$(".selected_field").removeClass("selected_field");	

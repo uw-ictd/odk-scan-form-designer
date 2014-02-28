@@ -40,6 +40,10 @@ function Box(json_init, update_init) {
 */
 Box.prototype.addEventHandlers = function($box) {
 	var border_width = this.border_width;
+	/*	Round up the width and height of the box to the nearest 
+		multiple of GRID_X and GRID_Y respectively in order to
+		maintain grid alignment.
+	*/
 	$box.on('resizestop', (function(event, ui) {
 		var curr_size = ui.size;
 		var nearest_width = Math.ceil(curr_size.width / GRID_X) * GRID_X;
@@ -48,14 +52,6 @@ Box.prototype.addEventHandlers = function($box) {
 		ui.element.height(nearest_height - 2 * border_width);	
 	}));
 	
-	// box is removed when double-clicked
-	$box.dblclick( function() {
-		ODKScan.FieldContainer.popObject();
-		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-		this.remove() 
-	});
-	
-	// highlight only this box when clicked
 	var obj = this;
 	$box.click(function() {
 		$(".selected_field").removeClass("selected_field");	

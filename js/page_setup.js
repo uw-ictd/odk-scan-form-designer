@@ -1,3 +1,5 @@
+$(window).bind('beforeunload', function(){ return 'You are about to leave the ODK Scan application.'});
+
 $(document).ready(function() {		
 	// general page setup
 	ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);

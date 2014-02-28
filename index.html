@@ -167,10 +167,12 @@
 	
 	<script type="text/x-handlebars" data-template-name="grid-values-view">
 		<label for="name">Grid values:</label><br>
-		{{#each view.parentView.gridElements}}
-			&nbsp;&nbsp;&nbsp;<label for="name">Row: {{rowIndex}}, Col: {{colIndex}}</label>
-			<input type="text" class="ui-widget-content ui-corner-all"></input>
-			<br>
+		{{#each row in view.parentView.gridElements}}
+			{{#each ele in row}}
+				&nbsp;&nbsp;&nbsp;<label for="name">Row: {{ele.rowIndex}}, Col: {{ele.colIndex}}</label>
+				<input type="text" {{bind-attr value=ele.ele_value}} class="ui-widget-content ui-corner-all grid_value" {{action 'inputBoxPressed' ele.rowIndex ele.colIndex target="view.parentView" on="click"}}></input>
+				<br>
+			{{/each}}
 		{{/each}}
 	</script>
 	
@@ -265,6 +267,7 @@
 			<option value="select1">Select One</option>										
 			<option value="select_many">Select Many</option>	
 		</select><br>
+		{{view GridValues viewName="gridValues"}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="bubbles-view">
@@ -278,7 +281,8 @@
 		<label for="name">Bubble type</label>
 		<select id="bubb_type"> 
 			<option value="tally">Tally</option>
-			<option value="select1">Select</option>										
+			<option value="select1">Select One</option>		
+			<option value="select_many">Select Many</option>		
 		</select><br>
 		{{view GridValues viewName="gridValues"}}
 	</script>

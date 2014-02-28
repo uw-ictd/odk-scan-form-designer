@@ -143,6 +143,7 @@ GridField.prototype.constructGrid = function() {
 			var $g_element = this.makeGridElement();
 			$g_element.css({marginTop: this.margin_top, marginBottom: this.margin_bottom, 
 							marginLeft: this.margin_left, marginRight: this.margin_right});
+			$g_element.addClass('row' + (i + 1) + '_col' + (j + 1));
 			
 			if (this.num_cols == 1) { // special case: only one column
 				$g_element.addClass(row_pos).addClass('first_col last_col');
@@ -246,10 +247,13 @@ GridField.prototype.getFieldJSON = function() {
 		
 	f_info.classifier = cf;
 	
-	// check if fields have 'type' or 'param'
-	// attribtues
+	// check if fields have 'grid_values' or 'param' attributes
 	if (this.param) {
 		f_info.param = this.param;
+	}
+	
+	if (this.grid_values) {
+		f_info.grid_values = this.grid_values;
 	}
 	
 	f_info.segments = [];
@@ -340,21 +344,33 @@ function CheckboxField(json_init, update_init) {
 	/* Set all checkbox attributes. */
 	this.field_type = "checkbox";
 	this.grid_class = 'cb_div';
-	
-	this.type = 'int';	
+
 	this.data_uri = "checkboxes";
 	this.cf_advanced = {flip_training_data : false};
 	this.cf_map = {empty : false};
 	
-	if (!json_init) {
+	if (json_init) {
+		this.type = json_init.type;
+		this.grid_values = json_init.grid_values;
+	} else {
 		// set the class of the grid elements
 		this.ele_class = 'c_box';
+		
+		// set type
+		this.type = $("#cb_type").val();
 		
 		// checkbox size
 		this.element_width = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
 							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;
 		this.element_height = ($("#cb_size").val() == 'small') ? CHECKBOX_SMALL : 
-							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;							
+							($("#cb_size").val() == 'medium') ? CHECKBOX_MEDIUM : CHECKBOX_LARGE;		
+
+		// set checkbox values
+		grid_values = [];
+		$(".grid_value").each(function() {
+			grid_values.push($(this).val());
+		});
+		this.grid_values = grid_values;
 	}
 }
 
@@ -379,6 +395,9 @@ CheckboxField.prototype.loadProperties = function() {
 	// checkbox size
 	$("#cb_size").prop('selectedIndex', (this.element_width == CHECKBOX_SMALL) ? 0 :
 						(this.element_width == CHECKBOX_MEDIUM) ? 1 : 2);
+						
+	// checkbox type
+	$("#cb_type").prop('selectedIndex', (this.type == 'tally') ? 0 : (this.type == 'select1') ? 1 : 2);	
 }
 
 /*	Creates a new checkbox field with the updated
@@ -394,7 +413,10 @@ CheckboxField.prototype.updateProperties = function() {
 	the document.
 */
 CheckboxField.prototype.saveJSON = function() {
-	return this.getProperties();
+	var json = this.getProperties();
+	json.grid_values = this.grid_values;
+	json.type = this.type;
+	return json;
 }
 
 /*	Represents a grid of fill-in bubbles.
@@ -414,6 +436,7 @@ function BubbleField(json_init, update_init) {
 	if (json_init) {
 		this.param = json_init.param;
 		this.type = json_init.type;
+		this.grid_values = json_init.grid_values;
 	} else {
 		// set the class of the grid elements
 		this.ele_class = ($("#bubb_size").val() == 'small') ? 'bubble_small' : 
@@ -427,6 +450,10 @@ function BubbleField(json_init, update_init) {
 			this.param = $("#num_row_bubbles").val() * $("#num_col_bubbles").val();
 		} else if (this.type == 'select1') {
 			this.param = 'yes_no';
+		} else if (this.type == 'select_many') {
+			this.param = 'many'; // TODO: find out what this value should actually be
+		} else {
+			console.log("error, unsupported bubble type");
 		}
 		
 		// bubble size
@@ -436,7 +463,11 @@ function BubbleField(json_init, update_init) {
 							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
 							
 		// set bubble values
-		
+		grid_values = [];
+		$(".grid_value").each(function() {
+			grid_values.push($(this).val());
+		});
+		this.grid_values = grid_values;
 	}
 }
 
@@ -463,7 +494,7 @@ BubbleField.prototype.loadProperties = function() {
 						(this.element_width == BUBBLE_MEDIUM) ? 1 : 2);		
 
 	// bubble type
-	$("#bubb_type").prop('selectedIndex', (this.type == 'tally') ? 0 : 1);			
+	$("#bubb_type").prop('selectedIndex', (this.type == 'tally') ? 0 : (this.type == 'select1') ? 1 : 2);			
 }
 
 /*	Creates a new bubble field with the updated
@@ -482,6 +513,7 @@ BubbleField.prototype.saveJSON = function() {
 	var json = this.getProperties();
 	json.param = this.param;
 	json.type = this.type;
+	json.grid_values = this.grid_values;
 	return json;
 }
 

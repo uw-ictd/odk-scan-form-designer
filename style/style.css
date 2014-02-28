@@ -12,7 +12,6 @@ auto because they can sometimes open up toward the
 bottom of the page rather than the center (started 
 happening after using views within dialog menus). */
 .ui-dialog, .ui-front {
-	/* top: auto !important; */
 	z-index: 10000 !important;
 }
 
@@ -60,14 +59,25 @@ happening after using views within dialog menus). */
 	that are added to the ODK Scan doc.
 */
 #prop_sidebar {
-	width: 275px; /* TODO: remove hard-coded value */
+	width: 285px; /* TODO: remove hard-coded value */
 	background-color: white;
 	border: 1px solid black;
-	text-align: center;
 	float: left;
 	padding-right: 10px;
 	padding-left: 10px;
 	margin-left: 10px;
+}
+
+/* Centers the properties sidebar title. */
+#prop_sidebar h3  {
+	text-align: center;
+}
+
+/* Roughly centers the update properties buttton. */
+#update_prop {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	margin-left: 80px;
 }
 
 /*	Contains the default text when a field
@@ -77,9 +87,11 @@ happening after using views within dialog menus). */
 	background-color: lightgray;
 	height: 200px;
 	outline: 1px dashed;
-	width: 220px;
 	display: inline-block;
 	vertical-align: middle;
+	margin-left: 15px;
+	margin-right: 15px;
+	text-align: center;
 }
 
 #default_prop_message h4 {
@@ -149,11 +161,7 @@ input[type=text], input[type=number] {
 
 /* set default width on text input boxes */
 input[type=text]{
-	width: 130px;
-}
-
-#update_prop, #load_prop {
-	margin: 15px;
+	width: 110px;
 }
 
 /************************************************************

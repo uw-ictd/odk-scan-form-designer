@@ -434,6 +434,9 @@ function BubbleField(json_init, update_init) {
 							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
 		this.element_height = ($("#bubb_size").val() == 'small') ? BUBBLE_SMALL : 
 							($("#bubb_size").val() == 'medium') ? BUBBLE_MEDIUM : BUBBLE_LARGE;
+							
+		// set bubble values
+		
 	}
 }
 

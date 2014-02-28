@@ -142,11 +142,11 @@
 		the user navigates to this website -->
 		<div id="page_body">
 			<div id="prop_sidebar">
-				<h3>Form Properties</h3>	
+				<h3 class="prop_sidebar_content">Form Properties</h3>	
 				<br>
 				{{#view ODKScan.FieldContainer}}			
 				{{/view}}
-				<button id="update_prop">Update Field</button>
+				<button id="update_prop" class="prop_sidebar_content">Update Field</button>
 			</div>
 			<div id="scan_doc">
 			</div>
@@ -168,7 +168,7 @@
 	<script type="text/x-handlebars" data-template-name="grid-values-view">
 		<label for="name">Grid values:</label><br>
 		{{#each view.parentView.gridElements}}
-			&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Row: {{rowIndex}}, Col: {{colIndex}}</label>
+			&nbsp;&nbsp;&nbsp;<label for="name">Row: {{rowIndex}}, Col: {{colIndex}}</label>
 			<input type="text" class="ui-widget-content ui-corner-all"></input>
 			<br>
 		{{/each}}
@@ -183,7 +183,7 @@
 		<label>
 			{{view Ember.RadioButton type="radio" viewName="borderNoView" name="borderOption" value="0"}} No
 		</label>
-		
+		<br>
 		<div id="border_container">
 			<label for="name">Border</label>
 			<input type="number" id="border_width" value="1" class="ui-widget-content ui-corner-all" min="1" max="5">	

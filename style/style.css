@@ -25,8 +25,7 @@ happening after using views within dialog menus). */
 	font-weight: bold;
 }
 
-/* 
-	Contains all of the application options (create new document,
+/* 	Contains all of the application options (create new document,
 	change editing mode, etc.) 
 */
 #toolbar {
@@ -36,16 +35,14 @@ happening after using views within dialog menus). */
 	z-index: 1;
 }
 
-/* 
-	This element is hidden, this file-input button is invoked
+/* 	This element is hidden, this file-input button is invoked
 	when the 'Select Image' button is clicked.
 */
 #image_select {
 	display: none;
 }
 
-/*
-	The page_body div contains:
+/*	The page_body div contains:
 		- ODK Scan document
 		- Properties sidebar
 		- Loaded images
@@ -161,7 +158,12 @@ input[type=text], input[type=number] {
 
 /* set default width on text input boxes */
 input[type=text]{
-	width: 110px;
+	width: 100px;
+}
+
+.grid_values_view {
+	max-height: 120px;
+	overflow: auto;
 }
 
 /************************************************************

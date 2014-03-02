@@ -169,14 +169,16 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="grid-values-view">
-		<label for="name">Grid values:</label><br>
-		{{#each row in view.parentView.gridElements}}
-			{{#each ele in row}}
-				&nbsp;&nbsp;&nbsp;<label for="name">Row: {{ele.rowIndex}}, Col: {{ele.colIndex}}</label>
-				<input type="text" {{bind-attr value=ele.ele_value}} class="ui-widget-content ui-corner-all grid_value" {{action 'inputBoxPressed' ele.rowIndex ele.colIndex target="view.parentView" on="click"}}></input>
-				<br>
+		<div class="grid_values_view">
+			<label for="name">Grid values:</label><br>
+			{{#each row in view.parentView.gridElements}}
+				{{#each ele in row}}
+					&nbsp;&nbsp;<label for="name">Row: {{ele.rowIndex}}, Col: {{ele.colIndex}}</label>
+					<input type="text" {{bind-attr value=ele.ele_value}} class="ui-widget-content ui-corner-all grid_value" {{action 'inputBoxPressed' ele.rowIndex ele.colIndex target="view.parentView" on="click"}}></input>
+					<br>
+				{{/each}}
 			{{/each}}
-		{{/each}}
+		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="border-options-view">

@@ -58,7 +58,9 @@ ODKScan.GridFieldWithValues = ODKScan.FieldController.extend({
 		this._super();
 		if ($(".selected_field").length == 0) {
 			// loading view into a dialog menu, default # of rows is 1, default # of col is 1		
-			this.set('gridElements', [[{colIndex: 1, rowIndex: 1, ele_value: "default_val"}]]);			
+			this.set('gridElements', [[{colIndex: 1, rowIndex: 1, ele_value: "default_val"}]]);	
+			this.set('preNumRow', 1);
+			this.set('preNumCol', 1);						
 		} else {
 			// loading view into a properties sidebar
 			var curr_field = $(".selected_field").data('obj');
@@ -66,7 +68,9 @@ ODKScan.GridFieldWithValues = ODKScan.FieldController.extend({
 			// set # of rows, columns
 			this.set('numRow', parseInt(curr_field.num_rows));
 			this.set('numCol', parseInt(curr_field.num_cols));
-			
+			this.set('preNumRow', this.get('numRow'));
+			this.set('preNumCol', this.get('numCol'));
+						
 			var new_grid = [];
 			var arr_index = 0;
 			

@@ -82,7 +82,7 @@ Box.prototype.constructBox = function() {
 	
 	$(".selected_field").removeClass("selected_field");
 	this.$box.addClass("selected_field");
-	$("#scan_doc").append(this.$box);
+	$(".selected_page").append(this.$box);
 };
 
 /*	Returns JSON containing DOM properties
@@ -159,7 +159,7 @@ Box.prototype.copyField = function() {
 	
 	$(".selected_field").removeClass("selected_field");	
 	$new_box.addClass("selected_field");
-	$("#scan_doc").append($new_box);
+	$(".selected_page").append($new_box);
 };
 
 /*	Loads properties that are common to all Box

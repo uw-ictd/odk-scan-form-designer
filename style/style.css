@@ -5,12 +5,10 @@ html, body {
 	background-color: lightgrey;
 }
 
-/* Makes dialog boxes appear above other elements, 
-also makes the background inactive while a dialog
-box is open. Manually adjusts top to set it to
-auto because they can sometimes open up toward the 
-bottom of the page rather than the center (started 
-happening after using views within dialog menus). */
+/* 	Makes dialog boxes appear above other elements, 
+	also makes the background inactive while a dialog
+	box is open. 
+*/
 .ui-dialog, .ui-front {
 	z-index: 10000 !important;
 }
@@ -25,16 +23,6 @@ happening after using views within dialog menus). */
 	font-weight: bold;
 }
 
-/* 	Contains all of the application options (create new document,
-	change editing mode, etc.) 
-*/
-#toolbar {
-	position: fixed; /* keeps toolbar at top of the page */
-	top: 0;
-	left: 0;
-	z-index: 1;
-}
-
 /* 	This element is hidden, this file-input button is invoked
 	when the 'Select Image' button is clicked.
 */
@@ -43,12 +31,13 @@ happening after using views within dialog menus). */
 }
 
 /*	The page_body div contains:
+		- page list
 		- ODK Scan document
 		- Properties sidebar
 		- Loaded images
 */
 #page_body {
-	margin-top: 20px;
+	margin-top: 65px; /* TODO: remove hard-coded value */
 }
 
 /* 	Sidebar which allows the user to add/modify/delete
@@ -70,7 +59,9 @@ happening after using views within dialog menus). */
 	text-align: center;
 }
 
-/* Roughly centers the update properties buttton. */
+/* 	Roughly centers the update properties buttton. 
+	TODO: figure out to center it programmatically.
+*/
 #update_prop {
 	margin-top: 15px;
 	margin-bottom: 15px;
@@ -96,7 +87,7 @@ happening after using views within dialog menus). */
 }
 
 /* A div container for the ODK Scan doc. */
-#scan_doc {
+.scan_page {
 	border: 2px solid black;
 	background-color: white;
 	float: left;
@@ -104,6 +95,10 @@ happening after using views within dialog menus). */
 	margin-right: 30px;
 	margin-bottom: 15px;
 	position: relative;
+	display: none;
+}
+
+.selected_page {
 	display: inline-block;
 }
 
@@ -115,7 +110,7 @@ happening after using views within dialog menus). */
 }
 
 /* 	Makes the area that surrounds the selected region darker
-	in order to highlight the selected region. 
+	in order to highlight the selected image region. 
 */
 .imgareaselect-outer {
 	background-color: black;
@@ -161,10 +156,33 @@ input[type=text]{
 	width: 100px;
 }
 
+/* 	Sets the max height on the div containing the rows 
+	and columns before it starts to scroll. */
 .grid_values_view {
 	max-height: 120px;
 	overflow: auto;
 }
+
+#page_label_container {
+	margin-left: 140px;
+	margin-top: -20px;
+	margin-bottom: 15px;
+}
+
+.page_tab {
+	text-align: center;
+	border: 1px solid black;
+	background-color: white;
+	float: left;
+	padding: 2px;
+	margin-left: 5px;
+	margin-right: 5px;
+	font-weight: bold;
+}
+
+.selected_page_tab {
+	background-color: rgba(7, 197, 223, 0.41);
+}	
 
 /************************************************************
 *  Scan Document Sizes

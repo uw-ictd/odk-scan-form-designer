@@ -2,6 +2,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	hasBorder: true,
 	isImageEditing: false,
 	imgSelect: null,
+	currPage: null,
+	selectedPageNum: null,
+	pages: null,
 	init: function() {
 		this._super();		
 		
@@ -15,7 +18,16 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var ias = $('#image_area img').imgAreaSelect({
 											instance: true,
 											handles: true});				
-			controller.set('imgSelect', ias);									
+			controller.set('imgSelect', ias);		
+			
+			controller.set('currPage', 1);			
+			// NOTE: the Scan document is set to letter_size by default
+			var $new_page = $("<div/>").addClass("scan_page selected_page letter_portrait");
+			var new_page_tab = {pageNum: controller.get('currPage'), isActive: true, pageDiv:$new_page};
+			controller.set('selectedPageTab', new_page_tab);
+			controller.set('pages', [new_page_tab]);
+			// add the new page to the dom
+			$("#page_container").append($new_page);
 		});
 	},
 	actions: {
@@ -136,11 +148,63 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}
 		},
 		newDoc: function() {
-			if ($("#scan_doc").children().length == 0) {
+			if ($(".selected_page").children().length == 0) {
 				$("#new_doc_dialog").dialog("open");
 			} else {
 				$("#save_check_dialog").dialog("open");
 			}
+		},
+		newPage: function() {
+			console.log("adding new page!");			
+			// create new page div
+			$(".selected_page").removeClass("selected_page");
+			var $new_page = $("<div/>").addClass("scan_page selected_page letter_portrait");
+			$("#page_container").append($new_page);	
+			
+			// deselect current page tab
+			Ember.set(this.get('selectedPageTab'), 'isActive', false);
+			
+			// create new page tab
+			var new_page_num = this.get('currPage') + 1;
+			this.set('currPage', new_page_num);
+			var new_page_tab = {pageNum: new_page_num, isActive: true, pageDiv: $new_page};
+			this.set("selectedPageTab", new_page_tab);
+			var page_arr = this.get('pages');
+			page_arr.pushObject(new_page_tab);					
+			
+			// TODO: add support for dialog menu?
+			//$("#new_page_dialog").dialog("open");
+		},
+		removePage: function() {
+			var page_arr = this.get('pages');
+			var selected_page = this.get("selectedPageTab");
+			for (var i = 0; i < page_arr.length; i++) {
+				if (page_arr[i].pageNum == selected_page.pageNum) {
+					if (page_arr.length > 0) {
+						// make the first tab the currently
+						// selected tab by default after a deletion
+						this.send('selectPageTab', page_arr[0]);
+					}
+					page_arr[i].pageDiv.remove();
+					page_arr.removeAt(i);
+				}
+			}
+		},
+		selectPageTab: function(page) {
+			// deselect current page tab
+			Ember.set(this.get('selectedPageTab'), 'isActive', false);
+			
+			// select new page tab
+			Ember.set(page, 'isActive', true);
+			this.set('selectedPageTab', page);
+		
+			$(".selected_page").removeClass("selected_page");
+			page.pageDiv.addClass("selected_page");
+			// reset the view in the properties sidebar
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+			// unselect any selected field
+			$(".selected_field").removeClass("selected_field");
 		},
 		loadDoc: function() {
 			$("#load_dialog").dialog("open");
@@ -155,7 +219,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			savedDoc.fields = [];
 			
 			// save metadata about the page
-			savedDoc.doc_info.page_size = $("#scan_doc").attr("class");
+			savedDoc.doc_info.page_size = $(".selected_page").attr("class");
 			
 			// save metadata about all images
 			$(".img_div").each(function() {
@@ -190,8 +254,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var scanDoc = {};
 
 			// set Scan doc properties
-			scanDoc.height = $("#scan_doc").height();
-			scanDoc.width = $("#scan_doc").width();
+			scanDoc.height = $(".selected_page").height();
+			scanDoc.width = $(".selected_page").width();
 			scanDoc.fields = [];
 			
 			// compute and get the JSON for each field
@@ -206,7 +270,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var json_output = JSON.stringify(scanDoc, null, '\t');
 			
 			$(".selected_field").removeClass("selected_field");
-			html2canvas($("#scan_doc"), {   
+			html2canvas($(".selected_page"), {   
 				logging:true,
 				onrendered : function(canvas) {
 					var img_src = canvas.toDataURL("image/jpeg");					

@@ -51,7 +51,7 @@ $(document).ready(function() {
 			reader.readAsDataURL(selectedFile);					
 		}
 	);
-	
-	// NOTE: the Scan document is set to letter_size by default
-	$("#scan_doc").addClass("letter_portrait");		
+
+	// at startup the first tab is currently selected
+	$($("#page_list").children(".page_tab")[0]).addClass('selected_page_tab');
 });

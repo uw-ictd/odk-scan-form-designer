@@ -10,10 +10,10 @@
 	-->
 	
 	<!-- CSS -->
-		<link rel="stylesheet" href="style/style.css">
 		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="style/imgareaselect-animated.css">
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="style/style.css">
 	<!---->
 
 	<!-- JavaScript libraries -->
@@ -121,7 +121,16 @@
 			<ul class="nav navbar-nav navbar-right">
 				<li><a>Help</a></li>
 			</ul>			
-		</nav>
+		</nav>	
+		<div id="page_label_container">
+			<div id="page_list">
+				{{#each pages}}
+					<div {{bind-attr class=":page_tab :scan_doc_page isActive:selected_page_tab"}} {{action 'selectPageTab' this}}>Page {{pageNum}}</div>
+				{{/each}}
+			</div>				
+			<div id="new_page" class="page_tab" {{action 'newPage'}}>Add +</div>
+			<div id="remove_page" class="page_tab" {{action 'removePage'}}>Remove -</div>
+		</div>
 		
 		<!-- the content below the navbar is loaded depending on the current url of the website -->
 		{{outlet}}	
@@ -136,7 +145,8 @@
 		{{partial 'exportDialog'}}
 		{{partial 'loadDialog'}}
 		{{partial 'saveDialog'}}
-		{{partial 'newDialog'}}
+		{{partial 'newDocumentDialog'}}
+		{{partial 'newPageDialog'}}
 		{{partial 'saveCheckDialog'}}
 	</script>
 	
@@ -151,7 +161,7 @@
 				{{/view}}
 				<button id="update_prop" class="prop_sidebar_content">Update Field</button>
 			</div>
-			<div id="scan_doc">
+			<div id="page_container">
 			</div>
 			<div id="image_area">
 				<img id="loaded_image"></img>
@@ -426,8 +436,22 @@
 		</div>
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="_newDialog">
-		<div id="new_doc_dialog" title="Create New">		
+	<script type="text/x-handlebars" data-template-name="_newDocumentDialog">
+		<div id="new_doc_dialog" title="Create New Document">		
+			<label for="name">Page Size</label>
+			<select id="doc_size"> 
+				<option value="letter_portrait">Letter (Portrait)</option>
+				<option value="letter_landscape">Letter (Landscape)</option>
+				<option value="a4_portrait">A4 (Portrait)</option>			
+				<option value="a4_landscape">A4 (Landscape)</option>
+				<option value="legal_size">Legal</option>		
+				<option value="index_size">Index</option>						
+			</select><br>		
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_newPageDialog">
+		<div id="new_page_dialog" title="Create New Page">		
 			<label for="name">Page Size</label>
 			<select id="doc_size"> 
 				<option value="letter_portrait">Letter (Portrait)</option>

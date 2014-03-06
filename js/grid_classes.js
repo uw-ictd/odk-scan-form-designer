@@ -159,7 +159,7 @@ GridField.prototype.constructGrid = function() {
 	
 		this.$grid_div.append($("<br>"));							
 	}
-	$("#scan_doc").append(this.$grid_div);
+	$(".selected_page").append(this.$grid_div);
 	
 	this.alignToGrid(); // align this.$grid_div to the grid
 	this.addEventHandlers(this.$grid_div);
@@ -301,7 +301,7 @@ GridField.prototype.copyField = function() {
 	
 	$(".selected_field").removeClass("selected_field");	
 	$new_grid.addClass("selected_field");
-	$("#scan_doc").append($new_grid);
+	$(".selected_page").append($new_grid);
 };
 
 /*	Loads properties that are common to all GridField

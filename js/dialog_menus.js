@@ -6,9 +6,9 @@ $(document).ready(function() {
 		buttons: {
 			"Ok": function() {
 				console.log("making new document...");
-				$("#scan_doc").children().remove();
-				$("#scan_doc").removeClass();
-				$("#scan_doc").addClass($("#doc_size").val());
+				$(".selected_page").children().remove();
+				$(".selected_page").removeClass();
+				$(".selected_page").addClass($("#doc_size").val());
 				ODKScan.FieldContainer.popObject();
 				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			
@@ -16,6 +16,22 @@ $(document).ready(function() {
 			},
 			"Cancel": function() {
 				$("#new_doc_dialog").dialog("close");
+			}
+		}
+	});			
+	
+	$("#new_page_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {
+			"Ok": function() {
+				console.log("making new page...");				
+				ODKScan.FieldContainer.popObject();
+				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);			
+				$("#new_page_dialog").dialog("close");
+			},
+			"Cancel": function() {
+				$("#new_page_dialog").dialog("close");
 			}
 		}
 	});			
@@ -61,9 +77,9 @@ $(document).ready(function() {
 						var img_index = 0;
 						
 						// remove all current fields in the Scan doc
-						$("#scan_doc").children().remove();
+						$(".selected_page").children().remove();
 						
-						$("#scan_doc").addClass(scanDoc.doc_info.page_size);
+						$(".selected_page").addClass(scanDoc.doc_info.page_size);
 						
 						var check_if_done = function(index) {
 							// check if all pics have been loaded

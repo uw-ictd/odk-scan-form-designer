@@ -138,7 +138,7 @@ FormField.prototype.constructGrid = function() {
 			fieldObj.$grid_div.append($g_element);
 		}
 	});			
-	$("#scan_doc").append(this.$grid_div);
+	$(".selected_page").append(this.$grid_div);
 
 	this.alignToGrid();
 	this.addEventHandlers(this.$grid_div);
@@ -274,7 +274,7 @@ FormField.prototype.copyField = function() {
 	
 	$(".selected_field").removeClass("selected_field");	
 	$new_grid.addClass("selected_field");
-	$("#scan_doc").append($new_grid);
+	$(".selected_page").append($new_grid);
 };
 
 /*	Represents a group of formatted numbers.

@@ -248,28 +248,52 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#save_dialog").dialog("open");
 		},
 		exportZIP: function() {
-			// create a zip file for the form image and json
-			var zip = new JSZip();
+			// unselect any selected field (don't want it to be highlighted in the image output)
+			$(".selected_field").removeClass("selected_field");
 			
+			/* Recursively create the file structure. */
+			var zip = new JSZip();
+			this.send('createZipFolder', this.get('pages'), 0, "", zip);
+		},
+		createZipFolder: function(pages, curr_page, curr_directory, zip) {
+			if (curr_page == pages.length) { 
+				// base case
+				var content = zip.generate();
+				var scanDoc = "data:application/zip;base64," + content;				
+				$("#zip_link").attr('href', scanDoc);
+				if (pages.length > 0) {
+					this.send('selectPageTab', pages[0]);
+				}
+				
+				$("#export_dialog").dialog("open");
+				return; 
+			} 
 			var scanDoc = {};
-
+				
 			// set Scan doc properties
-			scanDoc.height = $(".selected_page").height();
-			scanDoc.width = $(".selected_page").width();
+			var $page_div = Ember.get(pages[curr_page], 'pageDiv');	
+			scanDoc.height = $page_div.height();
+			scanDoc.width = $page_div.width();
 			scanDoc.fields = [];
 			
 			// compute and get the JSON for each field
-			var all_fields = $(".field");			
-			for (var i = 0; i < all_fields.length; i++) {
-				var $curr_field = $(all_fields[i]);				
-				var fieldObj = $curr_field.data("obj");
-				
+			var all_fields = $page_div.children(".field");			
+			for (var j = 0; j < all_fields.length; j++) {
+				var $curr_field = $(all_fields[j]);				
+				var fieldObj = $curr_field.data("obj");					
 				scanDoc.fields.push(fieldObj.getFieldJSON());
 			}
-			
 			var json_output = JSON.stringify(scanDoc, null, '\t');
+			if (curr_page > 0) {
+				curr_directory += "nextPage/";
+			}
 			
-			$(".selected_field").removeClass("selected_field");
+			// html2canvas requires DOM element to be visible
+			if (!$page_div.hasClass("selected_page")){
+				$page_div.addClass("selected_page");
+			}
+			
+			var controller = this;
 			html2canvas($(".selected_page"), {   
 				logging:true,
 				onrendered : function(canvas) {
@@ -281,15 +305,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					var img_base64 = img_src.split(",")[1];
 					
 					// add img and json to zip file
-					zip.file("form.jpg", img_base64, {base64: true});
-					zip.file("template.json", json_output);
-					var content = zip.generate();
-
-					var scanDoc = "data:application/zip;base64," + content;
-					$("#zip_link").attr('href', scanDoc);
+					zip.file(curr_directory + "form.jpg", img_base64, {base64: true});
+					zip.file(curr_directory + "template.json", json_output);
+					$page_div.removeClass("selected_page");
+					controller.send('createZipFolder', pages, curr_page + 1, curr_directory, zip);
 				}
-			});	
-			$("#export_dialog").dialog("open");
+			});				
 		}
 	}
 });

@@ -193,13 +193,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						var selected_page = controller.get("selectedPageTab");
 						for (var i = 0; i < page_arr.length; i++) {
 							if (page_arr[i].pageNum == selected_page.pageNum) {
-								if (page_arr.length > 0) {
-									// make the first tab the currently
-									// selected tab by default after a deletion
-									controller.send('selectPageTab', page_arr[0]);
-								}
 								page_arr[i].pageDiv.remove();
-								page_arr.removeAt(i);
+								page_arr.removeAt(i);								
+								// make the first tab the currently
+								// selected tab by default after a deletion
+								controller.send('selectPageTab', page_arr[0]);
 							}
 						}
 						$(this).dialog("close"); 

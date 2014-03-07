@@ -1,9 +1,11 @@
 $(window).bind('beforeunload', function(){ return 'You are about to leave the ODK Scan application.'});
 
 $(document).ready(function() {		
-	// general page setup
+	/* General page setup */
+	
+	// set default view in properties sidebar
 	ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-
+	
 	$("#update_prop").click(function() {
 		console.log("updating field properties");
 		if ($(".selected_field").length != 0) {
@@ -51,7 +53,4 @@ $(document).ready(function() {
 			reader.readAsDataURL(selectedFile);					
 		}
 	);
-
-	// at startup the first tab is currently selected
-	$($("#page_list").children(".page_tab")[0]).addClass('selected_page_tab');
 });

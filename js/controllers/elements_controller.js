@@ -255,23 +255,20 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var zip = new JSZip();
 			this.send('createZipFolder', this.get('pages'), 0, "", zip);
 		},
-		createZipFolder: function(pages, curr_page, curr_directory, zip) {
-			if (curr_page == pages.length) { 
+		createZipFolder: function(pages, curr_index, curr_directory, zip) {
+			if (curr_index == pages.length) { 
 				// base case
 				var content = zip.generate();
 				var scanDoc = "data:application/zip;base64," + content;				
-				$("#zip_link").attr('href', scanDoc);
-				if (pages.length > 0) {
-					this.send('selectPageTab', pages[0]);
-				}
-				
+				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
 				return; 
 			} 
 			var scanDoc = {};
 				
-			// set Scan doc properties
-			var $page_div = Ember.get(pages[curr_page], 'pageDiv');	
+			// make page visible, set Scan doc properties
+			this.send('selectPageTab', pages[curr_index]);
+			var $page_div = Ember.get(pages[curr_index], 'pageDiv');	
 			scanDoc.height = $page_div.height();
 			scanDoc.width = $page_div.width();
 			scanDoc.fields = [];
@@ -284,14 +281,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				scanDoc.fields.push(fieldObj.getFieldJSON());
 			}
 			var json_output = JSON.stringify(scanDoc, null, '\t');
-			if (curr_page > 0) {
-				curr_directory += "nextPage/";
-			}
-			
-			// html2canvas requires DOM element to be visible
-			if (!$page_div.hasClass("selected_page")){
-				$page_div.addClass("selected_page");
-			}
 			
 			var controller = this;
 			html2canvas($(".selected_page"), {   
@@ -307,8 +296,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					// add img and json to zip file
 					zip.file(curr_directory + "form.jpg", img_base64, {base64: true});
 					zip.file(curr_directory + "template.json", json_output);
-					$page_div.removeClass("selected_page");
-					controller.send('createZipFolder', pages, curr_page + 1, curr_directory, zip);
+					controller.send('createZipFolder', pages, curr_index + 1, curr_directory + "nextPage/", zip);
 				}
 			});				
 		}

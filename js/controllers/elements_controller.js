@@ -155,40 +155,60 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}
 		},
 		newPage: function() {
-			console.log("adding new page!");			
-			// create new page div
-			$(".selected_page").removeClass("selected_page");
-			var $new_page = $("<div/>").addClass("scan_page selected_page letter_portrait");
-			$("#page_container").append($new_page);	
-			
-			// deselect current page tab
-			Ember.set(this.get('selectedPageTab'), 'isActive', false);
-			
-			// create new page tab
-			var new_page_num = this.get('currPage') + 1;
-			this.set('currPage', new_page_num);
-			var new_page_tab = {pageNum: new_page_num, isActive: true, pageDiv: $new_page};
-			this.set("selectedPageTab", new_page_tab);
-			var page_arr = this.get('pages');
-			page_arr.pushObject(new_page_tab);					
-			
-			// TODO: add support for dialog menu?
-			//$("#new_page_dialog").dialog("open");
+			var controller = this;
+			$("#new_page_dialog").dialog("option", 
+				"buttons", 
+					[{text: "Ok", click: function() { 
+						// create new page div
+						$(".selected_page").removeClass("selected_page");
+						var $new_page = $("<div/>").addClass("scan_page selected_page");
+						$new_page.addClass($("#page_size").val());
+						$("#page_container").append($new_page);	
+						
+						// deselect current page tab
+						Ember.set(controller.get('selectedPageTab'), 'isActive', false);
+						
+						// create new page tab
+						var new_page_num = controller.get('currPage') + 1;
+						controller.set('currPage', new_page_num);
+						var new_page_tab = {pageNum: new_page_num, isActive: true, pageDiv: $new_page};
+						controller.set("selectedPageTab", new_page_tab);
+						var page_arr = controller.get('pages');
+						page_arr.pushObject(new_page_tab);
+						$(this).dialog("close"); 
+					}},{text: "Cancel", click: function() { 
+						$(this).dialog("close"); 
+					}}
+				]
+			);
+			$("#new_page_dialog").dialog("open");
 		},
 		removePage: function() {
-			var page_arr = this.get('pages');
-			var selected_page = this.get("selectedPageTab");
-			for (var i = 0; i < page_arr.length; i++) {
-				if (page_arr[i].pageNum == selected_page.pageNum) {
-					if (page_arr.length > 0) {
-						// make the first tab the currently
-						// selected tab by default after a deletion
-						this.send('selectPageTab', page_arr[0]);
-					}
-					page_arr[i].pageDiv.remove();
-					page_arr.removeAt(i);
-				}
-			}
+			// removes the currently selected page tab			
+			var controller = this;
+			$("#remove_page_dialog").dialog("option", 
+				"buttons", 
+					[{text: "Ok", click: function() { 
+						var page_arr = controller.get('pages');
+						var selected_page = controller.get("selectedPageTab");
+						for (var i = 0; i < page_arr.length; i++) {
+							if (page_arr[i].pageNum == selected_page.pageNum) {
+								if (page_arr.length > 0) {
+									// make the first tab the currently
+									// selected tab by default after a deletion
+									controller.send('selectPageTab', page_arr[0]);
+								}
+								page_arr[i].pageDiv.remove();
+								page_arr.removeAt(i);
+							}
+						}
+						$(this).dialog("close"); 
+					}},{text: "Cancel", click: function() { 
+						$(this).dialog("close"); 
+					}}
+				]
+			);
+			$("#remove_page_dialog").dialog("open");
 		},
 		selectPageTab: function(page) {
 			// deselect current page tab

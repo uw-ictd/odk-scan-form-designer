@@ -147,6 +147,7 @@
 		{{partial 'saveDialog'}}
 		{{partial 'newDocumentDialog'}}
 		{{partial 'newPageDialog'}}
+		{{partial 'removePageDialog'}}
 		{{partial 'saveCheckDialog'}}
 	</script>
 	
@@ -453,7 +454,7 @@
 	<script type="text/x-handlebars" data-template-name="_newPageDialog">
 		<div id="new_page_dialog" title="Create New Page">		
 			<label for="name">Page Size</label>
-			<select id="doc_size"> 
+			<select id="page_size"> 
 				<option value="letter_portrait">Letter (Portrait)</option>
 				<option value="letter_landscape">Letter (Landscape)</option>
 				<option value="a4_portrait">A4 (Portrait)</option>			
@@ -461,6 +462,12 @@
 				<option value="legal_size">Legal</option>		
 				<option value="index_size">Index</option>						
 			</select><br>		
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_removePageDialog">
+		<div id="remove_page_dialog" title="Remove Page?">		
+			<p>Are you sure you want to remove this page?</p>	
 		</div>
 	</script>
 	

@@ -20,21 +20,19 @@ $(document).ready(function() {
 		}
 	});			
 	
+	// NOTE: buttons are implemented in the elements controller in 
+	// order to allow communication between the controller and dialog menu
 	$("#new_page_dialog").dialog({
 		autoOpen: false,
-		modal: true,
-		buttons: {
-			"Ok": function() {
-				console.log("making new page...");				
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);			
-				$("#new_page_dialog").dialog("close");
-			},
-			"Cancel": function() {
-				$("#new_page_dialog").dialog("close");
-			}
-		}
-	});			
+		modal: true
+	});		
+
+	// NOTE: buttons are implemented in the elements controller in 
+	// order to allow communication between the controller and dialog menu
+	$("#remove_page_dialog").dialog({
+		autoOpen: false,
+		modal: true
+	});		
 	
 	$("#save_check_dialog").dialog({
 		autoOpen: false,

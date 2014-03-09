@@ -62,4 +62,5 @@ var load_into_scan = function(img_src, img_height, img_width, orig_height, orig_
 	// NOTE: image removed when double-clicked
 	$img_draggable.dblclick(function() { $(this).remove() });
 	$(".selected_page").append($img_draggable);
+	return $img_draggable;
 };

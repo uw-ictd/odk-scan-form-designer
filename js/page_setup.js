@@ -49,6 +49,7 @@ $(document).ready(function() {
 			reader.onload = function(event) {
 				// set properties of the image
 				$("#loaded_image").attr('src', event.target.result);																	
+				$("#loaded_image").data('filename', selectedFile.name);	
 			};					
 			reader.readAsDataURL(selectedFile);					
 		}

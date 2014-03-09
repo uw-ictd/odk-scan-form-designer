@@ -163,7 +163,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				$("#scan_json_link").attr("download", $("#saved_scan_name").val() + ".json");
+				$("#scan_json_link").attr("download", $("#saved_scan_name").val());
 				document.getElementById("scan_json_link").click();
 				$("#save_dialog").dialog("close");
 			},

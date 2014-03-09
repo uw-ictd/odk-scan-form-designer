@@ -15,7 +15,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				access/modify the the selected image region
 				based on interaction from the user.
 			*/
-			var ias = $('#image_area img').imgAreaSelect({
+			var ias = $('#loaded_image').imgAreaSelect({
 											instance: true,
 											handles: true});				
 			controller.set('imgSelect', ias);		
@@ -33,21 +33,57 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	actions: {
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
+			this.set("fieldRefList", []);
 			this.set('isImageEditing', true);
 		},
-		enableFieldEdit: function() {
-			$("#image_area img").attr('src', null);
+		enableFieldEdit: function() {			
+			// add references to the currently loaded image from 
+			// all of the image snippets that were taken from it
+			this.send("addImageRef");
+			
+			// remove the loaded image from the loaded_image container
+			$("#loaded_image").attr("src", null);
+		
+			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
 			ias.cancelSelection();
+			
+			// revert back to displaying the properties sidebar
 			$("#prop_sidebar").show("slow");			
 			this.set('isImageEditing', false);
 		},
 		selectImage: function() {
+			// add references to the currently loaded image from 
+			// all of the image snippets that were taken from it
+			this.send("addImageRef");
+			
+			// cancel any currently selected image region
+			var ias = this.get('imgSelect');
+			ias.cancelSelection();
+			
 			/* 	NOTE: Pressing 'Select Image' triggers a hidden html 
 				file input button #image_select. The button is hidden
 				in order to override its appearance. 
 			*/
 			$("#image_select").click();
+		},
+		addImageRef: function() {
+			// store the currently loaded image into the saved images container
+			var $saved_img = $("<img/>");
+			$saved_img.attr("src", $("#loaded_image").attr("src"));
+			$("#saved_images").append($saved_img);
+			
+			var field_ref_list = this.get("fieldRefList");
+			// iterate over all of the image snippets that reference
+			// the image that was just uploaded, and a reference to
+			// the image.
+			for (var i = 0; i < field_ref_list.length; i++) {
+				var $img_field = field_ref_list[i];
+				$img_field.data("img_ref", $saved_img);
+			}
+			
+			// reset the array of fields
+			this.set("fieldRefList", []);
 		},
 		addSelection: function() {
 			var ias = this.get('imgSelect');
@@ -57,12 +93,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// load the image into the dom
 				var img_src = $("#loaded_image").attr('src');
 				var $img_container = load_into_dom(img_src, reg.height, reg.width, -reg.y1, -reg.x1);				
-
+				var controller = this;
 				html2canvas($img_container, {   
 					logging:true,
 					onrendered : function(canvas) {
 						var cropped_img_src = canvas.toDataURL("image/jpeg");			
-						load_into_scan(cropped_img_src, reg.height, reg.width, reg.height, reg.width, -reg.y1, -reg.x1, 0, 0);
+						var $new_img_div = load_into_scan(cropped_img_src, reg.height, reg.width, reg.height, reg.width, -reg.y1, -reg.x1, 0, 0);
+						$new_img_div.data('orig_img_name', $("#loaded_image").data('filename'));	
+						
+						// add the new image div to the list of fields which are referencing
+						// the currently selected image
+						controller.get("fieldRefList").pushObject($new_img_div);
 						$("#processed_images").children().remove();										
 					}
 				});			
@@ -71,6 +112,28 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		deleteField: function() {
 			var $curr_field = $(".selected_field");
 			if ($curr_field.length != 0) {
+				if ($curr_field.hasClass("img_div")) {
+					var img_name = $curr_field.data("orig_img_name");
+					var img_ref_count = 0;
+					// check if other img_divs reference the same image
+					$(".selected_page").children(".img_div").each(function() {
+						if ($(this).data("orig_img_name") == img_name) {
+							img_ref_count += 1;
+						}
+					});
+					
+					if (img_ref_count == 1) {
+						// delete the image that is being referenced by the current 
+						// field, since its the only field referencing the image
+						$("#saved_images").children("img").each(function() {
+							if ($(this).data("filename") == img_name) {
+								$(this).remove();
+								return;
+							}
+						});
+					}
+				}
+			
 				$curr_field.remove();
 				// update view in the field properties sidebar
 				ODKScan.FieldContainer.popObject();
@@ -155,6 +218,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}
 		},
 		newPage: function() {
+			// cancel any currently selected image region
+			var ias = this.get('imgSelect');
+			ias.cancelSelection();
+		
 			var controller = this;
 			$("#new_page_dialog").dialog("option", 
 				"buttons", 
@@ -172,8 +239,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						var new_page_num = controller.get('currPage') + 1;
 						controller.set('currPage', new_page_num);
 						var new_page_tab = {pageNum: new_page_num, isActive: true, pageDiv: $new_page};
-						controller.set("selectedPageTab", new_page_tab);
+						
+						// store the new page tab in the controller
+						controller.set("selectedPageTab", new_page_tab);						
 						var page_arr = controller.get('pages');
+						
 						page_arr.pushObject(new_page_tab);
 						$(this).dialog("close"); 
 					}},{text: "Cancel", click: function() { 
@@ -184,6 +254,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#new_page_dialog").dialog("open");
 		},
 		removePage: function() {
+			// cancel any currently selected image region
+			var ias = this.get('imgSelect');
+			ias.cancelSelection();
+		
 			// removes the currently selected page tab			
 			var controller = this;
 			$("#remove_page_dialog").dialog("option", 
@@ -228,41 +302,73 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#load_dialog").dialog("open");
 		},
 		saveDoc: function() {
-			/*	Need to save metadata about all fields (including all
+			/*	Saves metadata about all pages, fields (including all
 				parameters that were used to make them) and images.
-			*/			
-			var savedDoc = {};
-			savedDoc.doc_info = {};
-			savedDoc.images = [];
-			savedDoc.fields = [];
+			*/						
 			
-			// save metadata about the page
-			savedDoc.doc_info.page_size = $(".selected_page").attr("class");
+			var zip = new JSZip();
+			var pages = this.get('pages');		
 			
-			// save metadata about all images
-			$(".img_div").each(function() {
-				var img_div = {};
-				img_div.height = $(this).height();
-				img_div.width = $(this).width();
-				img_div.div_top = $(this).css('top');
-				img_div.div_left = $(this).css('left');
-				// NOTE: img position, original size stored in the img's data field
-				img_div.img_top = $(this).children("img").data('top');
-				img_div.img_left = $(this).children("img").data('left');
-				img_div.orig_height = $(this).children("img").data('orig_height');
-				img_div.orig_width = $(this).children("img").data('orig_width');
+			var curr_directory = "";
+			for (var i = 0; i < pages.length; i++) {
+				// make page visible, set Scan doc properties
+				this.send('selectPageTab', pages[i]);							
+				var $page_div = Ember.get(pages[i], 'pageDiv');	
+				var savedDoc = {};
+				savedDoc.doc_info = {};
+				savedDoc.images = [];
+				savedDoc.fields = [];
+			
+				// 'selected_page' class designation should not be
+				// stored in the JSON output
+				$page_div.removeClass("selected_page");
 				
-				savedDoc.images.push(img_div);
-			});
+				// save metadata about the page
+				savedDoc.doc_info.page_size = $(".selected_page").attr("class");
+				
+					// save metadata about all images
+				$page_div.children(".img_div").each(function() {
+					var img_div = {};
+					img_div.height = $(this).height();
+					img_div.width = $(this).width();
+					img_div.div_top = $(this).css('top');
+					img_div.div_left = $(this).css('left');
+					// NOTE: img position, original size stored in the img's data field
+					img_div.img_top = $(this).children("img").data('top');
+					img_div.img_left = $(this).children("img").data('left');
+					img_div.orig_height = $(this).children("img").data('orig_height');
+					img_div.orig_width = $(this).children("img").data('orig_width');
+					img_div.img_name = $(this).data('orig_img_name');					
+					savedDoc.images.push(img_div);
+				});
 		
-			/*	 create a new JSON object for each field */
-			$(".field").each(function() {
-				var json = $(this).data("obj").saveJSON();
-				savedDoc.fields.push(json);				
-			});
+				/*	 create a new JSON object for each field */
+				$page_div.children(".field").each(function() {
+					var json = $(this).data("obj").saveJSON();
+					savedDoc.fields.push(json);				
+				});				
+				var json_output = JSON.stringify(savedDoc, null, '\t');
+				
+				// create images directory, add all used images	
+				zip.folder(curr_directory + "images/");
+				$page_div.children(".img_div").each(function() {
+					var img_name = $(this).data("orig_img_name");
+					var search_res = zip.file(new RegExp(curr_directory + "images/" + img_name)); 
+					if (search_res.length == 0) {
+						// the image is not currently in the images/
+						// folder, it needs to be added
+						var img_base64 = $(this).data("img_ref").attr("src").split(",")[1];
+						zip.file(curr_directory + "images/" + img_name, img_base64, {base64: true});
+					}
+				});
+				
+				zip.file(curr_directory + "page.json", json_output);
+				curr_directory += "nextPage/";
+			}
 			
-			var json_output = JSON.stringify(savedDoc, null, '\t');
-			$("#scan_json_link").attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(json_output));	
+			var zip_contents = zip.generate();
+			var scan_doc_zip = "data:application/zip;base64," + zip_contents;				
+			$("#scan_json_link").attr('href', scan_doc_zip);				
 			$("#save_dialog").dialog("open");
 		},
 		exportZIP: function() {

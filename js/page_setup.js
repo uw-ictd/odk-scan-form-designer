@@ -30,15 +30,15 @@ $(document).ready(function() {
 		}
 	);
 	
-	$("#uploaded_json").change(
+	$("#uploaded_zip").change(
 		function (event) {
 			var selectedFile = event.target.files[0];
 			var reader = new FileReader();
 			reader.onload = function(event) {
 				console.log('json file: ' + event.target.result);	
-				$("#uploaded_json").data("json", event.target.result);
+				$("#uploaded_zip").data("zip", event.target.result);
 			};								
-			reader.readAsText(selectedFile);					
+			reader.readAsDataURL(selectedFile);					
 		}
 	);
 	

@@ -422,11 +422,12 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_loadDialog">
-		<div id="load_dialog" title="Load Scan Form">		
-			<label for="name">Image</label>
-			<input type="file" id="uploaded_image" class="ui-corner-all">		
-			<label for="name">JSON</label>
-			<input type="file" id="uploaded_json" class="ui-corner-all">							
+		<div id="load_dialog" title="Load Scan Form">			
+			<label for="name">Zip File</label>
+			<input type="file" id="uploaded_zip" class="ui-corner-all"><br>
+			<hr class="horz_divider">
+			<button id="load_zip" class="input_button" {{action "loadZip"}}>Ok</button>
+			<button id="load_cancel" class="input_button" {{action "cancelLoad"}}>Cancel</button>
 		</div>
 	</script>
 	

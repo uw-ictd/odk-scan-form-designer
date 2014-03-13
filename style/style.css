@@ -188,6 +188,15 @@ input[type=text]{
 	display: none;
 }
 
+#uploaded_zip {
+	width: 210px;
+}
+
+.input_button {
+	margin: 5px;
+	float: right;
+}
+
 /************************************************************
 *  Scan Document Sizes
 ************************************************************/

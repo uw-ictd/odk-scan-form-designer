@@ -54,71 +54,58 @@ $(document).ready(function() {
 	
 	$("#load_dialog").dialog({
 		autoOpen: false,
-		modal: true,
+		modal: true
+		/*
 		buttons: {
-			"Ok": function() {				
-				// check if no json was uploaded, error case
-				// if no json was uploaded?
-				if (!$("#uploaded_json").data("json")) {
-					console.log("no json uploaded");
-				} else {							
-					// load images into the scan doc
-					var scanDoc = JSON.parse($("#uploaded_json").data("json"));
-					var images = scanDoc.images;
+			"Ok": function() {											
+					// load image snippets into the Scan doc							
+					var img_pos = [];
+					var img_index = 0;
 					
-					if (images.length > 0 && !$("#uploaded_image").data("img_src")) {
-						// error case, no image was uploaded
-						console.log('error, no image file');
-					} else {							
-						// load image snippets into the Scan doc							
-						var img_pos = [];
-						var img_index = 0;
-						
-						// remove all current fields in the Scan doc
-						$(".selected_page").children().remove();
-						
-						$(".selected_page").addClass(scanDoc.doc_info.page_size);
-						
-						var check_if_done = function(index) {
-							// check if all pics have been loaded
-							if (index == img_pos.length) {
-								$("#processed_images").children().remove();
-							}
-						};
-						
-						var img_src = $("#uploaded_image").data("img_src");	
-						for (var i = 0; i < images.length; i++) {
-							var img_json = images[i];
-							img_pos.push(img_json);
+					// remove all current fields in the Scan doc
+					$(".selected_page").children().remove();
+					
+					$(".selected_page").addClass(scanDoc.doc_info.page_size);
+					
+					var check_if_done = function(index) {
+						// check if all pics have been loaded
+						if (index == img_pos.length) {
+							$("#processed_images").children().remove();
+						}
+					};
+					
+					var img_src = $("#uploaded_image").data("img_src");	
+					for (var i = 0; i < images.length; i++) {
+						var img_json = images[i];
+						img_pos.push(img_json);
 
-							// load the image into the dom
-							var $img_container = load_into_dom(img_src, 
-													img_json.orig_height,
-													img_json.orig_width,
-													img_json.img_top,
-													img_json.img_left);												
-
-							html2canvas($img_container, {   
-								logging:true,
-								onrendered : function(canvas) {												
-									var cropped_img_src = canvas.toDataURL("image/jpeg"); 
-									var img_json = img_pos[img_index]; // get image position/size information					
-									load_into_scan(cropped_img_src, 
-												img_json.height, 
-												img_json.width, 
+						// load the image into the dom
+						var $img_container = load_into_dom(img_src, 
 												img_json.orig_height,
 												img_json.orig_width,
-												img_json.img_top, 
-												img_json.img_left, 
-												img_json.div_top, 
-												img_json.div_left);
-														
-									img_index += 1;
-									check_if_done(img_index);
-								}
-							});			
-						}
-					}
+												img_json.img_top,
+												img_json.img_left);												
+
+						html2canvas($img_container, {   
+							logging:true,
+							onrendered : function(canvas) {												
+								var cropped_img_src = canvas.toDataURL("image/jpeg"); 
+								var img_json = img_pos[img_index]; // get image position/size information					
+								load_into_scan(cropped_img_src, 
+											img_json.height, 
+											img_json.width, 
+											img_json.orig_height,
+											img_json.orig_width,
+											img_json.img_top, 
+											img_json.img_left, 
+											img_json.div_top, 
+											img_json.div_left);
+													
+								img_index += 1;
+								check_if_done(img_index);
+							}
+						});			
+					}						
 					
 					// load all fields into the doc
 					var fields = scanDoc.fields;
@@ -149,13 +136,13 @@ $(document).ready(function() {
 						}
 					}
 				}
-										
 				$("#load_dialog").dialog("close");					
 			},
 			"Cancel": function() {
 				$("#load_dialog").dialog("close");
 			}
-		}			
+		}	
+		*/
 	});
 	
 	$("#save_dialog").dialog({

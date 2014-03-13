@@ -84,7 +84,7 @@
 					<ul class="dropdown-menu">
 						<li><a {{action 'newDoc'}}>New</a></li>
 						<li class="divider"></li>
-						<li><a {{action 'loadDoc'}}>Load</a></li>	
+						<li><a {{action 'openLoadDialog'}}>Load</a></li>	
 						<li><a {{action 'saveDoc'}}>Save</a></li>			
 						<li class="divider"></li>
 						<li><a {{action 'exportZIP'}}>Export zip</a></li>				
@@ -129,7 +129,7 @@
 				{{/each}}
 			</div>				
 			<div id="new_page" class="page_tab" {{action 'newPage'}}>Add +</div>
-			<div id="remove_page" class="page_tab" {{action 'removePage'}}>Remove -</div>
+			<div id="remove_page" class="page_tab" {{action 'openRemovePageDialog'}}>Remove -</div>
 		</div>
 		
 		<!-- the content below the navbar is loaded depending on the current url of the website -->
@@ -426,8 +426,8 @@
 			<label for="name">Zip File</label>
 			<input type="file" id="uploaded_zip" class="ui-corner-all"><br>
 			<hr class="horz_divider">
-			<button id="load_zip" class="input_button" {{action "loadZip"}}>Ok</button>
 			<button id="load_cancel" class="input_button" {{action "cancelLoad"}}>Cancel</button>
+			<button id="load_zip" class="input_button" {{action "loadZip"}}>Ok</button>
 		</div>
 	</script>
 	
@@ -470,6 +470,9 @@
 	<script type="text/x-handlebars" data-template-name="_removePageDialog">
 		<div id="remove_page_dialog" title="Remove Page">		
 			<p>Are you sure you want to remove this page?</p>	
+			<hr class="horz_divider">
+			<button class="input_button" {{action "cancelPageRemove"}}>Cancel</button>
+			<button class="input_button" {{action "removePage"}}>Ok</button>
 		</div>
 	</script>
 	

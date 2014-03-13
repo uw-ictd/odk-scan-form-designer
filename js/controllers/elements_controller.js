@@ -236,34 +236,28 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			page_arr.pushObject(new_page_tab);
 		},
+		openRemovePageDialog: function() {
+			$("#remove_page_dialog").dialog("open");
+		},
+		cancelPageRemove: function() {
+			$("#remove_page_dialog").dialog("close");
+		},
 		removePage: function() {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
 			ias.cancelSelection();
 		
-			// removes the currently selected page tab			
-			var controller = this;
-			$("#remove_page_dialog").dialog("option", 
-				"buttons", 
-					[{text: "Ok", click: function() { 
-						var page_arr = controller.get('pages');
-						var selected_page = controller.get("selectedPageTab");
-						for (var i = 0; i < page_arr.length; i++) {
-							if (page_arr[i].pageNum == selected_page.pageNum) {
-								page_arr[i].pageDiv.remove();
-								page_arr.removeAt(i);								
-								// make the first tab the currently
-								// selected tab by default after a deletion
-								controller.send('selectPageTab', page_arr[0]);
-							}
-						}
-						$(this).dialog("close"); 
-					}},{text: "Cancel", click: function() { 
-						$(this).dialog("close"); 
-					}}
-				]
-			);
-			$("#remove_page_dialog").dialog("open");
+			var page_arr = this.get('pages');
+			var selected_page = this.get("selectedPageTab");
+			page_arr.removeObject(selected_page);
+			
+			if (page_arr.length > 0) {
+				// set the first page to be the selected page
+				// after a page removal
+				this.send('selectPageTab', page_arr[0]); 
+			}
+			
+			$("#remove_page_dialog").dialog("close");
 		},
 		selectPageTab: function(page) {
 			// cancel any currently selected image region
@@ -285,7 +279,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// unselect any selected field
 			$(".selected_field").removeClass("selected_field");
 		},
-		loadDoc: function() {
+		openLoadDialog: function() {
+			// reset any previously uploaded file
+			$("#uploaded_zip").val("");
 			$("#load_dialog").dialog("open");
 		},
 		cancelLoad: function() {

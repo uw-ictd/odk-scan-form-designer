@@ -60,18 +60,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			*/
 			$("#image_select").click();
 		},
-		addImage: function(image_name) {
+		addImage: function(image_name, img_src) {
 			// store the currently loaded image into the 'images' field
 			var images = this.get('images');
 			if (!images[image_name]) {
 				images[image_name] = 
-					{ref_count: 0, data: $("#loaded_image").attr("src")}
+					{ref_count: 0, data: img_src}
 			}
 		},
-		addImageRef: function(image_name) {
+		addImageRef: function(image_name, img_src) {
 			// add a new reference to an image
 			if (!(image_name in this.get('images'))) {
-				this.send("addImage", image_name);
+				this.send("addImage", image_name, img_src);
 			}
 			
 			var image = this.get('images')[image_name];
@@ -104,7 +104,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						var $new_img_div = load_into_scan(cropped_img_src, reg.height, reg.width, reg.height, reg.width, -reg.y1, -reg.x1, 0, 0);
 						$new_img_div.data('img_name', $("#loaded_image").data('filename'));	
 						// update the image references
-						controller.send("addImageRef", $("#loaded_image").data('filename'));
+						controller.send("addImageRef", $("#loaded_image").data('filename'), $("#loaded_image").attr("src"));
 						$("#processed_images").children().remove();										
 					}
 				});			
@@ -309,6 +309,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var load_images = function(images, curr_index, curr_directory) {
 					if (curr_index == images.length) {
 						// base case
+						// remove all temporary image snippets that were
+						// loaded into the DOM
+						$("#processed_images").children().remove();
 						load_pages(curr_directory + "nextPage/");
 						return;
 					} else { 
@@ -330,7 +333,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							logging:true,
 							onrendered : function(canvas) {												
 								var cropped_img_src = canvas.toDataURL("image/jpeg"); 					
-								load_into_scan(cropped_img_src, 
+								var $new_img_div = load_into_scan(cropped_img_src, 
 											img_json.height, 
 											img_json.width, 
 											img_json.orig_height,
@@ -338,7 +341,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 											img_json.img_top, 
 											img_json.img_left, 
 											img_json.div_top, 
-											img_json.div_left);											
+											img_json.div_left);	
+								// store the original image's name
+								$new_img_div.data("img_name", img_json.img_name);
+								// store a reference to the image that was loaded
+								controller.send("addImageRef", img_json.img_name, img_src);
 								load_images(images, curr_index + 1, curr_directory);
 							}
 						});							
@@ -348,7 +355,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var controller = this;
 				var load_pages = function(curr_directory) {
 					if (zip.folder(new RegExp(curr_directory)).length == 0) {
-						$("#processed_images").remove();
 						return; // base case
 					} else {
 						// recursive case

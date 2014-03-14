@@ -3,7 +3,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	isImageEditing: false,
 	imgSelect: null,
 	currPage: null,
-	selectedPageNum: null,
+	selectedPageTab: null,
 	pages: null,
 	images: {},
 	init: function() {
@@ -39,7 +39,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		enableFieldEdit: function() {			
 			// remove the loaded image from the loaded_image container
-			$("#loaded_image").attr("src", null);
+			$("#loaded_image").attr("src", null);			
 		
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -53,6 +53,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
 			ias.cancelSelection();
+			
+			// reset any previously chosen files
+			$("#image_select").val("");
 			
 			/* 	NOTE: Pressing 'Select Image' triggers a hidden html 
 				file input button #image_select. The button is hidden
@@ -176,14 +179,14 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$new_field.data('obj').name += "_copy";
 				// load properties of the new field into
 				// the properties sidebar
-				$new_field.click();				
+				$new_field.click();											
 			}
 		},
 		copyImage: function() {
 			if ($(".selected_field").hasClass('img_div')) {
 				var $img_div = $(".selected_field");
 				var $img = $img_div.children("img");
-				load_into_scan($img.attr('src'), 
+				var $new_img_div = load_into_scan($img.attr('src'), 
 							$img_div.height(), 
 							$img_div.width(), 
 							$img.data('orig_height'), 
@@ -192,6 +195,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							$img.data('left'), 
 							0, 
 							0);		
+				var img_name = $(".selected_field").data("img_name");
+				$new_img_div.data("img_name", img_name);
+				
+				// update the image references
+				this.send("addImageRef", img_name);
 			}
 		},
 		newDoc: function() {

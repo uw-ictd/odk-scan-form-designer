@@ -83,6 +83,7 @@
 					<a class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a {{action 'newDoc'}}>New</a></li>
+						<li><a {{action 'openPageStyleDialog'}}>Set page style</a></li>
 						<li class="divider"></li>
 						<li><a {{action 'openLoadDialog'}}>Load</a></li>	
 						<li><a {{action 'saveDoc'}}>Save</a></li>			
@@ -97,7 +98,7 @@
 				  <li><a {{action "enableFieldEdit"}}>Field Layer</a></li>				  
 				</ul>
 			  </li>
-			  <input id="image_select" type="file"></input> <!--NOTE: this element is hidden. -->
+			  <input id="image_select" type="file" accept="image/*"></input> <!--NOTE: this element is hidden. -->
 			{{#if isImageEditing}}				
 				<li><a id="image_button" {{action 'selectImage'}}>Select Image</a></li>
 				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
@@ -146,7 +147,7 @@
 		{{partial 'loadDialog'}}
 		{{partial 'saveDialog'}}
 		{{partial 'newDocumentDialog'}}
-		{{partial 'newPageDialog'}}
+		{{partial 'pageStyleDialog'}}
 		{{partial 'removePageDialog'}}
 		{{partial 'saveCheckDialog'}}
 	</script>
@@ -424,7 +425,7 @@
 	<script type="text/x-handlebars" data-template-name="_loadDialog">
 		<div id="load_dialog" title="Load Scan Form">			
 			<label for="name">Zip File</label>
-			<input type="file" id="uploaded_zip" class="ui-corner-all"><br>
+			<input type="file" id="uploaded_zip" class="ui-corner-all" accept="application/x-zip-compressed"><br>
 			<hr class="horz_divider">
 			<button id="load_cancel" class="input_button" {{action "cancelLoad"}}>Cancel</button>
 			<button id="load_zip" class="input_button" {{action "loadZip"}}>Ok</button>
@@ -452,9 +453,9 @@
 			</select><br>		
 		</div>
 	</script>
-	
-	<script type="text/x-handlebars" data-template-name="_newPageDialog">
-		<div id="new_page_dialog" title="Create New Page">		
+
+	<script type="text/x-handlebars" data-template-name="_pageStyleDialog">
+		<div id="page_style_dialog" title="Set Page Style">		
 			<label for="name">Page Size</label>
 			<select id="page_size"> 
 				<option value="letter_portrait">Letter (Portrait)</option>
@@ -464,6 +465,9 @@
 				<option value="legal_size">Legal</option>		
 				<option value="index_size">Index</option>						
 			</select><br>		
+			<hr class="horz_divider">
+			<button class="input_button" {{action "cancelPageStyleDialog"}}>Cancel</button>
+			<button class="input_button" {{action "setPageStyle"}}>Ok</button>
 		</div>
 	</script>
 	

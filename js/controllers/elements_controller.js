@@ -1,11 +1,11 @@
 ODKScan.ElementsController = Ember.ArrayController.extend({
-	hasBorder: true,
-	isImageEditing: false,
-	imgSelect: null,
-	currPage: null,
-	selectedPageTab: null,
-	pages: null,
-	images: {},
+	isImageEditing: false,	// toggles app between field editing and image editing mode
+	imgSelect: null,		// imgAreaSelect object used to crop images
+	currPage: 1,			// current page tab number
+	pageStyle: "letter_portrait",	// the page style used by pages in the current Scan document
+	selectedPageTab: null,	// metadata about the currently selected tab (number, active/non-active, DOM reference)
+	pages: null,			// list of JSON objects containing page tab metadata
+	images: {},				// JSON containing references to image metadata (reference count, image src)
 	init: function() {
 		this._super();		
 		
@@ -19,11 +19,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var ias = $('#loaded_image').imgAreaSelect({
 											instance: true,
 											handles: true});				
-			controller.set('imgSelect', ias);		
+			controller.set('imgSelect', ias);							
 			
-			controller.set('currPage', 1);			
-			// NOTE: the Scan document is set to letter_size by default
-			var $new_page = $("<div/>").addClass("scan_page selected_page letter_portrait");
+			var $new_page = $("<div/>");
+			// NOTE: the Scan document is set to letter_portrait by default
+			$new_page.addClass("scan_page selected_page");
+			$new_page.addClass(controller.get("pageStyle"));
+			
 			var new_page_tab = {pageNum: controller.get('currPage'), isActive: true, pageDiv:$new_page};
 			controller.set('selectedPageTab', new_page_tab);
 			controller.set('pages', [new_page_tab]);
@@ -34,7 +36,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	actions: {
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
-			this.set("fieldRefList", []);
 			this.set('isImageEditing', true);
 		},
 		enableFieldEdit: function() {			
@@ -49,6 +50,30 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#prop_sidebar").show("slow");			
 			this.set('isImageEditing', false);
 		},
+		openPageStyleDialog: function() {
+			$("#page_style_dialog").dialog("open");
+		},
+		setPageStyle: function() {		
+			// delete all fields
+			$(this.get("pages")).each(function(index, page) {
+				page.pageDiv.children().remove();
+			});
+		
+			this.set("pageStyle", $("#page_size").val());
+			
+			// remove current page style from all pages
+			var $all_pages = $(".scan_page");
+			$all_pages.removeClass(); 
+			$all_pages.addClass("scan_page");
+			$all_pages.addClass(this.get("pageStyle"));
+			
+			// re-select the current page
+			this.send("selectPageTab", this.get("selectedPageTab"));
+			$("#page_style_dialog").dialog("close");
+		},
+		cancelPageStyleDiague: function() {
+			$("#page_style_dialog").dialog("close");
+		},
 		selectImage: function() {	
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -58,25 +83,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#image_select").val("");
 			
 			/* 	NOTE: Pressing 'Select Image' triggers a hidden html 
-				file input button #image_select. The button is hidden
+				file-input button #image_select. The button is hidden
 				in order to override its appearance. 
 			*/
 			$("#image_select").click();
 		},
 		addImage: function(image_name, img_src) {
-			// store the currently loaded image into the 'images' field
+			// add image_name to the images field
 			var images = this.get('images');
 			if (!images[image_name]) {
-				images[image_name] = 
-					{ref_count: 0, data: img_src}
+				images[image_name] = {ref_count: 0, data: img_src}
 			}
 		},
 		addImageRef: function(image_name, img_src) {
+			this.send("addImage", image_name, img_src);
+		
 			// add a new reference to an image
-			if (!(image_name in this.get('images'))) {
-				this.send("addImage", image_name, img_src);
-			}
-			
 			var image = this.get('images')[image_name];
 			image.ref_count += 1;
 		},
@@ -93,18 +115,35 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		addSelection: function() {
 			var ias = this.get('imgSelect');
 			var reg = ias.getSelection();
-			// check that a region is actually selected
+			// check that a region is currently selected
 			if (!(reg.width == 0 && reg.height == 0)) {
 				// load the image into the dom
 				var img_src = $("#loaded_image").attr('src');
-				var $img_container = load_into_dom(img_src, reg.height, reg.width, -reg.y1, -reg.x1);				
+				var image = {img_src: img_src, 
+									img_height: reg.height, 
+									img_width: reg.width, 
+									top_pos: -reg.y1,
+									left_pos: -reg.x1};					
+				var $img_container = crop_image(image);								
+				
+				// add the selected image region
+				// to the selected page
 				var controller = this;
 				html2canvas($img_container, {   
 					logging:true,
 					onrendered : function(canvas) {
-						// load the image snippet into the currently selected page
 						var cropped_img_src = canvas.toDataURL("image/jpeg");			
-						var $new_img_div = load_into_scan(cropped_img_src, reg.height, reg.width, reg.height, reg.width, -reg.y1, -reg.x1, 0, 0);
+						var cropped_image = {img_src: cropped_img_src,
+											img_height: reg.height,
+											img_width: reg.width,
+											orig_height: reg.height,
+											orig_width: reg.width,
+											img_top: -reg.y1,
+											img_left: -reg.x1,
+											div_top: 0,
+											div_left: 0};
+						var $new_img_div = image_to_field(cropped_image);
+						// store reference to the original image name						
 						$new_img_div.data('img_name', $("#loaded_image").data('filename'));	
 						// update the image references
 						controller.send("addImageRef", $("#loaded_image").data('filename'), $("#loaded_image").attr("src"));
@@ -186,6 +225,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			if ($(".selected_field").hasClass('img_div')) {
 				var $img_div = $(".selected_field");
 				var $img = $img_div.children("img");
+				/*
 				var $new_img_div = load_into_scan($img.attr('src'), 
 							$img_div.height(), 
 							$img_div.width(), 
@@ -195,7 +235,19 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							$img.data('left'), 
 							0, 
 							0);		
+				*/
+				var image = {img_src: $img.attr('src'),
+							img_height: $img_div.height(),
+							img_width: $img_div.width(),
+							orig_height: $img.data('orig_height'),
+							orig_width: $img.data('orig_width'),
+							img_top: $img.data('top'),
+							img_left: $img.data('left'),
+							div_top: 0,
+							div_left: 0};
+				var $new_img_div = image_to_field(image);
 				var img_name = $(".selected_field").data("img_name");
+				// store reference to the original image name	
 				$new_img_div.data("img_name", img_name);
 				
 				// update the image references
@@ -224,7 +276,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$new_page.addClass(page_size);
 			} else {
 				// use the current page size
-				$new_page.addClass("letter_portrait");
+				$new_page.addClass(this.get("pageStyle"));
 			}
 			
 			$new_page.addClass($("#page_size").val());
@@ -295,6 +347,96 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		cancelLoad: function() {
 			$("#load_dialog").dialog("close");
 		},
+		loadImages: function(images, curr_index, curr_directory, zip) {
+			// loads all image snippets into the current page
+			if (curr_index == images.length) {
+				// base case
+				// remove all temporary image snippets that were
+				// loaded into the DOM, load the next page
+				$("#processed_images").children().remove();
+				this.send("loadPage", curr_directory + "nextPage/", zip);
+			} else { 
+				// recursive case
+				var img_json = images[curr_index];
+				
+				// load the image source
+				var img_data = zip.file("images/" + img_json.img_name);
+				var img_src = "data:image/jpeg;base64," + btoa(img_data.asBinary());
+
+				var image = {img_src: img_src, 
+							img_height: img_json.orig_height, 
+							img_width: img_json.orig_width, 
+							top_pos: img_json.img_top,
+							left_pos: img_json.img_left};
+				
+				// load the image into the dom
+				var $img_container = crop_image(image);		
+				var controller = this;
+				html2canvas($img_container, {   
+					logging:true,
+					onrendered : function(canvas) {												
+						var cropped_img_src = canvas.toDataURL("image/jpeg");								
+						var cropped_image = {img_src: cropped_img_src,
+									img_height: img_json.height,
+									img_width: img_json.width,
+									orig_height: img_json.orig_height,
+									orig_width: img_json.orig_width,
+									img_top: img_json.img_top,
+									img_left: img_json.img_left,
+									div_top: img_json.div_top,
+									div_left: img_json.div_left};
+						var $new_img_div = image_to_field(cropped_image);
+						
+						// store reference to the original image name	
+						$new_img_div.data("img_name", img_json.img_name);
+						// store a reference to the image that was loaded
+						controller.send("addImageRef", img_json.img_name, img_src);
+						controller.send("loadImages", images, curr_index + 1, curr_directory, zip);
+					}
+				});							
+			}
+		},
+		loadPage: function(curr_directory, zip) {
+			// loads the next page in the zip file
+			if (zip.folder(new RegExp(curr_directory)).length == 0) {
+				// base case, there's no additional nextPage subdirectories
+				return; 
+			} else {
+				// recursive case, load the next page
+				var page_json = JSON.parse(zip.file(new RegExp(curr_directory + "page.json"))[0].asText());
+				// create a new page
+				this.send("newPage", page_json.doc_info.page_size);		
+
+				// add all of the fields to the page
+				var fields = page_json.fields;
+				for (var i = 0; i < fields.length; i++) {								
+					var f_json = fields[i];
+					if (f_json.field_type == 'checkbox') {
+						var cb_field = new CheckboxField(f_json);
+						cb_field.constructGrid();			
+					} else if (f_json.field_type == 'bubble') {
+						var bubb_field = new BubbleField(f_json);
+						bubb_field.constructGrid();			
+					} else if (f_json.field_type == 'seg_num') {
+						var seg_num_field = new SegNumField(f_json);
+						seg_num_field.constructGrid();			
+					} else if (f_json.field_type == 'empty_box') {
+						var empty_box = new EmptyBox(f_json);
+						empty_box.constructBox();		
+					} else if (f_json.field_type == 'text_box') {
+						var text_box = new TextBox(f_json);
+						text_box.constructBox();	
+					} else if (f_json.field_type == 'form_num') {
+						var form_num_field = new FormNumField(f_json);
+						form_num_field.constructGrid();		
+					} else {
+						console.log("unsupported field");
+					}
+				}		
+				// load all of the images for the current page
+				this.send("loadImages", page_json.images, 0, curr_directory, zip);										
+			}																				
+		},
 		loadZip: function() {
 			// delete all current pages
 			this.set("currPage", 0);
@@ -312,102 +454,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					Where '...' is the actual base64.
 				*/
 				zip.load($("#uploaded_zip").data("zip").split(",")[1], {base64: true});
-
-				// recursive function used to load images
-				var load_images = function(images, curr_index, curr_directory) {
-					if (curr_index == images.length) {
-						// base case
-						// remove all temporary image snippets that were
-						// loaded into the DOM
-						$("#processed_images").children().remove();
-						load_pages(curr_directory + "nextPage/");
-						return;
-					} else { 
-						// recursive case
-						var img_json = images[curr_index];
-						
-						// load the image source
-						var img_data = zip.file("images/" + img_json.img_name);
-						var img_src = "data:image/jpeg;base64," + btoa(img_data.asBinary());
-
-						// load the image into the dom
-						var $img_container = load_into_dom(img_src, 
-												img_json.orig_height,
-												img_json.orig_width,
-												img_json.img_top,
-												img_json.img_left);												
-
-						html2canvas($img_container, {   
-							logging:true,
-							onrendered : function(canvas) {												
-								var cropped_img_src = canvas.toDataURL("image/jpeg"); 					
-								var $new_img_div = load_into_scan(cropped_img_src, 
-											img_json.height, 
-											img_json.width, 
-											img_json.orig_height,
-											img_json.orig_width,
-											img_json.img_top, 
-											img_json.img_left, 
-											img_json.div_top, 
-											img_json.div_left);	
-								// store the original image's name
-								$new_img_div.data("img_name", img_json.img_name);
-								// store a reference to the image that was loaded
-								controller.send("addImageRef", img_json.img_name, img_src);
-								load_images(images, curr_index + 1, curr_directory);
-							}
-						});							
-					}
-				}
-				
-				var controller = this;
-				var load_pages = function(curr_directory) {
-					if (zip.folder(new RegExp(curr_directory)).length == 0) {
-						return; // base case
-					} else {
-						// recursive case
-						var page_json = JSON.parse(zip.file(new RegExp(curr_directory + "page.json"))[0].asText());
-						console.log(JSON.stringify(page_json, null, "\t"));
-						// create a new page
-						controller.send("newPage", page_json.doc_info.page_size);		
-
-						// add all of the fields to the page
-						var fields = page_json.fields;
-						for (var i = 0; i < fields.length; i++) {								
-							var f_json = fields[i];
-							console.log('loading field: ' + JSON.stringify(f_json, null, '\t'));
-							if (f_json.field_type == 'checkbox') {
-								console.log("\tloading checkbox");
-								var cb_field = new CheckboxField(f_json);
-								cb_field.constructGrid();			
-							} else if (f_json.field_type == 'bubble') {
-								var bubb_field = new BubbleField(f_json);
-								bubb_field.constructGrid();			
-							} else if (f_json.field_type == 'seg_num') {
-								var seg_num_field = new SegNumField(f_json);
-								seg_num_field.constructGrid();			
-							} else if (f_json.field_type == 'empty_box') {
-								var empty_box = new EmptyBox(f_json);
-								empty_box.constructBox();		
-							} else if (f_json.field_type == 'text_box') {
-								var text_box = new TextBox(f_json);
-								text_box.constructBox();	
-							} else if (f_json.field_type == 'form_num') {
-								var form_num_field = new FormNumField(f_json);
-								form_num_field.constructGrid();		
-							} else {
-								console.log("unsupported field");
-							}
-						}		
-						// load all of the images
-						load_images(page_json.images, 0, curr_directory);										
-					}							
-				}													
-			}
-			// begin loading pages starting from the root directory
-			// of the loaded zip file
-			load_pages("^");
 		
+				// begin loading pages starting from the root directory
+				// of the loaded zip file
+				this.send("loadPage", "", zip);
+			}
+			
 			$("#load_dialog").dialog("close");
 		},
 		saveDoc: function() {

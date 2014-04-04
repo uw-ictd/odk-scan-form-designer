@@ -239,23 +239,24 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="grid-field-layout">
+		{{view AttributeOptions}}
+		<hr class="horz_divider">
 		{{yield}}
-		{{view GridSize viewName="gridSize"}} 
 		<hr class="horz_divider">		
 		{{view BorderOptions viewName='bdOptions'}}	
 		<hr class="horz_divider">
 		{{view MarginOptions}}
-		<hr class="horz_divider">
-		{{view AttributeOptions}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="empty-box-view">
-		{{view BorderOptions viewName='bdOptions'}}
-		<hr class="horz_divider">
 		{{view AttributeOptions}}
+		<hr class="horz_divider">
+		{{view BorderOptions viewName='bdOptions'}}
 	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
+		{{view AttributeOptions}}
+		<hr class="horz_divider">
 		<label for="name">Text size</label>
 		<select id="text_size"> 
 			<option value="small">Small</option>
@@ -266,8 +267,6 @@
 		<input type="text" id="text_input" class="ui-widget-content ui-corner-all">		
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
-		<hr class="horz_divider">
-		{{view AttributeOptions}}
 	</script>
 	
 	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
@@ -285,6 +284,8 @@
 			<option value="select1">Select One</option>										
 			<option value="select_many">Select Many</option>	
 		</select><br>
+		{{view GridSize viewName="gridSize"}} 
+		<hr class="horz_divider">
 		{{view GridValues viewName="gridValues"}}
 	</script>
 	
@@ -302,6 +303,8 @@
 			<option value="select1">Select One</option>		
 			<option value="select_many">Select Many</option>		
 		</select><br>
+		{{view GridSize viewName="gridSize"}} 
+		<hr class="horz_divider">
 		{{view GridValues viewName="gridValues"}}
 	</script>
 	
@@ -319,9 +322,13 @@
 			<option value="medium">Medium</option>
 			<option value="large">Large</option>				
 		</select><br>
+		{{view GridSize viewName="gridSize"}} 
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="form-num-view">
+		{{view AttributeOptions}}
+		<hr class="horz_divider">
+		
 		<label for="name">Number size</label>
 		<select id="form_num_size"> 
 			<option value="small">Small</option>
@@ -364,11 +371,7 @@
 		<input type="number" id="form_num_group_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 		
 		<hr class="horz_divider">
-		
 		{{view MarginOptions}}
-		
-		<hr class="horz_divider">
-		{{view AttributeOptions}}
 	</script>
 	
 	<!-- Dialog menu html -->

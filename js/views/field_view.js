@@ -32,7 +32,7 @@ ODKScan.FieldController = Ember.View.extend({
 			} else if (new_field_type == 'form_num') {
 				$("#form_num_dialog").dialog("open");
 			} else {
-				console.log("error no dialog menu to open, unsupported field field type");
+				console.log("error no dialog menu to open, unsupported field type");
 			}
 		}
 	}

@@ -156,6 +156,11 @@ input[type=text]{
 	width: 100px;
 }
 
+/* Field name and label input boxes. */
+#field_name, #field_label {
+	width: 150px;
+}
+
 /* 	Sets the max height on the div containing the rows 
 	and columns before it starts to scroll. */
 .grid_values_view {

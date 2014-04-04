@@ -71,7 +71,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.send("selectPageTab", this.get("selectedPageTab"));
 			$("#page_style_dialog").dialog("close");
 		},
-		cancelPageStyleDiague: function() {
+		cancelPageStyleDialog: function() {
 			$("#page_style_dialog").dialog("close");
 		},
 		selectImage: function() {	
@@ -209,7 +209,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$(".selected_field").removeClass("selected_field");
 		},
 		copyField: function() {
-			if ($(".selected_field").length != 0) {
+			if ($(".selected_field").length != 0 && !$(".selected_field").hasClass("img_div")) {
 				var selected_field = $(".selected_field").data('obj');
 				selected_field.copyField();		
 				var $new_field = $(".selected_field");
@@ -225,17 +225,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			if ($(".selected_field").hasClass('img_div')) {
 				var $img_div = $(".selected_field");
 				var $img = $img_div.children("img");
-				/*
-				var $new_img_div = load_into_scan($img.attr('src'), 
-							$img_div.height(), 
-							$img_div.width(), 
-							$img.data('orig_height'), 
-							$img.data('orig_width'), 
-							$img.data('top'), 
-							$img.data('left'), 
-							0, 
-							0);		
-				*/
+				
 				var image = {img_src: $img.attr('src'),
 							img_height: $img_div.height(),
 							img_width: $img_div.width(),

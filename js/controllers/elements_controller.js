@@ -3,9 +3,20 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	imgSelect: null,		// imgAreaSelect object used to crop images
 	currPage: 1,			// current page tab number
 	pageStyle: "letter_portrait",	// the page style used by pages in the current Scan document
-	selectedPageTab: null,	// metadata about the currently selected tab (number, active/non-active, DOM reference)
+	selectedPageTab: null,	// metadata about the currently selected page tab (number, active/non-active, DOM reference)
 	pages: null,			// list of JSON objects containing page tab metadata
 	images: {},				// JSON containing references to image metadata (reference count, image src)
+	selectedImageTab: null,	// metadata about the currently selected image tab (name, data, reference count)
+	imageList: function() {
+		console.log("evaluating imageList");
+		var images = this.get("images");
+		var image_list = [];
+		for (img in images) {
+			image_list.push(images[img]);
+		}
+		console.log(image_list);
+		return image_list;
+	}.property("images"),
 	init: function() {
 		this._super();		
 		
@@ -88,11 +99,63 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			*/
 			$("#image_select").click();
 		},
+		selectImageTab: function(image) {
+			// cancel any currently selected image region
+			var ias = this.get('imgSelect');
+			ias.cancelSelection();
+			
+			// unselect the current image tab
+			var currSelectedImageTab = this.get("selectedImageTab");
+			Ember.set(currSelectedImageTab, "isActive", false);
+			
+			// select the new image tab
+			Ember.set(image, "isActive", true);
+			this.set("selectedImageTab", image);
+		
+			// set the selected image
+			$("#loaded_image").attr("src", image.data);	
+		},
+		openImageTabDialog: function() {
+			$("#itab_remove_dialog").dialog("open");
+		}, removeImageTab: function() {
+			if($("#remove_itab_cb").prop("checked")) {
+				// delete all referenced image snippets
+				var img_name = this.get("selectedImageTab").name;
+				$(".img_div").filter(function() { return $(this).data("img_name") == img_name});
+				$(".img_div").remove();
+				
+				delete this.get('images')[this.get("selectedImageTab").name];	
+
+				// must explicitly notify the controller of this change, because it
+				// does not seem to realize that images has changed
+				this.notifyPropertyChange("images");				
+			} else {
+				// only delete the image tab
+				this.get("imageList").removeObject(this.get("selectedImageTab"));
+				this.set("selectedImageTab", null)
+			}		
+				
+			this.set("selectedImageTab", null);				
+			$("#itab_remove_dialog").dialog("close");
+		},
 		addImage: function(image_name, img_src) {
 			// add image_name to the images field
 			var images = this.get('images');
 			if (!images[image_name]) {
-				images[image_name] = {ref_count: 0, data: img_src}
+				// unselect the current image tab
+				var currSelectedImageTab = this.get("selectedImageTab");
+				if (currSelectedImageTab != null) {
+					Ember.set(currSelectedImageTab, "isActive", false);
+				}
+				
+				// create, select new image tab
+				var newImageTab = {ref_count: 0, isActive: true, data: img_src, name: image_name};	
+				this.set("selectedImageTab", newImageTab);
+				Ember.set(images, image_name, newImageTab);
+				
+				// must explicitly notify the controller of this change, because it
+				// does not seem to realize that images has changed
+				this.notifyPropertyChange("images");
 			}
 		},
 		addImageRef: function(image_name, img_src) {
@@ -110,6 +173,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// no more image snippets are referencing this
 				// image, it can be deleted from the controller
 				delete this.get('images')[image_name];
+				// must explicitly notify the controller of this change, because it
+				// does not seem to realize that images has changed
+				this.notifyPropertyChange("images");
 			}
 		},
 		addSelection: function() {
@@ -144,9 +210,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 											div_left: 0};
 						var $new_img_div = image_to_field(cropped_image);
 						// store reference to the original image name						
-						$new_img_div.data('img_name', $("#loaded_image").data('filename'));	
+						$new_img_div.data('img_name', $("#loaded_image").data('filename').split(".")[0]);	
 						// update the image references
-						controller.send("addImageRef", $("#loaded_image").data('filename'), $("#loaded_image").attr("src"));
+						controller.send("addImageRef", $("#loaded_image").data('filename').split(".")[0], $("#loaded_image").attr("src"));
 						$("#processed_images").children().remove();										
 					}
 				});			
@@ -527,7 +593,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			/* Recursively create the file structure. */
 			var zip = new JSZip();
-			this.send('createZipFolder', this.get('pages'), 0, "", zip);
+			
+			// scale up the html element sizes
+			$("html").css("font-size", "200%")
+			this.send('createZipFolder', this.get('pages'), 0, "", zip);			
 		},
 		createZipFolder: function(pages, curr_index, curr_directory, zip) {
 			if (curr_index == pages.length) { 
@@ -536,6 +605,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var scanDoc = "data:application/zip;base64," + content;				
 				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
+				$("html").css("font-size", "62.5%")
 				return; 
 			} 
 			var scanDoc = {};
@@ -559,7 +629,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var controller = this;
 			html2canvas($(".selected_page"), {   
 				logging:true,
-				onrendered : function(canvas) {
+				onrendered : function(canvas) {					
 					var img_src = canvas.toDataURL("image/jpeg");					
 					/* 	Need to extract the base64 from the image source.
 						img_src is in the form: data:image/jpeg;base64,...

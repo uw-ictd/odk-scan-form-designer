@@ -185,9 +185,24 @@ input[type=text]{
 	font-weight: bold;
 }
 
-.selected_page_tab {
-	background-color: rgba(7, 197, 223, 0.41);
+.selected_tab {
+	background-color: rgba(7, 197, 223, 0.41) !important;
 }	
+
+.image_tab {
+	text-align: center;
+	border: 1px solid black;
+	background-color: white;
+	float: right;
+	padding: 2px;
+	margin-left: 5px;
+	margin-right: 5px;
+	font-weight: bold;
+}
+
+#remove_image_tab {
+	margin-right: 100px;
+}
 
 #saved_images {
 	display: none;
@@ -207,8 +222,8 @@ input[type=text]{
 ************************************************************/
 
 .letter_portrait {
-	width: 8.5in;
-	height: 11in;
+	width: 85rem;
+	height: 110rem;
 }
 
 .letter_landscape{

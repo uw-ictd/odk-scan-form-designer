@@ -1,3 +1,5 @@
+REM = 10;
+
 /*	Represents a generic box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
@@ -23,7 +25,7 @@ function Box(json_init, update_init) {
 		} else {
 			// NOTE: initial width and height are aligned
 			// to the grid size
-			this.$box.css({top: 0, left: 0, width: GRID_X * 10, height: GRID_Y * 10});
+			this.$box.css({top: "0rem", left: "0rem", width: GRID_X + "rem", height: GRID_Y + "rem"});
 		}
 		this.border_width = $("#border_width").val();
 		this.$box.css({borderWidth: this.border_width});
@@ -40,17 +42,30 @@ function Box(json_init, update_init) {
 */
 Box.prototype.addEventHandlers = function($box) {
 	var border_width = this.border_width;
+	
+	var adjust_position = function(event, ui) {
+		var pos = ui.position;
+		var nearest_left = (Math.floor(pos.left / GRID_X) * GRID_X) / REM;
+		var nearest_top = (Math.floor(pos.top / GRID_Y) * GRID_Y) / REM;
+		$box.css("top", nearest_top + "rem");
+		$box.css("left", nearest_left + "rem");
+	};
+	
 	/*	Round up the width and height of the box to the nearest 
 		multiple of GRID_X and GRID_Y respectively in order to
 		maintain grid alignment.
 	*/
-	$box.on('resizestop', (function(event, ui) {
+	$box.on('resize', (function(event, ui) {
 		var curr_size = ui.size;
-		var nearest_width = Math.ceil(curr_size.width / GRID_X) * GRID_X;
-		var nearest_height = Math.ceil(curr_size.height / GRID_Y) * GRID_Y;
-		ui.element.width(nearest_width - 2 * border_width);
-		ui.element.height(nearest_height - 2 * border_width);	
+		var nearest_width = (Math.ceil(curr_size.width / GRID_X) * GRID_X) / REM;
+		var nearest_height = (Math.ceil(curr_size.height / GRID_Y) * GRID_Y) / REM;
+		ui.element.width((nearest_width - 2 * border_width) + "rem");
+		ui.element.height((nearest_height - 2 * border_width) + "rem");	
+		adjust_position(event, ui);
 	}));
+	
+	$box.on('drag', (adjust_position));
+	$box.on('dragstop', (adjust_position));
 	
 	var obj = this;
 	$box.click(function() {
@@ -75,8 +90,8 @@ Box.prototype.constructBox = function() {
 	this.$box.resizable({handles: 'all', 
 						containment: 'parent', 
 						grid: [GRID_X, GRID_Y],
-						minWidth: GRID_X * 1,
-						minHeight: GRID_Y * 1});																								
+						minWidth: GRID_X,
+						minHeight: GRID_Y});																								
 	this.$box.css({'border-width': this.border_width + 'px'});	
 	this.addEventHandlers(this.$box);
 	

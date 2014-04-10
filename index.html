@@ -114,10 +114,12 @@
 						<li><a {{action 'createFormattedNumber'}}>Formatted Number</a></li>
 					</ul>
 				</li>	
+			{{/if}}
+			{{#unless isImageEditing}}
 				<li><a {{action 'copyField'}}>Copy Field</a></li>
-				<li><a {{action 'deleteField'}}>Delete Field</a></li>
-				<li><a {{action 'copyImage'}}>Copy Image</a></li>
-			{{/if}}			
+			{{/unless}}
+			<li><a {{action 'deleteField'}}>Delete Field</a></li>
+			<li><a {{action 'copyImage'}}>Copy Image</a></li>	
 			</ul>	
 			<ul class="nav navbar-nav navbar-right">
 				<li><a>Help</a></li>
@@ -126,12 +128,24 @@
 		<div id="page_label_container">
 			<div id="page_list">
 				{{#each pages}}
-					<div {{bind-attr class=":page_tab :scan_doc_page isActive:selected_page_tab"}} {{action 'selectPageTab' this}}>Page {{pageNum}}</div>
+					<div {{bind-attr class=":page_tab :scan_doc_page isActive:selected_tab"}} {{action 'selectPageTab' this}}>Page {{pageNum}}</div>
 				{{/each}}
 			</div>				
 			<div id="new_page" class="page_tab" {{action 'newPage'}}>Add +</div>
 			<div id="remove_page" class="page_tab" {{action 'openRemovePageDialog'}}>Remove -</div>
 		</div>
+		{{#if isImageEditing}}
+			<div id="image_tab_container">
+				{{#if imageList}}
+					<div id="remove_image_tab" class="image_tab" {{action 'openImageTabDialog'}}>Remove -</div>
+					<div id="image_list">
+						{{#each imageList}}
+							<div {{bind-attr class=":image_tab isActive:selected_tab"}} {{action 'selectImageTab' this}}>{{name}}</div>
+						{{/each}}
+					</div>								
+				{{/if}}
+			</div>
+		{{/if}}
 		
 		<!-- the content below the navbar is loaded depending on the current url of the website -->
 		{{outlet}}	
@@ -150,6 +164,7 @@
 		{{partial 'pageStyleDialog'}}
 		{{partial 'removePageDialog'}}
 		{{partial 'saveCheckDialog'}}
+		{{partial 'imageTabRemoveDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -486,6 +501,15 @@
 	<script type="text/x-handlebars" data-template-name="_saveCheckDialog">
 		<div id="save_check_dialog" title="ODK Scan">		
 			<label for="name">Do you want to save your changes?</label>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_imageTabRemoveDialog">
+		<div id="itab_remove_dialog" title="Remove Image Tab">		
+			<input id="remove_itab_cb" type="checkbox" defaultChecked="false"> Remove all images associated with this image tab?
+			<hr class="horz_divider">
+			<button class="input_button" {{action "cancelImageTabRemove"}}>Cancel</button>
+			<button class="input_button" {{action "removeImageTab"}}>Ok</button>
 		</div>
 	</script>
   </body>

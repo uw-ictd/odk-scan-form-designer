@@ -17,7 +17,9 @@ ODKScan.FieldController = Ember.View.extend({
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
 			
 			// the html for the dialog menu has finished loading, now the
-			// dialog menu can be opened
+			// dialog menu can be opened (if a dialog menu opens up before
+			// the html has finished opening then the dialog menu can pop
+			// up on the screen in a random location)
 			var new_field_type = this.get('controller.newFieldType');			
 			if (new_field_type == 'checkbox') {
 				$("#checkbox_dialog").dialog("open");

@@ -106,7 +106,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			// unselect the current image tab
 			var currSelectedImageTab = this.get("selectedImageTab");
-			Ember.set(currSelectedImageTab, "isActive", false);
+			if (currSelectedImageTab != null) {
+				Ember.set(currSelectedImageTab, "isActive", false);
+			}
 			
 			// select the new image tab
 			Ember.set(image, "isActive", true);
@@ -117,7 +119,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		openImageTabDialog: function() {
 			$("#itab_remove_dialog").dialog("open");
-		}, removeImageTab: function() {
+		}, 
+		removeImageTab: function() {
 			if($("#remove_itab_cb").prop("checked")) {
 				// delete all referenced image snippets
 				var img_name = this.get("selectedImageTab").name;
@@ -456,7 +459,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// loads the next page in the zip file
 			if (zip.folder(new RegExp(curr_directory)).length == 0) {
 				// base case, there's no additional nextPage subdirectories
-				return; 
+				
+				// load the image tabs
+				var imageList = [];
+				var itab_files = zip.folder("image_tabs").file(new RegExp(".*"));
+				for (var i = 0; i < itab_files.length; i++) {
+					var file = itab_files[i];
+					var itab_json = JSON.parse(file.asText());
+					imageList.push(itab_json);
+				}				
+				this.set("imageList", imageList);
+				this.set("selectedImageTab", null);
 			} else {
 				// recursive case, load the next page
 				var page_json = JSON.parse(zip.file(new RegExp(curr_directory + "page.json"))[0].asText());
@@ -513,7 +526,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		
 				// begin loading pages starting from the root directory
 				// of the loaded zip file
-				this.send("loadPage", "", zip);
+				this.send("loadPage", "", zip);			
 			}
 			
 			$("#load_dialog").dialog("close");
@@ -543,7 +556,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// save metadata about the page
 				savedDoc.doc_info.page_size = $page_div.attr("class");
 				
-					// save metadata about all images
+				// save metadata about all images
 				$page_div.children(".img_div").each(function() {
 					var img_div = {};
 					img_div.height = $(this).height();
@@ -577,6 +590,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					var img_base64 = img_info.data.split(",")[1];
 					zip.file("images/" + image_name, img_base64, {base64: true});
 				}
+			}
+			
+			// save all image tabs, add them to top-level image_tabs/ directory
+			var itab_folder = zip.folder("image_tabs");
+			var image_tabs = this.get("imageList");
+			for (var i = 0; i < image_tabs.length; i++) {
+				var tab = image_tabs[i];
+				tab.isActive = false; // make sure no tab is selected
+				itab_folder.file(tab.name, JSON.stringify(tab));
 			}
 			
 			// reset the current page tab to the first page

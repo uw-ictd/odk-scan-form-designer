@@ -221,8 +221,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			if($("#remove_itab_cb").prop("checked")) {
 				// delete all referenced image snippets
 				var img_name = this.get("selectedImageTab").name;
-				$(".img_div").filter(function() { return $(this).data("img_name") == img_name});
-				$(".img_div").remove();
+				$(".img_div").filter(function() { return $(this).data("img_name") == img_name}).remove();
 				
 				delete this.get('images')[this.get("selectedImageTab").name];	
 

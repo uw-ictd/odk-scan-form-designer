@@ -106,6 +106,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	actions: {
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
+			
+			// unselect the current image tab
+			var currSelectedImageTab = this.get("selectedImageTab");
+			if (currSelectedImageTab != null) {
+				Ember.set(currSelectedImageTab, "isActive", false);
+			}
+			
 			this.set('isImageEditing', true);
 		},
 		enableFieldEdit: function() {			
@@ -513,7 +520,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$("#processed_images").children().remove();
 				this.send("loadPage", curr_directory + "nextPage/", zip);
 			} else { 
-				// recursive case
+				// recursive case, load next image for the page
 				var img_json = images[curr_index];
 				
 				// load the image source
@@ -603,9 +610,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}																				
 		},
 		loadZip: function() {
-			// delete all current pages
+			// delete all current pages, fields
 			this.set("currPage", 0);
 			this.set("pages", []);
+			$(".img_div").remove();
+			$(".field").remove();
 			Ember.set(this.get('selectedPageTab'), 'isActive', false);
 
 			if (!$("#uploaded_zip").data("zip")) {

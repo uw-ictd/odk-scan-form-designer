@@ -7,7 +7,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	pages: null,			// list of JSON objects containing page tab metadata
 	images: {},				// JSON containing references to image metadata (reference count, image src)
 	selectedImageTab: null,	// metadata about the currently selected image tab (name, data, reference count)
-	imageList: function() {
+	imageList: function() {	// the image tab list
 		console.log("evaluating imageList");
 		var images = this.get("images");
 		var image_list = [];
@@ -16,7 +16,49 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		}
 		console.log(image_list);
 		return image_list;
-	}.property("images"),
+	}.property(),
+	defaultImages: function() {
+		// div_top and top_left are both set by addDefaultImages.
+		// These values depend on the size of the page they are 
+		// added to.
+		
+		// html2canvas will not save these images because it thinks
+		// they are tained
+		var images = {};
+		images.top_left = {img_name: "form",
+							img_src: "/default_images/top_right.jpg",
+							img_height: 67,
+							img_width: 197,
+							orig_height: 67,
+							orig_width: 197,
+							img_top: 0,
+							img_left: 0,};
+		images.top_right = {img_name: "form",
+							img_src: "/default_images/top_right.jpg",
+							img_height: 56,
+							img_width: 260,
+							orig_height: 56,
+							orig_width: 260,
+							img_top: 0,
+							img_left: 568};						
+		images.bottom_left = {img_name: "form",
+							img_src: "/default_images/bottom_left.jpg",
+							img_height: 89,
+							img_width: 92,
+							orig_height: 89,
+							orig_width: 92,
+							img_top: 0,
+							img_left: 998};		
+		images.bottom_right = {img_name: "form",
+							img_src: "/default_images/bottom_right.jpg",
+							img_height: 71,
+							img_width: 114,
+							orig_height: 71,
+							orig_width: 114,
+							img_top: 1014,
+							img_left: 718};
+		return images;
+	}.property(),
 	init: function() {
 		this._super();		
 		
@@ -42,6 +84,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			controller.set('pages', [new_page_tab]);
 			// add the new page to the dom
 			$("#page_container").append($new_page);
+			
+			// add default images to page
+			controller.send("addDefaultImages");
+			controller.notifyPropertyChange("imageList");	
 		});
 	},
 	actions: {
@@ -81,9 +127,39 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// re-select the current page
 			this.send("selectPageTab", this.get("selectedPageTab"));
 			$("#page_style_dialog").dialog("close");
+			
+			// add default images
+			this.send("addDefaultImages");
 		},
 		cancelPageStyleDialog: function() {
 			$("#page_style_dialog").dialog("close");
+		},
+		addDefaultImages: function() {			
+			var images = this.get("defaultImages");
+			// calculate the positions for each respective 
+			// image snippet within the current page
+			images.top_left.div_top = 0;
+			images.top_left.div_left = 0;
+			
+			images.top_right.div_top = 0;
+			images.top_right.div_left = $(".selected_page").width() - images.top_right.img_width;
+			
+			images.bottom_left.div_top = $(".selected_page").height() - images.bottom_left.img_height;
+			images.bottom_left.div_left = 0;
+			
+			images.bottom_right.div_top = $(".selected_page").height() - images.bottom_right.img_height;
+			images.bottom_right.div_left = $(".selected_page").width() - images.bottom_right.img_width;
+			
+			image_to_field(images.top_left);
+			image_to_field(images.top_right);
+			image_to_field(images.bottom_left);
+			image_to_field(images.bottom_right);
+			
+			// update image ref count of the form
+			this.send("addImageRef", "form", "default_images/form.jpg");
+			this.send("addImageRef", "form", "default_images/form.jpg");
+			this.send("addImageRef", "form", "default_images/form.jpg");
+			this.send("addImageRef", "form", "default_images/form.jpg");
 		},
 		selectImage: function() {	
 			// cancel any currently selected image region
@@ -129,11 +205,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				
 				delete this.get('images')[this.get("selectedImageTab").name];	
 
-				// must explicitly notify the controller of this change, because it
-				// does not seem to realize that images has changed
-				this.notifyPropertyChange("images");				
+				// notify the image tabs to update
+				this.notifyPropertyChange("imageList");				
 			} else {
-				// only delete the image tab
+				// delete the selected image tab
 				this.get("imageList").removeObject(this.get("selectedImageTab"));
 				this.set("selectedImageTab", null)
 			}		
@@ -156,9 +231,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				this.set("selectedImageTab", newImageTab);
 				Ember.set(images, image_name, newImageTab);
 				
-				// must explicitly notify the controller of this change, because it
-				// does not seem to realize that images has changed
-				this.notifyPropertyChange("images");
+				// notify the image tabs to update
+				this.notifyPropertyChange("imageList");
 			}
 		},
 		addImageRef: function(image_name, img_src) {
@@ -176,9 +250,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// no more image snippets are referencing this
 				// image, it can be deleted from the controller
 				delete this.get('images')[image_name];
-				// must explicitly notify the controller of this change, because it
-				// does not seem to realize that images has changed
-				this.notifyPropertyChange("images");
+				// notify the image tabs to update
+				this.notifyPropertyChange("imageList");
 			}
 		},
 		addSelection: function() {
@@ -186,6 +259,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var reg = ias.getSelection();
 			// check that a region is currently selected
 			if (!(reg.width == 0 && reg.height == 0)) {
+				console.log(reg);
+			
 				// load the image into the dom
 				var img_src = $("#loaded_image").attr('src');
 				var image = {img_src: img_src, 
@@ -202,7 +277,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					logging:true,
 					onrendered : function(canvas) {
 						var cropped_img_src = canvas.toDataURL("image/jpeg");			
-						var cropped_image = {img_src: cropped_img_src,
+						var cropped_image = {img_name: $("#loaded_image").data('filename').split(".")[0],
+											img_src: cropped_img_src,
 											img_height: reg.height,
 											img_width: reg.width,
 											orig_height: reg.height,
@@ -211,9 +287,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 											img_left: -reg.x1,
 											div_top: 0,
 											div_left: 0};
-						var $new_img_div = image_to_field(cropped_image);
-						// store reference to the original image name						
-						$new_img_div.data('img_name', $("#loaded_image").data('filename').split(".")[0]);	
+						var $new_img_div = image_to_field(cropped_image);						
 						// update the image references
 						controller.send("addImageRef", $("#loaded_image").data('filename').split(".")[0], $("#loaded_image").attr("src"));
 						$("#processed_images").children().remove();										
@@ -295,7 +369,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var $img_div = $(".selected_field");
 				var $img = $img_div.children("img");
 				
-				var image = {img_src: $img.attr('src'),
+				var image = {img_name: $(".selected_field").data("img_name"),
+							img_src: $img.attr('src'),
 							img_height: $img_div.height(),
 							img_width: $img_div.width(),
 							orig_height: $img.data('orig_height'),
@@ -304,17 +379,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							img_left: $img.data('left'),
 							div_top: 0,
 							div_left: 0};
-				var $new_img_div = image_to_field(image);
-				var img_name = $(".selected_field").data("img_name");
-				// store reference to the original image name	
-				$new_img_div.data("img_name", img_name);
+				var $new_img_div = image_to_field(image);		
 				
 				// update the image references
 				this.send("addImageRef", img_name);
 			}
 		},
 		newDoc: function() {
-			if ($(".selected_page").children().length == 0) {
+			var $all_pages = $(".scan_page");
+			if ($all_pages.children(".field").length == 0 && $all_pages.children(".img_div").length == 0) {
 				$("#new_doc_dialog").dialog("open");
 			} else {
 				$("#save_check_dialog").dialog("open");
@@ -330,8 +403,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var $new_page = $("<div/>");
 			$new_page.addClass("scan_page selected_page");
 			
-			if (page_size) {
-				// check if a page size was provided
+			// set page style	
+			if (page_size) { // check if passed a page size argument
 				$new_page.addClass(page_size);
 			} else {
 				// use the current page size
@@ -351,9 +424,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			// store the new page tab in the controller
 			this.set("selectedPageTab", new_page_tab);						
-			var page_arr = this.get('pages');
-			
+			var page_arr = this.get('pages');			
 			page_arr.pushObject(new_page_tab);
+			
+			// add default images
+			this.send("addDefaultImages");
 		},
 		openRemovePageDialog: function() {
 			$("#remove_page_dialog").dialog("open");
@@ -364,10 +439,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		removePage: function() {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
-			ias.cancelSelection();
+			ias.cancelSelection();	
+			
+			// remove all image references from the deleted page	
+			var controller = this;
+			$(".selected_page .img_div").each(function() {
+				controller.send("removeImageRef", $(this).data("img_name"));
+			});
 		
 			var page_arr = this.get('pages');
 			var selected_page = this.get("selectedPageTab");
+			selected_page.pageDiv.remove();
 			page_arr.removeObject(selected_page);
 			
 			if (page_arr.length > 0) {
@@ -435,7 +517,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					logging:true,
 					onrendered : function(canvas) {												
 						var cropped_img_src = canvas.toDataURL("image/jpeg");								
-						var cropped_image = {img_src: cropped_img_src,
+						var cropped_image = {img_name: img_json.img_name,
+									img_src: cropped_img_src,
 									img_height: img_json.height,
 									img_width: img_json.width,
 									orig_height: img_json.orig_height,
@@ -445,9 +528,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 									div_top: img_json.div_top,
 									div_left: img_json.div_left};
 						var $new_img_div = image_to_field(cropped_image);
-						
-						// store reference to the original image name	
-						$new_img_div.data("img_name", img_json.img_name);
 						// store a reference to the image that was loaded
 						controller.send("addImageRef", img_json.img_name, img_src);
 						controller.send("loadImages", images, curr_index + 1, curr_directory, zip);
@@ -650,7 +730,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			var controller = this;
 			html2canvas($(".selected_page"), {   
-				logging:true,
+				logging: true,
 				onrendered : function(canvas) {					
 					var img_src = canvas.toDataURL("image/jpeg");					
 					/* 	Need to extract the base64 from the image source.

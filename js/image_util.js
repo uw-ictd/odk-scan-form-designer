@@ -34,6 +34,7 @@ var crop_image = function(image) {
 var image_to_field = function(image) {
 	/* 	Creates a image field from the image attributes. 
 		NOTE: 'image' must the following attributes:
+			- img_name: the name of the original source image
 			- img_src: src data for the image snippet
 			- img_top: top offset within original image
 			- img_left: left offset within original image
@@ -55,27 +56,36 @@ var image_to_field = function(image) {
 	$img.data('left', image.img_left);
 	$img.data('orig_width', image.orig_width);
 	$img.data('orig_height', image.orig_height);		
-	/*	NOTE: in order to be resizable the image is 
-		put into a div which is set to resizable, 
-		the image's size then matches the div's size.
+	/*	NOTE: in order for the image to be resizable
+		it is put into a div and set to match the div's
+		width and height, the div is made resizable so
+		the image matches its width and height as it 
+		becomes resized.
 	*/
 	$img.css({width: '100%', height: '100%'});
 	
+	// create div container for the image
 	var $img_draggable = $("<div/>");
+	$img_draggable.data('img_name', image.img_name);	
 	$img_draggable.css({width: image.img_width, 
 					height: image.img_height, 
 					left: image.div_left, 
 					top: image.div_top, 
 					position: 'absolute'});										
+	// make the div draggable/resizable
 	$img_draggable.draggable({containment: 'parent'});
 	$img_draggable.resizable({containment: 'parent', 
 		aspectRatio: true, handles: 'all'});	
+	
+	// add event listeners
 	$img_draggable.click(function() {
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);	
 		$(".selected_field").removeClass("selected_field");
 		$(this).addClass("selected_field");
 	});
+	
+	// image fields are identified by the 'img_div' class
 	$img_draggable.addClass('img_div').append($img);		
 	$(".selected_page").append($img_draggable);
 	return $img_draggable;

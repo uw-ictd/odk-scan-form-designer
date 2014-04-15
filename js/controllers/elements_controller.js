@@ -26,7 +26,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		// they are tained
 		var images = {};
 		images.top_left = {img_name: "form",
-							img_src: "default_images/top_right.jpg",
+							img_src: "default_images/top_left.jpg",
 							img_height: 67,
 							img_width: 197,
 							orig_height: 67,
@@ -57,6 +57,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_width: 114,
 							img_top: 1014,
 							img_left: 718};
+							
+		var canvas = document.createElement('canvas'),
+        ctx = canvas.getContext('2d'),
+        img = new Image;
+		img.crossOrigin = 'Anonymous';
+		img.src = "default_images/form.jpg";
+		var controller = this;
+		img.onload = function(){
+			canvas.height = img.height;
+			canvas.width = img.width;
+			ctx.drawImage(img,0,0);
+			var dataURL = canvas.toDataURL('image/jpeg');
+			console.log("form src: " + dataURL);
+			canvas = null; 
+		};
+														
 		return images;
 	}.property(),
 	init: function() {

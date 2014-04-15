@@ -22,8 +22,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		// These values depend on the size of the page they are 
 		// added to.
 		
-		// html2canvas will not save these images because it thinks
-		// they are tained
 		var images = {};
 		images.top_left = {img_name: "form",
 							img_src: "default_images/top_left.jpg",
@@ -56,23 +54,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_height: 71,
 							orig_width: 114,
 							img_top: 1014,
-							img_left: 718};
-							
-		var canvas = document.createElement('canvas'),
-        ctx = canvas.getContext('2d'),
-        img = new Image;
-		img.crossOrigin = 'Anonymous';
-		img.src = "default_images/form.jpg";
-		var controller = this;
-		img.onload = function(){
-			canvas.height = img.height;
-			canvas.width = img.width;
-			ctx.drawImage(img,0,0);
-			var dataURL = canvas.toDataURL('image/jpeg');
-			console.log("form src: " + dataURL);
-			canvas = null; 
-		};
-														
+							img_left: 718};														
 		return images;
 	}.property(),
 	init: function() {
@@ -101,9 +83,24 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// add the new page to the dom
 			$("#page_container").append($new_page);
 			
-			// add default images to page
-			controller.send("addDefaultImages");
-			controller.notifyPropertyChange("imageList");	
+			// code snippet from 
+			// http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
+			var canvas = document.createElement('canvas'),
+			ctx = canvas.getContext('2d'),
+			img = new Image;
+			img.crossOrigin = 'Anonymous';
+			img.src = "default_images/form.jpg";
+			img.onload = function(){
+				canvas.height = img.height;
+				canvas.width = img.width;
+				ctx.drawImage(img,0,0);
+				var dataURL = canvas.toDataURL('image/jpeg');
+				controller.set("defaultFormSrc", dataURL);
+				// add default images to page
+				controller.send("addDefaultImages");
+				controller.notifyPropertyChange("imageList");			
+				canvas = null; 
+			};			
 		});
 	},
 	actions: {
@@ -172,10 +169,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			image_to_field(images.bottom_right);
 			
 			// update image ref count of the form
-			this.send("addImageRef", "form", "default_images/form.jpg");
-			this.send("addImageRef", "form", "default_images/form.jpg");
-			this.send("addImageRef", "form", "default_images/form.jpg");
-			this.send("addImageRef", "form", "default_images/form.jpg");
+			var form_src = this.get("defaultFormSrc");
+			this.send("addImageRef", "form", form_src);
+			this.send("addImageRef", "form", form_src);
+			this.send("addImageRef", "form", form_src);
+			this.send("addImageRef", "form", form_src);
 		},
 		selectImage: function() {	
 			// cancel any currently selected image region
@@ -409,7 +407,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$("#save_check_dialog").dialog("open");
 			}
 		},
-		newPage: function(page_size) {
+		newPage: function(page_size, load_from_zip) {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
 			ias.cancelSelection();
@@ -443,8 +441,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var page_arr = this.get('pages');			
 			page_arr.pushObject(new_page_tab);
 			
-			// add default images
-			this.send("addDefaultImages");
+			if (!load_from_zip) {
+				// add default images
+				this.send("addDefaultImages");
+			}
 		},
 		openRemovePageDialog: function() {
 			$("#remove_page_dialog").dialog("open");
@@ -570,7 +570,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// recursive case, load the next page
 				var page_json = JSON.parse(zip.file(new RegExp(curr_directory + "page.json"))[0].asText());
 				// create a new page
-				this.send("newPage", page_json.doc_info.page_size);		
+				this.send("newPage", page_json.doc_info.page_size, true);		
 
 				// add all of the fields to the page
 				var fields = page_json.fields;

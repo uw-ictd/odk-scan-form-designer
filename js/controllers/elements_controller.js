@@ -26,7 +26,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		// they are tained
 		var images = {};
 		images.top_left = {img_name: "form",
-							img_src: "/default_images/top_right.jpg",
+							img_src: "default_images/top_right.jpg",
 							img_height: 67,
 							img_width: 197,
 							orig_height: 67,
@@ -34,7 +34,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							img_top: 0,
 							img_left: 0,};
 		images.top_right = {img_name: "form",
-							img_src: "/default_images/top_right.jpg",
+							img_src: "default_images/top_right.jpg",
 							img_height: 56,
 							img_width: 260,
 							orig_height: 56,
@@ -42,7 +42,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							img_top: 0,
 							img_left: 568};						
 		images.bottom_left = {img_name: "form",
-							img_src: "/default_images/bottom_left.jpg",
+							img_src: "default_images/bottom_left.jpg",
 							img_height: 89,
 							img_width: 92,
 							orig_height: 89,
@@ -50,7 +50,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							img_top: 0,
 							img_left: 998};		
 		images.bottom_right = {img_name: "form",
-							img_src: "/default_images/bottom_right.jpg",
+							img_src: "default_images/bottom_right.jpg",
 							img_height: 71,
 							img_width: 114,
 							orig_height: 71,

@@ -230,7 +230,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			} else {
 				// delete the selected image tab
 				this.get("imageList").removeObject(this.get("selectedImageTab"));
-				this.set("selectedImageTab", null)
+				this.set("selectedImageTab", null);
+				$("#loaded_image").attr("src", null);
 			}		
 				
 			this.set("selectedImageTab", null);				

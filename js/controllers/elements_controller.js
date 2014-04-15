@@ -571,8 +571,14 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					var itab_json = JSON.parse(file.asText());
 					imageList.push(itab_json);
 				}				
+				
 				this.set("imageList", imageList);
-				this.set("selectedImageTab", null);
+				
+				// unselect the current image tab
+				var currSelectedImageTab = this.get("selectedImageTab");
+				if (currSelectedImageTab != null) {
+					Ember.set(currSelectedImageTab, "isActive", false);
+				}
 			} else {
 				// recursive case, load the next page
 				var page_json = JSON.parse(zip.file(new RegExp(curr_directory + "page.json"))[0].asText());

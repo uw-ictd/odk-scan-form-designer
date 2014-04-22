@@ -1,5 +1,7 @@
 // Constants 
 
+var REM = 10;
+
 var CHECKBOX_SMALL = 10;
 var CHECKBOX_MEDIUM = 16;
 var CHECKBOX_LARGE = 25;
@@ -193,6 +195,22 @@ GridField.prototype.alignToGrid = function() {
 		var bottom_pad = height_diff - top_pad;
 		this.$grid_div.children('.last_row').css('marginBottom', this.margin_bottom + bottom_pad);
 	}
+	
+	// convert units to REM
+	this.$grid_div.children().each(function() {
+		$(this).css({marginTop: parseInt($(this).css("marginTop")) / REM + "rem", 
+					marginBottom: parseInt($(this).css("marginBottom")) / REM + "rem",
+					marginRight: parseInt($(this).css("marginRight")) / REM + "rem",
+					marginLeft: parseInt($(this).css("marginLeft")) / REM + "rem"});
+		
+		//$(this).css({margin: $(this).css("margin") / REM + "rem"});
+					
+		$(this).css("width", $(this).css("width") / REM + "rem");
+		$(this).css("height", $(this).css("height") / REM + "rem");
+	});
+	
+	this.$grid_div.css("width", parseInt(this.$grid_div.css("width")) / REM + "rem");
+	this.$grid_div.css("height", parseInt(this.$grid_div.css("height")) / REM + "rem");
 }
 
 /*	Adds event handlers (on click, on double click) to $grid.
@@ -217,6 +235,17 @@ GridField.prototype.addEventHandlers = function($grid) {
 			console.log("error - unsupported field type");
 		}		
 	});
+	
+	var adjust_position = function(event, ui) {
+		var pos = ui.position;
+		var nearest_left = (Math.floor(pos.left / GRID_X) * GRID_X) / REM;
+		var nearest_top = (Math.floor(pos.top / GRID_Y) * GRID_Y) / REM;
+		$(this).css("top", nearest_top + "rem");
+		$(this).css("left", nearest_left + "rem");
+	};
+	
+	$grid.on("drag", (adjust_position));
+	$grid.on('dragstop', (adjust_position));
 }
 
 /*	Returns JSON containing DOM properties
@@ -375,7 +404,7 @@ CheckboxField.prototype.constructor = CheckboxField;
 
 /* 	Returns a div representing a single checkbox. */
 CheckboxField.prototype.makeGridElement = function() {
-	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
+	return $("<div/>").addClass(this.ele_class).css({width: this.element_width / REM + "rem", height: this.element_height / REM + "rem"});
 }
 
 /* 	Loads the properties of the checkbox into 
@@ -472,7 +501,7 @@ BubbleField.prototype.constructor = BubbleField;
 
 /* 	Returns a div representing a single bubble. */
 BubbleField.prototype.makeGridElement = function() {
-	return $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
+	return $("<div/>").addClass(this.ele_class).css({width: this.element_width / REM + "rem", height: this.element_height / REM + "rem"});
 }
 
 /* 	Loads the properties of the bubbles into 
@@ -562,7 +591,10 @@ SegNumField.prototype.constructor = SegNumField;
 
 /* 	Returns a div representing a single segmented number. */
 SegNumField.prototype.makeGridElement = function() {
-	var $new_num = $("<div/>").addClass(this.ele_class).css({width: this.element_width, height: this.element_height});
+	var $new_num = $("<div/>").css({width: this.element_width, height: this.element_height});
+	$new_num.addClass(this.ele_class);
+	$new_num.css({width: this.element_width / REM + "rem", 
+				height: this.element_height / REM + "rem"});
 	
 	/*	NOTE: About dot position:
 		Let y = 0 be located at the top of the
@@ -590,18 +622,24 @@ SegNumField.prototype.makeGridElement = function() {
 		var $left_dot = $("<div/>");
 		$left_dot.addClass("dot");
 		// NOTE: assuming this.dot_width == this.dot_height for borderRadius calculation
-		$left_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
+		$left_dot.css({width: this.dot_width / REM + "rem", 
+					height: this.dot_height / REM + "rem", 
+					borderRadius: (this.dot_width / 2) / REM + "rem"});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$left_dot.css({left: x_pos - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		$left_dot.css({left: (x_pos - (this.dot_width / 2)) / REM + "rem", 
+					top: ((y_pos * i) - (this.dot_height / 2)) / REM + "rem"});
 		
 		var $right_dot = $("<div/>");
 		$right_dot.addClass("dot");
 		// NOTE: assuming this.dot_width == this.dot_height for borderRadius calculation
-		$right_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
+		$right_dot.css({width: this.dot_width / REM + "rem", 
+						height: this.dot_height / REM + "rem", 
+						borderRadius: (this.dot_width / 2) / REM + "rem"});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$right_dot.css({left: (3 * x_pos) - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		$right_dot.css({left: ((3 * x_pos) - (this.dot_width / 2)) / REM + "rem", 
+						top: ((y_pos * i) - (this.dot_height / 2)) / REM + "rem"});
 		
 		$new_num.append($left_dot);
 		$new_num.append($right_dot);

@@ -1,5 +1,3 @@
-REM = 10;
-
 /*	Represents a generic box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field

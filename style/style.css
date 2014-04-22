@@ -222,8 +222,8 @@ input[type=text]{
 ************************************************************/
 
 .letter_portrait {
-	width: 8.5in;
-	height: 11in;
+	width: 85rem;
+	height: 110rem;
 }
 
 .letter_landscape{
@@ -303,19 +303,19 @@ input[type=text]{
 .bubble_small {
 	border: 1px solid black;
 	float: left;
-	border-radius: 5px;
+	border-radius: .5rem;
 }
 
 .bubble_med {
 	border: 1px solid black;
 	float: left;
-	border-radius: 8px;
+	border-radius: .8rem;
 }
 
 .bubble_large {
 	border: 1px solid black;
 	float: left;
-	border-radius: 13px;
+	border-radius: 1.3rem;
 }
 
 .num_div {

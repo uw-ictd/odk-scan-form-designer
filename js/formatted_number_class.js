@@ -50,10 +50,10 @@ function FormField(json_init, update_init) {
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
-			this.$grid_div.css({top: update_init.top, left: update_init.left});
+			this.$grid_div.css({top: rem(update_init.top), left: rem(update_init.left)});
 		} else {
 			// invoked by Dialog menu
-			this.$grid_div.css({top: 0, left: 0});
+			this.$grid_div.css({top: rem(0), left: rem(0)});
 		}
 		
 		// margin values
@@ -111,7 +111,7 @@ FormField.prototype.getProperties = function() {
 FormField.prototype.constructGrid = function() {
 	// NOTE: initial width and height are aligned to the grid size
 	this.$grid_div.addClass(this.grid_class).addClass('field');
-	this.$grid_div.css({position: 'absolute', borderWidth: this.border_width});																	
+	this.$grid_div.css({position: 'absolute', borderWidth: rem(this.border_width)});																	
 	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});		
 	
 	var fieldObj = this;
@@ -172,6 +172,27 @@ FormField.prototype.alignToGrid = function() {
 		var bottom_pad = height_diff - top_pad;
 		this.$grid_div.children('div').css('marginBottom', this.margin_bottom + bottom_pad);
 	}
+	
+	var convert_sizes = function() {
+		$(this).css({marginTop: rem($(this).css("marginTop")), 
+					marginBottom: rem($(this).css("marginBottom")),
+					marginRight: rem($(this).css("marginRight")),
+					marginLeft: rem($(this).css("marginLeft"))});
+
+		$(this).css("width", rem($(this).css("width")));
+		$(this).css("height", rem($(this).css("height")));
+	};
+	
+	// convert units to REM
+	this.$grid_div.children(".num_group").each(convert_sizes); // all groups
+	this.$grid_div.children(".num").each(convert_sizes); // all delimeters
+	this.$grid_div.children(".num_group").children(".num").each(convert_sizes); // numbers within groups
+	
+	this.$grid_div.css("width", rem(this.$grid_div.css("width")));
+	this.$grid_div.css("height", rem(this.$grid_div.css("height")));
+		
+	this.$grid_div.css("top", rem(this.$grid_div.css("top")));
+	this.$grid_div.css("left", rem(this.$grid_div.css("left")));
 }
 
 /*	Adds event handlers (on click, on double click) to $grid.
@@ -190,6 +211,17 @@ FormField.prototype.addEventHandlers = function($grid) {
 			console.log("error - unsupported field type");
 		}	
 	});
+	
+	var adjust_position = function(event, ui) {
+		var pos = ui.position;
+		var nearest_left = Math.floor(pos.left / GRID_X) * GRID_X;
+		var nearest_top = Math.floor(pos.top / GRID_Y) * GRID_Y;
+		$(this).css("top", rem(nearest_top));
+		$(this).css("left", rem(nearest_left));
+	};
+	
+	$grid.on("drag", (adjust_position));
+	$grid.on('dragstop', (adjust_position));
 }
 
 /*	Returns JSON containing DOM properties
@@ -263,14 +295,14 @@ FormField.prototype.getFieldJSON = function() {
 FormField.prototype.copyField = function() {
 	// make a new copy of the $grid_div
 	var $new_grid = this.$grid_div.clone();
-	$new_grid.css({left: 0, top: 0});
+	$new_grid.css({left: rem(0), top: rem(0)});
 	$new_grid.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	this.addEventHandlers($new_grid);
 	
 	// copy the field object
 	var $new_field = jQuery.extend({}, this);
 	$new_grid.data('obj', $new_field);
-	$new_field.$grid_div = $new_grid;
+	$new_field.$grid_div = $new_grid;	
 	
 	$(".selected_field").removeClass("selected_field");	
 	$new_grid.addClass("selected_field");
@@ -376,19 +408,24 @@ FormNumField.prototype.makeGridElement = function(num_digits, group_num) {
 	for (var i = 1; i <= 5; i += 2) {
 		var $left_dot = $("<div/>");
 		$left_dot.addClass("dot");
-		// NOTE: assuming this.dot_width == this.dot_height for borderRadius calculation
-		$left_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
+		$left_dot.css({width: rem(this.dot_width), 
+					height: rem(this.dot_height), 
+					borderRadius: rem(this.dot_width / 2)});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$left_dot.css({left: x_pos - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		$left_dot.css({left: rem(x_pos - (this.dot_width / 2)), 
+					top: rem((y_pos * i) - (this.dot_height / 2))});
 		
 		var $right_dot = $("<div/>");
 		$right_dot.addClass("dot");
 		// NOTE: assuming this.dot_width == this.dot_height for borderRadius calculation
-		$right_dot.css({width: this.dot_width, height: this.dot_height, borderRadius: this.dot_width / 2});
+		$right_dot.css({width: rem(this.dot_width), 
+						height: rem(this.dot_height), 
+						borderRadius: rem(this.dot_width / 2)});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$right_dot.css({left: (3 * x_pos) - (this.dot_width / 2), top: (y_pos * i) - (this.dot_height / 2)});
+		$right_dot.css({left: rem((3 * x_pos) - (this.dot_width / 2)), 
+						top: rem((y_pos * i) - (this.dot_height / 2))});
 		
 		$new_num.append($left_dot);
 		$new_num.append($right_dot);
@@ -466,19 +503,24 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 		var vert_trans = (this.element_height / 2) - slash_width;
 		var rot_angle = Math.atan2(this.element_height, this.element_width) * 180 / Math.PI;
 		
-		$delim.css({border: "1px solid black", 
-					width: slash_length, 
-					height: slash_width});
-		$delim.css('webkitTransform', 'translate(-' + horiz_trans + 'px, ' + vert_trans + "px) " + 'rotate(-' + rot_angle + 'deg)');		
+		$delim.css({borderWidth: rem(1),
+					borderStyle: "solid",
+					borderColor: "black",
+					width: rem(slash_length), 
+					height: rem(slash_width)});
+		$delim.css('webkitTransform', 
+			'translate(-' + rem(horiz_trans) +', ' + rem(vert_trans) + ") " + 'rotate(-' + rot_angle + 'deg)');		
 	} else if (this.delim_type == "-") {	
 		var dash_width = 1; // NOTE: hardcoded constant
 		var dash_length = this.element_width;
 		var vert_trans = (this.element_height / 2) - dash_width;
 		
-		$delim.css({border: "1px solid black", 
-					width: dash_length, 
-					height: dash_width});
-		$delim.css('webkitTransform', "translate(0px, " + vert_trans + "px)");		
+		$delim.css({borderWidth: rem(1),
+					borderStyle: "solid",
+					borderColor: "black", 
+					width: rem(dash_length), 
+					height: rem(dash_width)});
+		$delim.css('webkitTransform', "translate(" + rem(0) + ", " + rem(vert_trans) + ")");		
 	} else if (this.delim_type == ".") {		
 		var circle_radius = (this.element_width == SEG_NUM_SMALL[0]) ? 3 :
 							(this.element_width == SEG_NUM_MEDIUM[0]) ? 4 : 6;
@@ -488,16 +530,16 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 		var horiz_trans = (this.element_width / 2) - circle_radius;		
 		
 		$delim.addClass("dot_delim");
-		$delim.css({borderWidth: circle_border, 
+		$delim.css({borderWidth: rem(circle_border), 
 					backgroundColor: "black",
 					position: "absolute",
-					bottom: "0px",
+					bottom: rem(1),
 					borderColor: "black",
 					borderStyle: "solid",
-					borderRadius: circle_radius,
-					height: circle_radius * 2,
-					width: circle_radius * 2});
-		$delim.css('webkitTransform', "translate(" + horiz_trans + "px, 0px)");		
+					borderRadius: rem(circle_radius),
+					height: rem(circle_radius * 2),
+					width: rem(circle_radius * 2)});
+		$delim.css('webkitTransform', "translate(" + rem(horiz_trans) + ", " + rem(0) + ")");		
 	} else {
 		console.log("error, unsupported delimeter type for formatted numbers");
 	}

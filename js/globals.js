@@ -18,3 +18,7 @@ var is_name_unique = function() {
 	});
 	return name_unique;
 };
+
+var rem = function(value) {
+	return parseFloat(value) / 10 + "rem";
+}

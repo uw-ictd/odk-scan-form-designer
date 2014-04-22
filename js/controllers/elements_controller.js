@@ -763,7 +763,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			html2canvas($(".selected_page"), {   
 				logging: true,
 				onrendered : function(canvas) {					
-					var img_src = canvas.toDataURL("image/jpeg");					
+					var img_src = canvas.toDataURL("image/jpeg");		
+					console.log(img_src);
 					/* 	Need to extract the base64 from the image source.
 						img_src is in the form: data:image/jpeg;base64,...
 						Where '...' is the actual base64.

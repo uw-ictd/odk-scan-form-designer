@@ -9,24 +9,26 @@ function Box(json_init, update_init) {
 	this.type = "box"; 
 	
 	if(json_init) {
-		this.$box.css({width: json_init.box_width, 
-					height: json_init.box_height,
-					left: json_init.left,
-					top: json_init.top});
+		this.$box.css({width: rem(json_init.box_width), 
+					height: rem(json_init.box_height),
+					left: rem(json_init.left),
+					top: rem(json_init.top)});
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;
 	} else {	
 		if (update_init) {
-			this.$box.css({top: update_init.top, left: update_init.left, 
-							width: update_init.box_width, height: update_init.box_height});
+			this.$box.css({top: rem(update_init.top), 
+						left: rem(update_init.left), 
+						width: rem(update_init.box_width), 
+						height: rem(update_init.box_height)});
 		} else {
 			// NOTE: initial width and height are aligned
 			// to the grid size
-			this.$box.css({top: "0rem", left: "0rem", width: GRID_X + "rem", height: GRID_Y + "rem"});
+			this.$box.css({top: rem(0), left: rem(0), width: rem(GRID_X * 10), height: rem(GRID_Y * 10)});
 		}
 		this.border_width = $("#border_width").val();
-		this.$box.css({borderWidth: this.border_width});
+		this.$box.css({borderWidth: rem(this.border_width)});
 		
 		// set other field attributes
 		this.name = $("#field_name").val();
@@ -43,10 +45,10 @@ Box.prototype.addEventHandlers = function($box) {
 	
 	var adjust_position = function(event, ui) {
 		var pos = ui.position;
-		var nearest_left = (Math.floor(pos.left / GRID_X) * GRID_X) / REM;
-		var nearest_top = (Math.floor(pos.top / GRID_Y) * GRID_Y) / REM;
-		$box.css("top", nearest_top + "rem");
-		$box.css("left", nearest_left + "rem");
+		var nearest_left = Math.floor(pos.left / GRID_X) * GRID_X;
+		var nearest_top = Math.floor(pos.top / GRID_Y) * GRID_Y;
+		$box.css("top", rem(nearest_top));
+		$box.css("left", rem(nearest_left));
 	};
 	
 	/*	Round up the width and height of the box to the nearest 
@@ -55,10 +57,10 @@ Box.prototype.addEventHandlers = function($box) {
 	*/
 	$box.on('resize', (function(event, ui) {
 		var curr_size = ui.size;
-		var nearest_width = (Math.ceil(curr_size.width / GRID_X) * GRID_X) / REM;
-		var nearest_height = (Math.ceil(curr_size.height / GRID_Y) * GRID_Y) / REM;
-		ui.element.width((nearest_width - 2 * border_width) + "rem");
-		ui.element.height((nearest_height - 2 * border_width) + "rem");	
+		var nearest_width = Math.ceil(curr_size.width / GRID_X) * GRID_X;
+		var nearest_height = Math.ceil(curr_size.height / GRID_Y) * GRID_Y;
+		ui.element.width(rem(nearest_width - 2 * border_width));
+		ui.element.height(rem(nearest_height - 2 * border_width));	
 		adjust_position(event, ui);
 	}));
 	
@@ -89,8 +91,7 @@ Box.prototype.constructBox = function() {
 						containment: 'parent', 
 						grid: [GRID_X, GRID_Y],
 						minWidth: GRID_X,
-						minHeight: GRID_Y});																								
-	this.$box.css({'border-width': this.border_width + 'px'});	
+						minHeight: GRID_Y});
 	this.addEventHandlers(this.$box);
 	
 	$(".selected_field").removeClass("selected_field");
@@ -156,7 +157,7 @@ Box.prototype.copyField = function() {
 						grid: [GRID_X, GRID_Y],
 						minWidth: GRID_X * 1,
 						minHeight: GRID_Y * 1});
-	$new_box.css({left: 0, top: 0});
+	$new_box.css({left: rem(0), top: rem(0)});
 	$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	$new_box.resizable({handles: 'all', 
 						containment: 'parent', 
@@ -237,15 +238,14 @@ function TextBox(json_init, update_init) {
 	var $text = $("<p/>");
 	
 	if (json_init) {
-		this.$box.css({fontSize: json_init.font_size});
+		this.$box.css({fontSize: rem(json_init.font_size)});
 		$text.text(json_init.text);
 		this.text = json_init.text;
 	} else {
 		this.text = $("#text_input").val();
 		$text.text(this.text);
 		this.font_size = $("#text_size").val();
-		this.$box.css({fontSize: this.font_size});
-		
+		this.$box.css({fontSize: rem(this.font_size)});
 	}
 	this.$box.append($text);
 }

@@ -1,7 +1,5 @@
 // Constants 
 
-var REM = 10;
-
 var CHECKBOX_SMALL = 10;
 var CHECKBOX_MEDIUM = 16;
 var CHECKBOX_LARGE = 25;
@@ -59,17 +57,17 @@ function GridField(json_init, update_init) {
 		this.element_height = json_init.element_height;
 		this.element_width = json_init.element_width;
 		this.ele_class = json_init.ele_class;
-		this.$grid_div.css({top: json_init.top, left: json_init.left});
+		this.$grid_div.css({top: rem(json_init.top), left: rem(json_init.left)});
 		this.border_width = json_init.border_width;	
 		this.name = json_init.name;
 		this.label = json_init.label;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
-			this.$grid_div.css({top: update_init.top, left: update_init.left});
+			this.$grid_div.css({top: rem(update_init.top), left: rem(update_init.left)});
 		} else {
 			// invoked by Dialog menu
-			this.$grid_div.css({top: 0, left: 0});
+			this.$grid_div.css({top: rem(0), left: rem(0)});
 		}
 		
 		// margin values
@@ -123,7 +121,7 @@ GridField.prototype.getProperties = function() {
 */
 GridField.prototype.constructGrid = function() {
 	this.$grid_div.addClass(this.grid_class).addClass('field');
-	this.$grid_div.css({position: 'absolute', borderWidth: this.border_width});																	
+	this.$grid_div.css({position: 'absolute', borderWidth: rem(this.border_width)});																	
 	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});			
 	
 	// construct the grid
@@ -198,19 +196,20 @@ GridField.prototype.alignToGrid = function() {
 	
 	// convert units to REM
 	this.$grid_div.children().each(function() {
-		$(this).css({marginTop: parseInt($(this).css("marginTop")) / REM + "rem", 
-					marginBottom: parseInt($(this).css("marginBottom")) / REM + "rem",
-					marginRight: parseInt($(this).css("marginRight")) / REM + "rem",
-					marginLeft: parseInt($(this).css("marginLeft")) / REM + "rem"});
-		
-		//$(this).css({margin: $(this).css("margin") / REM + "rem"});
+		$(this).css({marginTop: rem($(this).css("marginTop")), 
+					marginBottom: rem($(this).css("marginBottom")),
+					marginRight: rem($(this).css("marginRight")),
+					marginLeft: rem($(this).css("marginLeft"))});
 					
-		$(this).css("width", $(this).css("width") / REM + "rem");
-		$(this).css("height", $(this).css("height") / REM + "rem");
+		$(this).css("width", rem($(this).css("width")));
+		$(this).css("height", rem($(this).css("height")));
 	});
 	
-	this.$grid_div.css("width", parseInt(this.$grid_div.css("width")) / REM + "rem");
-	this.$grid_div.css("height", parseInt(this.$grid_div.css("height")) / REM + "rem");
+	this.$grid_div.css("width", rem(this.$grid_div.css("width")));
+	this.$grid_div.css("height", rem(this.$grid_div.css("height")));
+	
+	this.$grid_div.css("top", rem(this.$grid_div.css("top")));
+	this.$grid_div.css("left", rem(this.$grid_div.css("left")));
 }
 
 /*	Adds event handlers (on click, on double click) to $grid.
@@ -238,10 +237,10 @@ GridField.prototype.addEventHandlers = function($grid) {
 	
 	var adjust_position = function(event, ui) {
 		var pos = ui.position;
-		var nearest_left = (Math.floor(pos.left / GRID_X) * GRID_X) / REM;
-		var nearest_top = (Math.floor(pos.top / GRID_Y) * GRID_Y) / REM;
-		$(this).css("top", nearest_top + "rem");
-		$(this).css("left", nearest_left + "rem");
+		var nearest_left = Math.floor(pos.left / GRID_X) * GRID_X;
+		var nearest_top = Math.floor(pos.top / GRID_Y) * GRID_Y;
+		$(this).css("top", rem(nearest_top));
+		$(this).css("left", rem(nearest_left));
 	};
 	
 	$grid.on("drag", (adjust_position));
@@ -319,7 +318,7 @@ GridField.prototype.getFieldJSON = function() {
 GridField.prototype.copyField = function() {
 	// make a new copy of the $grid_div
 	var $new_grid = this.$grid_div.clone();
-	$new_grid.css({left: 0, top: 0});
+	$new_grid.css({left: rem(0), top: rem(0)});
 	$new_grid.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	this.addEventHandlers($new_grid);
 	
@@ -404,7 +403,11 @@ CheckboxField.prototype.constructor = CheckboxField;
 
 /* 	Returns a div representing a single checkbox. */
 CheckboxField.prototype.makeGridElement = function() {
-	return $("<div/>").addClass(this.ele_class).css({width: this.element_width / REM + "rem", height: this.element_height / REM + "rem"});
+	$element = $("<div/>");
+	$element.addClass(this.ele_class);
+	$element.css({width: rem(this.element_width), 
+				height: rem(this.element_height)});
+	return $element;
 }
 
 /* 	Loads the properties of the checkbox into 
@@ -501,7 +504,11 @@ BubbleField.prototype.constructor = BubbleField;
 
 /* 	Returns a div representing a single bubble. */
 BubbleField.prototype.makeGridElement = function() {
-	return $("<div/>").addClass(this.ele_class).css({width: this.element_width / REM + "rem", height: this.element_height / REM + "rem"});
+	$element = $("<div/>");
+	$element.addClass(this.ele_class);
+	$element.css({width: rem(this.element_width), 
+				height: rem(this.element_height)});
+	return $element;
 }
 
 /* 	Loads the properties of the bubbles into 
@@ -591,10 +598,10 @@ SegNumField.prototype.constructor = SegNumField;
 
 /* 	Returns a div representing a single segmented number. */
 SegNumField.prototype.makeGridElement = function() {
-	var $new_num = $("<div/>").css({width: this.element_width, height: this.element_height});
+	var $new_num = $("<div/>");
 	$new_num.addClass(this.ele_class);
-	$new_num.css({width: this.element_width / REM + "rem", 
-				height: this.element_height / REM + "rem"});
+	$new_num.css({width: rem(this.element_width), 
+				height: rem(this.element_height)});
 	
 	/*	NOTE: About dot position:
 		Let y = 0 be located at the top of the
@@ -622,24 +629,24 @@ SegNumField.prototype.makeGridElement = function() {
 		var $left_dot = $("<div/>");
 		$left_dot.addClass("dot");
 		// NOTE: assuming this.dot_width == this.dot_height for borderRadius calculation
-		$left_dot.css({width: this.dot_width / REM + "rem", 
-					height: this.dot_height / REM + "rem", 
-					borderRadius: (this.dot_width / 2) / REM + "rem"});
+		$left_dot.css({width: rem(this.dot_width), 
+					height: rem(this.dot_height), 
+					borderRadius: rem(this.dot_width / 2)});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$left_dot.css({left: (x_pos - (this.dot_width / 2)) / REM + "rem", 
-					top: ((y_pos * i) - (this.dot_height / 2)) / REM + "rem"});
+		$left_dot.css({left: rem(x_pos - (this.dot_width / 2)), 
+					top: rem((y_pos * i) - (this.dot_height / 2))});
 		
 		var $right_dot = $("<div/>");
 		$right_dot.addClass("dot");
 		// NOTE: assuming this.dot_width == this.dot_height for borderRadius calculation
-		$right_dot.css({width: this.dot_width / REM + "rem", 
-						height: this.dot_height / REM + "rem", 
-						borderRadius: (this.dot_width / 2) / REM + "rem"});
+		$right_dot.css({width: rem(this.dot_width), 
+						height: rem(this.dot_height), 
+						borderRadius: rem(this.dot_width / 2)});
 		
 		// shifts over the dot to place its center at the appropriate location
-		$right_dot.css({left: ((3 * x_pos) - (this.dot_width / 2)) / REM + "rem", 
-						top: ((y_pos * i) - (this.dot_height / 2)) / REM + "rem"});
+		$right_dot.css({left: rem((3 * x_pos) - (this.dot_width / 2)), 
+						top: rem((y_pos * i) - (this.dot_height / 2))});
 		
 		$new_num.append($left_dot);
 		$new_num.append($right_dot);

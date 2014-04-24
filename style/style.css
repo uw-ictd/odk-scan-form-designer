@@ -253,6 +253,11 @@ input[type=text]{
 
 /************************************************************
 *  Field Elements
+*
+*  NOTE: Border style, weight, and width are set separately 
+*  because there's a bug in the way that Chrome renders 
+*  an objects border with the rem unit when setting the border
+*  using only the 'border' attribute.
 ************************************************************/
 .selected_field {
 	background-color: rgba(7, 197, 223, 0.41);
@@ -290,7 +295,9 @@ input[type=text]{
 }
 
 .c_box {
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
+	border-width: 0.1rem;
 	float: left;
 }
 
@@ -301,19 +308,25 @@ input[type=text]{
 }
 
 .bubble_small {
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
+	border-width: 0.1rem;
 	float: left;
 	border-radius: .5rem;
 }
 
 .bubble_med {
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
+	border-width: 0.1rem;
 	float: left;
 	border-radius: .8rem;
 }
 
 .bubble_large {
-	border: 1px solid black;
+	border-style: solid;
+	border-color: black;
+	border-width: 0.1rem;
 	float: left;
 	border-radius: 1.3rem;
 }
@@ -322,11 +335,13 @@ input[type=text]{
 	display: inline-block;
 	border-style: solid;
 	border-color: black;
-	border-width: 1px;
+	border-width: 0.2rem;
 }
 
-.num {
-	border: 1px solid black;
+.num {	
+	border-style: solid;
+	border-color: black;
+	border-width: 0.1rem;
 	float: left;
 	position: relative;
 }

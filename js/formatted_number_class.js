@@ -212,16 +212,9 @@ FormField.prototype.addEventHandlers = function($grid) {
 		}	
 	});
 	
-	var adjust_position = function(event, ui) {
-		var pos = ui.position;
-		var nearest_left = Math.floor(pos.left / GRID_X) * GRID_X;
-		var nearest_top = Math.floor(pos.top / GRID_Y) * GRID_Y;
-		$(this).css("top", rem(nearest_top));
-		$(this).css("left", rem(nearest_left));
-	};
-	
-	$grid.on("drag", (adjust_position));
-	$grid.on('dragstop', (adjust_position));
+	$grid.on('dragstop', function() {
+		convert_position($(this));
+	});
 }
 
 /*	Returns JSON containing DOM properties

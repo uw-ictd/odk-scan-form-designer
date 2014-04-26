@@ -1,3 +1,36 @@
+/*
+	NOTE:
+	The top, left position of images are kept aligned to 
+	grid vertically and horizontally. Since users can resize
+	images in all directions then the top, left position of the
+	image can fall out of alignment. 
+*/
+var adjust_image_position = function($obj, ui) {
+/*
+	Rounds the top, left position of an image up or down to 
+	the nearest multiple of GRID_Y and GRID_X respectively 
+	in order to maintain grid alignment.
+*/
+	var pos = ui.position;
+	var left_rounded_down = Math.floor(pos.left / GRID_X) * GRID_X;
+	var top_rounded_down = Math.floor(pos.top / GRID_Y) * GRID_Y;
+	
+	var left_rounded_up = Math.ceil(pos.left / GRID_X) * GRID_X;
+	var top_rounded_up = Math.ceil(pos.top / GRID_Y) * GRID_Y
+	
+	if (Math.abs(pos.left - left_rounded_down) < Math.abs(pos.left - left_rounded_up)) {
+		$obj.css("left", rem(left_rounded_down));
+	} else {
+		$obj.css("left", rem(left_rounded_up));
+	}
+	
+	if (Math.abs(pos.top - top_rounded_down) < Math.abs(pos.top - top_rounded_up)) {
+		$obj.css("top", rem(top_rounded_down));
+	} else {
+		$obj.css("top", rem(top_rounded_up));
+	}
+};
+
 var crop_image = function(image) {		
 	/*	Image is wrapped in a div to eliminate the overflow
 		and only make the selected region visible.	
@@ -67,15 +100,32 @@ var image_to_field = function(image) {
 	// create div container for the image
 	var $img_draggable = $("<div/>");
 	$img_draggable.data('img_name', image.img_name);	
-	$img_draggable.css({width: image.img_width, 
-					height: image.img_height, 
-					left: image.div_left, 
-					top: image.div_top, 
-					position: 'absolute'});										
+	$img_draggable.css({width: rem(image.img_width), 
+					height: rem(image.img_height), 
+					left: rem(image.div_left), 
+					top: rem(image.div_top), 
+					position: 'absolute'});
+					
 	// make the div draggable/resizable
-	$img_draggable.draggable({containment: 'parent'});
+	$img_draggable.draggable({containment: 'parent', 
+							grid: [GRID_X, GRID_Y]});
 	$img_draggable.resizable({containment: 'parent', 
 		aspectRatio: true, handles: 'all'});	
+	
+	// convert units to REM on resize/drag stop
+	$img_draggable.on('resizestop', function(event, ui) {		
+		// ISSUE: rem function can cause loss of precision 
+		// after converting units
+		var width = $(this).css("width");
+		var height = $(this).css("height");
+		$(this).css("width", rem(width));
+		$(this).css("height", rem(height));
+		adjust_image_position($(this), ui);
+	});	
+	
+	$img_draggable.on("dragstop", function() {
+		convert_position($(this));
+	});
 	
 	// add event listeners
 	$img_draggable.click(function() {
@@ -88,5 +138,6 @@ var image_to_field = function(image) {
 	// image fields are identified by the 'img_div' class
 	$img_draggable.addClass('img_div').append($img);		
 	$(".selected_page").append($img_draggable);
+	
 	return $img_draggable;
 };

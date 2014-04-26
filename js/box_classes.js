@@ -36,36 +36,29 @@ function Box(json_init, update_init) {
 	}
 }
 
-/*	Adds event handlers (on click, on double click, on resize)
+/*	Adds event handlers (on click, on resize)
 	to this box.
 	$box: jQuery div representing the box
 */
 Box.prototype.addEventHandlers = function($box) {
 	var border_width = this.border_width;
-	
-	var adjust_position = function(event, ui) {
-		var pos = ui.position;
-		var nearest_left = Math.floor(pos.left / GRID_X) * GRID_X;
-		var nearest_top = Math.floor(pos.top / GRID_Y) * GRID_Y;
-		$box.css("top", rem(nearest_top));
-		$box.css("left", rem(nearest_left));
-	};
-	
+		
 	/*	Round up the width and height of the box to the nearest 
 		multiple of GRID_X and GRID_Y respectively in order to
 		maintain grid alignment.
 	*/
-	$box.on('resize', (function(event, ui) {
+	$box.on('resizestop', (function(event, ui) {
 		var curr_size = ui.size;
 		var nearest_width = Math.ceil(curr_size.width / GRID_X) * GRID_X;
 		var nearest_height = Math.ceil(curr_size.height / GRID_Y) * GRID_Y;
-		ui.element.width(rem(nearest_width - 2 * border_width));
-		ui.element.height(rem(nearest_height - 2 * border_width));	
-		adjust_position(event, ui);
+		$(this).css("width", rem(nearest_width));
+		$(this).css("height", rem(nearest_height));	
+		convert_position($(this));
 	}));
 	
-	$box.on('drag', (adjust_position));
-	$box.on('dragstop', (adjust_position));
+	$box.on('dragstop', function() {
+		convert_position($(this));
+	});
 	
 	var obj = this;
 	$box.click(function() {

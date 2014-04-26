@@ -19,6 +19,13 @@ var is_name_unique = function() {
 	return name_unique;
 };
 
+// converts a numeric value to an rem unit
 var rem = function(value) {
 	return parseFloat(value) / 10 + "rem";
 }
+
+// converts position units to rem
+var convert_position = function($obj) {
+	$obj.css("top", rem($obj.css("top")));
+	$obj.css("left", rem($obj.css("left")));
+};	

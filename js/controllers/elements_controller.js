@@ -398,12 +398,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_width: $img.data('orig_width'),
 							img_top: $img.data('top'),
 							img_left: $img.data('left'),
-							div_top: 0,
-							div_left: 0};
+							div_top: rem(0),
+							div_left: rem(0)};
 				var $new_img_div = image_to_field(image);		
 				
 				// update the image references
-				this.send("addImageRef", img_name);
+				this.send("addImageRef", image.img_name);
 			}
 		},
 		newDoc: function() {

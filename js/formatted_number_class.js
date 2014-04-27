@@ -485,14 +485,20 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 					position: "absolute"});
 	$vert_line.css('webkitTransform', 'translate(' + vt_horiz_trans + "px, 0px)");
 	$delim_div.append($vert_line);
+	// END DEBUG TEST
 	*/
 	
 	var $delim = $("<div/>");
 	if (this.delim_type == "/") {
 		// calculate size, translation, rotation of slash symbol
 		var slash_width = 1; // NOTE: hardcoded constant
-		var slash_length = Math.sqrt(Math.pow(this.element_width, 2) + Math.pow(this.element_height, 2));
-		var horiz_trans = ((slash_length / 2) - (this.element_width / 2));
+		var slash_length = 0.5 * Math.sqrt(Math.pow(this.element_width, 2) + Math.pow(this.element_height, 2));
+		var horiz_trans;
+		if (slash_length > this.element_width) {
+			horiz_trans = -((slash_length / 2) - (this.element_width / 2));
+		} else {
+			horiz_trans = (this.element_width / 2) - (slash_length / 2);
+		}
 		var vert_trans = (this.element_height / 2) - slash_width;
 		var rot_angle = Math.atan2(this.element_height, this.element_width) * 180 / Math.PI;
 		
@@ -502,10 +508,16 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 					width: rem(slash_length), 
 					height: rem(slash_width)});
 		$delim.css('webkitTransform', 
-			'translate(-' + rem(horiz_trans) +', ' + rem(vert_trans) + ") " + 'rotate(-' + rot_angle + 'deg)');		
+			'translate(' + rem(horiz_trans) +', ' + rem(vert_trans) + ") " + 'rotate(-' + rot_angle + 'deg)');		
 	} else if (this.delim_type == "-") {	
 		var dash_width = 1; // NOTE: hardcoded constant
-		var dash_length = this.element_width;
+		var dash_length = 0.5 * this.element_width;
+		var horiz_trans;
+		if (dash_length > this.element_width) {
+			horiz_trans = -((dash_length / 2) - (this.element_width / 2));
+		} else {
+			horiz_trans = (this.element_width / 2) - (dash_length / 2);
+		}
 		var vert_trans = (this.element_height / 2) - dash_width;
 		
 		$delim.css({borderWidth: rem(1),
@@ -513,7 +525,7 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 					borderColor: "black", 
 					width: rem(dash_length), 
 					height: rem(dash_width)});
-		$delim.css('webkitTransform', "translate(" + rem(0) + ", " + rem(vert_trans) + ")");		
+		$delim.css('webkitTransform', "translate(" + rem(horiz_trans) + ", " + rem(vert_trans) + ")");		
 	} else if (this.delim_type == ".") {		
 		var circle_radius = (this.element_width == SEG_NUM_SMALL[0]) ? 3 :
 							(this.element_width == SEG_NUM_MEDIUM[0]) ? 4 : 6;

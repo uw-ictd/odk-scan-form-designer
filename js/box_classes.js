@@ -1,3 +1,8 @@
+// Constants
+var SMALL_TEXT_SIZE = 9;
+var MEDIUM_TEXT_SIZE = 11;
+var LARGE_TEXT_SIZE = 14;
+
 /*	Represents a generic box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
@@ -12,7 +17,8 @@ function Box(json_init, update_init) {
 		this.$box.css({width: rem(json_init.box_width), 
 					height: rem(json_init.box_height),
 					left: rem(json_init.left),
-					top: rem(json_init.top)});
+					top: rem(json_init.top),
+					borderWidth: rem(json_init.border_width)});
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;
@@ -25,7 +31,8 @@ function Box(json_init, update_init) {
 		} else {
 			// NOTE: initial width and height are aligned
 			// to the grid size
-			this.$box.css({top: rem(0), left: rem(0), width: rem(GRID_X * 10), height: rem(GRID_Y * 10)});
+			this.$box.css({top: rem(0), left: rem(0), 
+			width: rem(GRID_X * 10), height: rem(GRID_Y * 10)});
 		}
 		this.border_width = $("#border_width").val();
 		this.$box.css({borderWidth: rem(this.border_width)});
@@ -230,15 +237,26 @@ function TextBox(json_init, update_init) {
 	this.$box.css({wordWrap: 'break-word'});											
 	var $text = $("<p/>");
 	
+	var font_size_choice = (json_init) ? json_init.font_size 
+						: $("#text_size").val();
+	// set the font size
+	var font_size_value;
+	if (font_size_choice == "small") {
+		font_size_value = SMALL_TEXT_SIZE;
+	} else if (font_size_choice == "medium") {
+		font_size_value = MEDIUM_TEXT_SIZE;
+	} else {
+		font_size_value = LARGE_TEXT_SIZE;
+	}
 	if (json_init) {
-		this.$box.css({fontSize: rem(json_init.font_size)});
+		this.$box.css({fontSize: rem(font_size_value)});
 		$text.text(json_init.text);
 		this.text = json_init.text;
 	} else {
 		this.text = $("#text_input").val();
 		$text.text(this.text);
 		this.font_size = $("#text_size").val();
-		this.$box.css({fontSize: rem(this.font_size)});
+		this.$box.css({fontSize: rem(font_size_value)});
 	}
 	this.$box.append($text);
 }
@@ -258,10 +276,9 @@ TextBox.prototype.loadProperties = function() {
 	$("#text_input").val(this.text);
 	
 	// set text size
-	$("#text_size").prop('selectedIndex', (this.font_size == '13px') ? 0 :
-						(this.font_size == '16px') ? 1 : 2);			
+	$("#text_size").prop('selectedIndex', (this.font_size == "small") ? 0 :
+						(this.font_size == "medium") ? 1 : 2);			
 }
-
 
 /*	Creates a new text box field with the updated
 	properties listed in the properties sidebar.
@@ -278,6 +295,6 @@ TextBox.prototype.updateProperties = function() {
 TextBox.prototype.saveJSON = function() {
 	var json = this.getProperties();
 	json.text = this.text;
-	json.font_size = this.$box.css('fontSize');
+	json.font_size = this.font_size;
 	return json;
 }

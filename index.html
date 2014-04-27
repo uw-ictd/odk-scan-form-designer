@@ -165,6 +165,7 @@
 		{{partial 'removePageDialog'}}
 		{{partial 'saveCheckDialog'}}
 		{{partial 'imageTabRemoveDialog'}}
+		{{partial 'exportInProgressDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -512,6 +513,12 @@
 			<hr class="horz_divider">
 			<button class="input_button" {{action "cancelImageTabRemove"}}>Cancel</button>
 			<button class="input_button" {{action "removeImageTab"}}>Ok</button>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_exportInProgressDialog">
+		<div id="export_progress_dialog" title="ODK Scan">	
+			<p>Exporting Scan document...</p>
 		</div>
 	</script>
   </body>

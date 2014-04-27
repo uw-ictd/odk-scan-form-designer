@@ -166,6 +166,12 @@ input[type=text], input[type=number] {
 	overflow: auto;
 }
 
+#export_progress_dialog p {
+	text-align: center;
+	margin-top: 10%;
+	margin-bottom: 10%;
+}
+
 #page_label_container {
 	margin-left: 140px;
 	margin-top: -20px;

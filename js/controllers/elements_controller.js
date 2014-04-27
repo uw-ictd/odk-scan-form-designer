@@ -721,6 +721,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#save_dialog").dialog("open");
 		},
 		exportZIP: function() {
+			$("#export_progress_dialog").dialog("open");
+		
 			// unselect any selected field (don't want it to be highlighted in the image output)
 			$(".selected_field").removeClass("selected_field");
 			
@@ -738,7 +740,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var scanDoc = "data:application/zip;base64," + content;				
 				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
-				$("html").css("font-size", "62.5%")
+				$("html").css("font-size", "62.5%");
+				$("#export_progress_dialog").dialog("close");
 				return; 
 			} 
 			var scanDoc = {};

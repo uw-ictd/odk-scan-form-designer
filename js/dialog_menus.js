@@ -48,6 +48,13 @@ $(document).ready(function() {
 		modal: true
 	});	
 	
+	// NOTE: buttons are implemented in the elements controller in 
+	// order to allow communication between the controller and dialog menu
+	$("#export_progress_dialog").dialog({
+		autoOpen: false,
+		modal: true
+	});	
+	
 	$("#save_check_dialog").dialog({
 		autoOpen: false,
 		modal: true,

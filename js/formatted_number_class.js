@@ -43,7 +43,7 @@ function FormField(json_init, update_init) {
 		this.element_height = json_init.element_height;
 		this.element_width = json_init.element_width;
 		this.ele_class = json_init.ele_class;
-		this.$grid_div.css({top: json_init.top, left: json_init.left});
+		this.$grid_div.css({top: rem(json_init.top), left: rem(json_init.left)});
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;

@@ -151,19 +151,17 @@ input[type=text], input[type=number] {
 	margin-left: 15px;
 }
 
-/* set default width on text input boxes */
-input[type=text]{
-	width: 100px;
+.short_text_input {
+	width: 90px;
 }
 
-/* Field name and label input boxes. */
-#field_name, #field_label {
+.long_text_input {
 	width: 150px;
 }
 
 /* 	Sets the max height on the div containing the rows 
 	and columns before it starts to scroll. */
-.grid_values_view {
+.scrollable_values {
 	max-height: 120px;
 	overflow: auto;
 }

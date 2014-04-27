@@ -197,12 +197,12 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="grid-values-view">
-		<div class="grid_values_view">
+		<div class="scrollable_values">
 			<label for="name">Grid values:</label><br>
 			{{#each row in view.parentView.gridElements}}
 				{{#each ele in row}}
 					&nbsp;&nbsp;<label for="name">Row: {{ele.rowIndex}}, Col: {{ele.colIndex}}</label>
-					<input type="text" {{bind-attr value=ele.ele_value}} class="ui-widget-content ui-corner-all grid_value" {{action 'inputBoxPressed' ele.rowIndex ele.colIndex target="view.parentView" on="click"}}></input>
+					<input type="text" {{bind-attr value=ele.ele_value}} class="ui-widget-content ui-corner-all grid_value short_text_input" {{action 'inputBoxPressed' ele.rowIndex ele.colIndex target="view.parentView" on="click"}}></input>
 					<br>
 				{{/each}}
 			{{/each}}
@@ -241,10 +241,10 @@
 	
 	<script type="text/x-handlebars" data-template-name="field-attributes-view">
 		<label for="name">Name</label>
-		<input type="text" id="field_name" class="ui-widget-content ui-corner-all"><br>
+		<input type="text" id="field_name" class="ui-widget-content ui-corner-all long_text_input"><br>
 		
 		<label for="name">Label</label>
-		<input type="text" id="field_label" class="ui-widget-content ui-corner-all"><br>
+		<input type="text" id="field_label" class="ui-widget-content ui-corner-all long_text_input"><br>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="default-prop-view">
@@ -279,7 +279,7 @@
 			<option value="large">Large</option>				
 		</select><br>
 		<label for="name">Text</label>
-		<input type="text" id="text_input" class="ui-widget-content ui-corner-all">		
+		<input type="text" id="text_input" class="ui-widget-content ui-corner-all long_text_input">		
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
 	</script>
@@ -371,10 +371,12 @@
 		
 		<label for="name">Number of groups</label>
 		<input type="number" id="num_col_form_num" value="2" class="int_input ui-widget-content ui-corner-all" min="2" {{action 'updateNumGroups' target="view"}}><br>
-		{{#each view.formNumGroups}}
-			&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{groupNum}}</label>
-			<input type="number" {{bind-attr value=size}} class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
-		{{/each}}
+		<div class="scrollable_values">
+			{{#each view.formNumGroups}}
+				&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{groupNum}}</label>
+				<input type="number" {{bind-attr value=size}} class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
+			{{/each}}
+		</div>
 		<hr class="horz_divider">
 		
 		<label for="name">Number spacing</label>
@@ -435,7 +437,7 @@
 	<script type="text/x-handlebars" data-template-name="_exportDialog">
 		<div id="export_dialog" title="Export Scan Form">		
 			<label for="name">Filename</label>
-			<input type="text" id="zip_name" class="ui-widget-content ui-corner-all">		
+			<input type="text" id="zip_name" class="ui-widget-content ui-corner-all long_text_input">		
 			<a id="zip_link" download="odk_scan_output"></a>
 		</div>
 	</script>
@@ -453,7 +455,7 @@
 	<script type="text/x-handlebars" data-template-name="_saveDialog">
 		<div id="save_dialog" title="Save Scan Form">		
 			<label for="name">Filename</label>
-			<input type="text" id="saved_scan_name" class="ui-widget-content ui-corner-all">	
+			<input type="text" id="saved_scan_name" class="ui-widget-content ui-corner-all long_text_input">	
 			<a id="scan_json_link" download=""></a>			
 		</div>
 	</script>

@@ -45,8 +45,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							img_width: 92,
 							orig_height: 89,
 							orig_width: 92,
-							img_top: 0,
-							img_left: -998};		
+							img_top: -998,
+							img_left: 0};		
 		images.bottom_right = {img_name: "form",
 							img_src: "default_images/bottom_right.jpg",
 							img_height: 71,

@@ -38,7 +38,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_height: 56,
 							orig_width: 260,
 							img_top: 0,
-							img_left: 568};						
+							img_left: -568};						
 		images.bottom_left = {img_name: "form",
 							img_src: "default_images/bottom_left.jpg",
 							img_height: 89,
@@ -46,15 +46,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_height: 89,
 							orig_width: 92,
 							img_top: 0,
-							img_left: 998};		
+							img_left: -998};		
 		images.bottom_right = {img_name: "form",
 							img_src: "default_images/bottom_right.jpg",
 							img_height: 71,
 							img_width: 114,
 							orig_height: 71,
 							orig_width: 114,
-							img_top: 1014,
-							img_left: 718};														
+							img_top: -1014,
+							img_left: -718};														
 		return images;
 	}.property(),
 	init: function() {

@@ -166,6 +166,7 @@
 		{{partial 'saveCheckDialog'}}
 		{{partial 'imageTabRemoveDialog'}}
 		{{partial 'exportInProgressDialog'}}
+		{{partial 'pageStyleWarningDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="elements/index">
@@ -519,6 +520,12 @@
 	<script type="text/x-handlebars" data-template-name="_exportInProgressDialog">
 		<div id="export_progress_dialog" title="ODK Scan">	
 			<p>Exporting Scan document...</p>
+		</div>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="_pageStyleWarningDialog">
+		<div id="page_style_warning_dialog" title="ODK Scan">	
+			<p>Warning, changing the page style will delete all fields.</p>
 		</div>
 	</script>
   </body>

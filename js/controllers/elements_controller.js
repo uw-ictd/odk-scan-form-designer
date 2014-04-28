@@ -128,7 +128,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.set('isImageEditing', false);
 		},
 		openPageStyleDialog: function() {
-			$("#page_style_dialog").dialog("open");
+			$("#page_style_warning_dialog").dialog("open");
 		},
 		setPageStyle: function() {		
 			// delete all fields

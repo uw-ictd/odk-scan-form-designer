@@ -55,6 +55,20 @@ $(document).ready(function() {
 		modal: true
 	});	
 	
+	$("#page_style_warning_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {
+			"Continue": function() {
+				$("#page_style_dialog").dialog("open");
+				$(this).dialog("close");
+			},
+			"Cancel": function() {
+				$(this).dialog("close");
+			}
+		}
+	});	
+	
 	$("#save_check_dialog").dialog({
 		autoOpen: false,
 		modal: true,

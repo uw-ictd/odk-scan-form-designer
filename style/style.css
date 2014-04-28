@@ -13,6 +13,11 @@ html, body {
 	z-index: 10000 !important;
 }
 
+/* Removes the close button from dialog menus. */
+.ui-dialog-titlebar-close {
+	display: none;
+}
+
 /* Div that contains the application name. */
 #app_name {
 	text-align: center;

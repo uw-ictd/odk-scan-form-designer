@@ -758,7 +758,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				scanDoc.fields.push(fieldObj.getFieldJSON());
 			}
 			var json_output = JSON.stringify(scanDoc, null, '\t');
-			console.log(json_output);
 			
 			var controller = this;
 			// scale up the html element sizes
@@ -768,7 +767,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				onrendered : function(canvas) {					
 					var img_src = canvas.toDataURL("image/jpeg");		
 					$("html").css("font-size", "62.5%");
-					
+
 					/* 	Need to extract the base64 from the image source.
 						img_src is in the form: data:image/jpeg;base64,...
 						Where '...' is the actual base64.

@@ -22,16 +22,22 @@ ODKScan.FieldController = Ember.View.extend({
 			// up on the screen in a random location)
 			var new_field_type = this.get('controller.newFieldType');			
 			if (new_field_type == 'checkbox') {
+				$("#field_label").val("checkbox");
 				$("#checkbox_dialog").dialog("open");
 			} else if (new_field_type == 'bubble') {
+				$("#field_label").val("fill-in bubbles");
 				$("#bubble_dialog").dialog("open");
 			} else if (new_field_type == 'seg_num') {
+				$("#field_label").val("segmented number");
 				$("#seg_num_dialog").dialog("open");
 			} else if (new_field_type == 'empty_box') {
+				$("#field_label").val("text box");
 				$("#box_dialog").dialog("open");
 			} else if (new_field_type == 'text_box') {
+				$("#field_label").val("text");
 				$("#text_dialog").dialog("open");
 			} else if (new_field_type == 'form_num') {
+				$("#field_label").val("formatted number");
 				$("#form_num_dialog").dialog("open");
 			} else {
 				console.log("error no dialog menu to open, unsupported field type");

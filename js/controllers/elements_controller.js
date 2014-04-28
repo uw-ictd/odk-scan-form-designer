@@ -729,8 +729,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			/* Recursively create the file structure. */
 			var zip = new JSZip();
 			
-			// scale up the html element sizes
-			$("html").css("font-size", "200%")
 			this.send('createZipFolder', this.get('pages'), 0, "", zip);			
 		},
 		createZipFolder: function(pages, curr_index, curr_directory, zip) {
@@ -740,7 +738,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var scanDoc = "data:application/zip;base64," + content;				
 				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
-				$("html").css("font-size", "62.5%");
 				$("#export_progress_dialog").dialog("close");
 				return; 
 			} 
@@ -761,13 +758,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				scanDoc.fields.push(fieldObj.getFieldJSON());
 			}
 			var json_output = JSON.stringify(scanDoc, null, '\t');
+			console.log(json_output);
 			
 			var controller = this;
+			// scale up the html element sizes
+			$("html").css("font-size", "200%");
 			html2canvas($(".selected_page"), {   
 				logging: true,
 				onrendered : function(canvas) {					
 					var img_src = canvas.toDataURL("image/jpeg");		
-					console.log(img_src);
+					$("html").css("font-size", "62.5%");
+					
 					/* 	Need to extract the base64 from the image source.
 						img_src is in the form: data:image/jpeg;base64,...
 						Where '...' is the actual base64.

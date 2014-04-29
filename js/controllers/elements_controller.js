@@ -131,21 +131,20 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#page_style_warning_dialog").dialog("open");
 		},
 		setPageStyle: function() {		
-			// delete all fields
-			$(this.get("pages")).each(function(index, page) {
-				page.pageDiv.children().remove();
-			});
-		
+			// delete all pages, update page style
+			var num_pages = this.get("pages").length;
+			this.set("pages", []);		
+			this.set("currPage", 0);
 			this.set("pageStyle", $("#page_size").val());
 			
-			// remove current page style from all pages
-			var $all_pages = $(".scan_page");
-			$all_pages.removeClass(); 
-			$all_pages.addClass("scan_page");
-			$all_pages.addClass(this.get("pageStyle"));
+			for (var i = 0; i < num_pages; i++) {
+				this.send("newPage");
+			}
 			
 			// re-select the current page
-			this.send("selectPageTab", this.get("selectedPageTab"));
+			if (num_pages > 0) {
+				this.send("selectPageTab", this.get("pages")[0]);
+			}
 			$("#page_style_dialog").dialog("close");
 			
 			// add default images

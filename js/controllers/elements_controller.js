@@ -7,8 +7,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	pages: null,			// list of JSON objects containing page tab metadata
 	images: {},				// JSON containing references to image metadata (reference count, image src)
 	selectedImageTab: null,	// metadata about the currently selected image tab (name, data, reference count)
+	deletedFields: [],		// stores up to N deleted fields from an ODK Scan document
 	imageList: function() {	// the image tab list
-		console.log("evaluating imageList");
 		var images = this.get("images");
 		var image_list = [];
 		for (img in images) {
@@ -221,7 +221,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			if($("#remove_itab_cb").prop("checked")) {
 				// delete all referenced image snippets
 				var img_name = this.get("selectedImageTab").name;
-				$(".img_div").filter(function() { return $(this).data("img_name") == img_name}).remove();
+				$(".img_div").filter(function() {
+					return $(this).data("img_name") == img_name
+				}).remove();
 				
 				delete this.get('images')[this.get("selectedImageTab").name];	
 
@@ -248,7 +250,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				}
 				
 				// create, select new image tab
-				var newImageTab = {ref_count: 0, isActive: true, data: img_src, name: image_name};	
+				var newImageTab = {ref_count: 0, isActive: false, data: img_src, name: image_name};	
 				this.set("selectedImageTab", newImageTab);
 				Ember.set(images, image_name, newImageTab);
 				
@@ -319,16 +321,54 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		deleteField: function() {
 			var $curr_field = $(".selected_field");
 			if ($curr_field.length != 0) {
+				var undo = {};
 				if ($curr_field.hasClass("img_div")) {
+					// store reference to image src before
+					// deleting the image
+					var image_name = $curr_field.data("img_name");
+					var img_src = this.get("images")[image_name].data;
+					undo.img_src = img_src;
+				
 					// decrement the image reference count
 					this.send("removeImageRef", $curr_field.data("img_name"));
 				}
 			
-				$curr_field.remove();
+				var deletedFields = this.get("deletedFields");	
+				undo.$deleted_field = $curr_field;
+				undo.$page = $(".selected_page");
+				
+				deletedFields.push(undo);
+				// remove the field from the current page
+				// but don't delete the event handlers and data
+				// associated with it
+				$curr_field.detach();
+				
+				// only store up to 8 fields at a time
+				if (deletedFields.length == 9) {
+					var undo = deletedFields.shift();
+					undo.$deleted_field.remove();
+				}
+				
 				// update view in the field properties sidebar
 				ODKScan.FieldContainer.popObject();
 				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			}
+		},
+		undoDeleteField: function() {
+			var deletedFields = this.get("deletedFields");
+			if (deletedFields.length > 0) {
+				// restore the deleted field to its
+				// respective page
+				var undo = deletedFields.pop();	
+				
+				if (undo.$deleted_field.hasClass("img_div")) {									
+					// restore the image reference count
+					this.send("addImageRef", undo.$deleted_field.data("img_name"), undo.img_src);
+				}
+				
+				$(".selected_field").removeClass("selected_field");
+				undo.$page.append(undo.$deleted_field);			
+			}			
 		},
 		createBox: function() {
 			this.set('newFieldType', 'empty_box');

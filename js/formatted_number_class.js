@@ -120,20 +120,20 @@ FormField.prototype.constructGrid = function() {
 		$g_element.css({marginTop: fieldObj.margin_top, marginBottom: fieldObj.margin_bottom});
 
 		if (index == 0) { // edge case, first grid element in the row
-			$g_element.css({marginLeft: fieldObj.margin_left, marginRight: fieldObj.group_dx / 2});
+			$g_element.css({marginLeft: fieldObj.margin_left, marginRight: rem(0)});
 			$g_element.addClass('first_col');
 			fieldObj.$grid_div.append($g_element);
 			
 			var delim = fieldObj.makeGridDelim();
 			fieldObj.$grid_div.append(delim);
 		} else if (index < fieldObj.num_cols - 1) {			
-			$g_element.css({marginLeft: fieldObj.group_dx / 2, marginRight: fieldObj.group_dx / 2});
+			$g_element.css({marginLeft: rem(0), marginRight: rem(0)});
 			fieldObj.$grid_div.append($g_element);
 			
 			var delim = fieldObj.makeGridDelim();
 			fieldObj.$grid_div.append(delim.clone());
 		} else { // edge case, last grid element in the row
-			$g_element.css({marginLeft: fieldObj.group_dx / 2, marginRight: fieldObj.margin_right});
+			$g_element.css({marginLeft: rem(0), marginRight: fieldObj.margin_right});
 			$g_element.addClass('last_col');
 			fieldObj.$grid_div.append($g_element);
 		}
@@ -453,13 +453,16 @@ FormNumField.prototype.makeGridElement = function(num_digits, group_num) {
 FormNumField.prototype.makeGridDelim = function(num_digits) {
 	var $delim_div = $("<div/>");
 	$delim_div.addClass(this.ele_class);
+	var delim_width = this.element_width / 2;
+	var delim_height = this.element_height;
+	
 	$delim_div.css({border: 'none',
-					width: this.element_width, 
-					height: this.element_height,
+					width: delim_width, 
+					height: delim_height,
 					marginTop: this.margin_top,
 					marginBottom: this.margin_bottom,
-					marginLeft: this.group_dx / 2, 
-					marginRight: this.group_dx / 2,
+					marginLeft: 0, 
+					marginRight: 0,
 					textAlign: 'center'});
 					
 	//	DEBUG test - adds horizontal and vertical line to the div
@@ -467,8 +470,8 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 	/*
 	var border_offset = 1;
 	var $horiz_line = $("<div/>");
-	var hz_line_length = this.element_width;
-	var hz_vert_trans = (this.element_height / 2) - border_offset;
+	var hz_line_length = delim_width;
+	var hz_vert_trans = (delim_height / 2) - border_offset;
 	$horiz_line.css({border: "1px solid black", 
 					width: hz_line_length, 
 					height: "1px",
@@ -477,30 +480,30 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 	$delim_div.append($horiz_line);
 	
 	var $vert_line = $("<div/>");
-	var vt_line_length = this.element_height;
-	var vt_horiz_trans = (this.element_width / 2) - border_offset;
+	var vt_line_length = delim_height;
+	var vt_horiz_trans = (delim_width / 2) - border_offset;
 	$vert_line.css({border: "1px solid black", 
 					width: "1px", 
 					height: vt_line_length,
 					position: "absolute"});
 	$vert_line.css('webkitTransform', 'translate(' + vt_horiz_trans + "px, 0px)");
 	$delim_div.append($vert_line);
-	// END DEBUG TEST
 	*/
+	// END DEBUG TEST
 	
 	var $delim = $("<div/>");
 	if (this.delim_type == "/") {
 		// calculate size, translation, rotation of slash symbol
 		var slash_width = 1; // NOTE: hardcoded constant
-		var slash_length = 0.5 * Math.sqrt(Math.pow(this.element_width, 2) + Math.pow(this.element_height, 2));
+		var slash_length = 0.5 * Math.sqrt(Math.pow(delim_width, 2) + Math.pow(delim_height, 2));
 		var horiz_trans;
-		if (slash_length > this.element_width) {
-			horiz_trans = -((slash_length / 2) - (this.element_width / 2));
+		if (slash_length > delim_width) {
+			horiz_trans = -((slash_length / 2) - (delim_width / 2));
 		} else {
-			horiz_trans = (this.element_width / 2) - (slash_length / 2);
+			horiz_trans = (delim_width / 2) - (slash_length / 2);
 		}
-		var vert_trans = (this.element_height / 2) - slash_width;
-		var rot_angle = Math.atan2(this.element_height, this.element_width) * 180 / Math.PI;
+		var vert_trans = (delim_height / 2) - slash_width;
+		var rot_angle = Math.atan2(delim_height, delim_width) * 180 / Math.PI;
 		
 		$delim.css({borderWidth: rem(1),
 					borderStyle: "solid",
@@ -511,14 +514,14 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 			'translate(' + rem(horiz_trans) +', ' + rem(vert_trans) + ") " + 'rotate(-' + rot_angle + 'deg)');		
 	} else if (this.delim_type == "-") {	
 		var dash_width = 1; // NOTE: hardcoded constant
-		var dash_length = 0.5 * this.element_width;
+		var dash_length = 0.5 * delim_width;
 		var horiz_trans;
-		if (dash_length > this.element_width) {
-			horiz_trans = -((dash_length / 2) - (this.element_width / 2));
+		if (dash_length > delim_width) {
+			horiz_trans = -((dash_length / 2) - (delim_width / 2));
 		} else {
-			horiz_trans = (this.element_width / 2) - (dash_length / 2);
+			horiz_trans = (delim_width / 2) - (dash_length / 2);
 		}
-		var vert_trans = (this.element_height / 2) - dash_width;
+		var vert_trans = (delim_height / 2) - dash_width;
 		
 		$delim.css({borderWidth: rem(1),
 					borderStyle: "solid",
@@ -530,9 +533,9 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 		var circle_radius = (this.element_width == SEG_NUM_SMALL[0]) ? 3 :
 							(this.element_width == SEG_NUM_MEDIUM[0]) ? 4 : 6;
 		// must compensate for circle radius to center the circle vertically witin the div
-		var vert_trans = (this.element_height / 2) - circle_radius; 
+		var vert_trans = (delim_height / 2) - circle_radius; 
 		var circle_border = 1;
-		var horiz_trans = (this.element_width / 2) - circle_radius;		
+		var horiz_trans = (delim_width / 2) - circle_radius;		
 		
 		$delim.addClass("dot_delim");
 		$delim.css({borderWidth: rem(circle_border), 

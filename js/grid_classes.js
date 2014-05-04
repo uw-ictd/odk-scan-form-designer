@@ -578,6 +578,10 @@ function SegNumField(json_init, update_init) {
 							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
 		this.dot_height = ($("#dot_size").val() == 'small') ? DOT_SMALL : 
 							($("#dot_size").val() == 'medium') ? DOT_MEDIUM : DOT_LARGE;
+		
+		// number of rows is hardcoded to 1
+		// for number fields
+		this.num_rows = 1;
 							
 		this.param = this.num_rows * this.num_cols;
 	}

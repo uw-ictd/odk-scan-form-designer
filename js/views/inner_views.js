@@ -21,8 +21,12 @@ Ember.RadioButton = Ember.View.extend({
     }.property('selection'),
 });
 
-GridSize = Ember.View.extend({
-	templateName: 'grid-size-view'
+FullGridSize = Ember.View.extend({
+	templateName: 'full-grid-size-view'
+});
+
+ColGridSize = Ember.View.extend({
+	templateName: 'col-grid-size-view'
 });
 
 GridValues = Ember.View.extend({

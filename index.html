@@ -110,7 +110,7 @@
 						<li><a {{action 'createText'}}>Text</a></li>
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
 						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
-						<li><a {{action 'createNumbers'}}>Segmented Numbers</a></li>
+						<li><a {{action 'createNumbers'}}>Simple Number</a></li>
 						<li><a {{action 'createFormattedNumber'}}>Formatted Number</a></li>
 					</ul>
 				</li>	
@@ -191,12 +191,17 @@
 		</div>	
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="grid-size-view">
+	<script type="text/x-handlebars" data-template-name="full-grid-size-view">
 		<label for="name">Number of columns</label>
 		<input type="number" id="num_col" value="1" class="int_input ui-widget-content ui-corner-all" min="1" {{action 'updateNumColumns' target="view.parentView"}}><br>
 		
 		<label for="name">Number of rows</label>
 		<input type="number" id="num_row" value="1" class="int_input ui-widget-content ui-corner-all" min="1" {{action 'updateNumRows' target="view.parentView"}}><br>
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="col-grid-size-view">
+		<label for="name">Number of digits</label>
+		<input type="number" id="num_col" value="1" class="int_input ui-widget-content ui-corner-all" min="1" {{action 'updateNumColumns' target="view.parentView"}}><br>		
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="grid-values-view">
@@ -302,7 +307,7 @@
 			<option value="select1">Select One</option>										
 			<option value="select_many">Select Many</option>	
 		</select><br>
-		{{view GridSize viewName="gridSize"}} 
+		{{view FullGridSize viewName="gridSize"}} 
 		<hr class="horz_divider">
 		{{view GridValues viewName="gridValues"}}
 	</script>
@@ -321,7 +326,7 @@
 			<option value="select1">Select One</option>		
 			<option value="select_many">Select Many</option>		
 		</select><br>
-		{{view GridSize viewName="gridSize"}} 
+		{{view FullGridSize viewName="gridSize"}} 
 		<hr class="horz_divider">
 		{{view GridValues viewName="gridValues"}}
 	</script>
@@ -340,7 +345,7 @@
 			<option value="medium">Medium</option>
 			<option value="large">Large</option>				
 		</select><br>
-		{{view GridSize viewName="gridSize"}} 
+		{{view ColGridSize viewName="gridSize"}} 
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="form-num-view">
@@ -376,13 +381,13 @@
 		<input type="number" id="num_col_form_num" value="2" class="int_input ui-widget-content ui-corner-all" min="2" {{action 'updateNumGroups' target="view"}}><br>
 		<div class="scrollable_values">
 			{{#each view.formNumGroups}}
-				&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Group {{groupNum}}</label>
+				&nbsp;&nbsp;&nbsp;&nbsp;<label for="name">Digits in group {{groupNum}}</label>
 				<input type="number" {{bind-attr value=size}} class="num_groups int_input ui-widget-content ui-corner-all" min="1"><br>
 			{{/each}}
 		</div>
 		<hr class="horz_divider">
 		
-		<label for="name">Number spacing</label>
+		<label for="name">Digit spacing</label>
 		<!-- TODO: remove hardcoded min value -->
 		<input type="number" id="form_num_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 		
@@ -424,7 +429,7 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_segNumDialog">
-		<div id="seg_num_dialog" title="Create segmented numbers">		
+		<div id="seg_num_dialog" title="Create simple number">		
 			{{#view ODKScan.SegNumContainer}}		
 			{{/view}}
 		</div>

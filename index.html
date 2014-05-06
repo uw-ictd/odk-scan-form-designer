@@ -121,6 +121,15 @@
 			<li><a {{action 'deleteField'}}>Delete Field</a></li>
 			<li><a {{action 'undoDeleteField'}}>Undo Delete</a></li>
 			<li><a {{action 'copyImage'}}>Copy Image</a></li>	
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown">Change Position <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a {{action 'sendBackward'}}>Send Backward</a></li>
+					<li><a {{action 'sendToBack'}}>Send To Back</a></li>
+					<li><a {{action 'sendForward'}}>Send Forward</a></li>
+					<li><a {{action 'sendToFront'}}>Send to Front</a></li>
+				</ul>
+			</li>	
 			</ul>	
 			<ul class="nav navbar-nav navbar-right">
 				<!-- <li><a>Help</a></li> -->

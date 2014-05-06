@@ -64,7 +64,7 @@ var crop_image = function(image) {
 	return $img_container;
 };
 
-var image_to_field = function(image) {
+var image_to_field = function(image, json_zIndex) {
 	/* 	Creates a image field from the image attributes. 
 		NOTE: 'image' must the following attributes:
 			- img_name: the name of the original source image
@@ -100,11 +100,18 @@ var image_to_field = function(image) {
 	// create div container for the image
 	var $img_draggable = $("<div/>");
 	$img_draggable.data('img_name', image.img_name);	
+	
 	$img_draggable.css({width: rem(image.img_width), 
 					height: rem(image.img_height), 
 					left: rem(image.div_left), 
 					top: rem(image.div_top), 
 					position: 'absolute'});
+	if (json_zIndex) {
+		$img_draggable.css({zIndex: json_zIndex});
+	} else {
+		$img_draggable.css({zIndex: globZIndex.getZ()});
+		globZIndex.incrZ();
+	}	
 					
 	// make the div draggable/resizable
 	$img_draggable.draggable({containment: 'parent', 

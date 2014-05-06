@@ -270,17 +270,21 @@ input[type=text], input[type=number] {
 *  an objects border with the rem unit when setting the border
 *  using only the 'border' attribute.
 ************************************************************/
+.field {
+	background-color: white;
+}
+
 .selected_field {
-	background-color: rgba(7, 197, 223, 0.41);
+	background-color: rgba(7, 197, 223, 1);
+}
+
+.selected_field.img_div {
+	border: 2px dashed black;
 }
 
 .img_div {
 	overflow: hidden;
 	position: absolute;
-}
-
-.img_div:hover {
-	border: 1px dashed black;
 }
 
 .img_div img {
@@ -297,6 +301,10 @@ input[type=text], input[type=number] {
 
 .box p{
 	text-align: center;
+}
+
+.first_col {
+	clear: left;
 }
 
 .cb_div {

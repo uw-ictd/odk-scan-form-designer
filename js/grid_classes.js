@@ -57,17 +57,20 @@ function GridField(json_init, update_init) {
 		this.element_height = json_init.element_height;
 		this.element_width = json_init.element_width;
 		this.ele_class = json_init.ele_class;
-		this.$grid_div.css({top: rem(json_init.top), left: rem(json_init.left)});
+		this.$grid_div.css({top: rem(json_init.top), 
+							left: rem(json_init.left), 
+							zIndex: json_init.zIndex});
 		this.border_width = json_init.border_width;	
 		this.name = json_init.name;
 		this.label = json_init.label;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
-			this.$grid_div.css({top: rem(update_init.top), left: rem(update_init.left)});
+			this.$grid_div.css({top: rem(update_init.top), 
+							left: rem(update_init.left), zIndex: update_init.zIndex});
 		} else {
-			// invoked by Dialog menu
-			this.$grid_div.css({top: rem(0), left: rem(0)});
+			this.$grid_div.css({top: rem(0), left: rem(0), zIndex: globZIndex.getZ()});
+			globZIndex.incrZ();
 		}
 		
 		// margin values
@@ -112,6 +115,7 @@ GridField.prototype.getProperties = function() {
 	json.field_type = this.field_type;
 	json.name = this.name;
 	json.label = this.label;
+	json.zIndex = this.$grid_div.zIndex();
 	
 	return json;
 }
@@ -122,7 +126,7 @@ GridField.prototype.getProperties = function() {
 GridField.prototype.constructGrid = function() {
 	this.$grid_div.addClass(this.grid_class).addClass('field');
 	this.$grid_div.css({position: 'absolute', borderWidth: rem(this.border_width)});																	
-	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y], stack: ".field"});			
+	this.$grid_div.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});			
 	
 	// construct the grid
 	for (var i = 0; i < this.num_rows; i++) {	
@@ -155,9 +159,7 @@ GridField.prototype.constructGrid = function() {
 				$g_element.addClass(row_pos).addClass('last_col');
 			}
 			this.$grid_div.append($g_element);
-		}
-	
-		this.$grid_div.append($("<br>"));							
+		}				
 	}
 	$(".selected_page").append(this.$grid_div);
 	
@@ -311,7 +313,8 @@ GridField.prototype.getFieldJSON = function() {
 GridField.prototype.copyField = function() {
 	// make a new copy of the $grid_div
 	var $new_grid = this.$grid_div.clone();
-	$new_grid.css({left: rem(0), top: rem(0)});
+	$new_grid.css({left: rem(0), top: rem(0), zIndex: globZIndex.getZ()});
+	globZIndex.incrZ();
 	$new_grid.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	this.addEventHandlers($new_grid);
 	

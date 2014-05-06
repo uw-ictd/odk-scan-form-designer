@@ -4,7 +4,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 	currPage: 1,			// current page tab number
 	pageStyle: "letter_portrait",	// the page style used by pages in the current Scan document
 	selectedPageTab: null,	// metadata about the currently selected page tab (number, active/non-active, DOM reference)
-	pages: null,			// list of JSON objects containing page tab metadata
+	pages: [],			// list of JSON objects containing page tab metadata
 	images: {},				// JSON containing references to image metadata (reference count, image src)
 	selectedImageTab: null,	// metadata about the currently selected image tab (name, data, reference count)
 	deletedFields: [],		// stores up to N deleted fields from an ODK Scan document
@@ -71,17 +71,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 											instance: true,
 											handles: true});				
 			controller.set('imgSelect', ias);							
-			
-			var $new_page = $("<div/>");
-			// NOTE: the Scan document is set to letter_portrait by default
-			$new_page.addClass("scan_page selected_page");
-			$new_page.addClass(controller.get("pageStyle"));
-			
-			var new_page_tab = {pageNum: controller.get('currPage'), isActive: true, pageDiv:$new_page};
-			controller.set('selectedPageTab', new_page_tab);
-			controller.set('pages', [new_page_tab]);
-			// add the new page to the dom
-			$("#page_container").append($new_page);
+			controller.send("newPage", controller.get("pageStyle"));
 			
 			// code snippet from 
 			// http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
@@ -445,9 +435,99 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				this.send("addImageRef", image.img_name);
 			}
 		},
+		sendBackward: function() {
+			var $selected_field = $(".selected_field");		
+
+			// field must be selected
+			if ($selected_field.length == 0) {
+				return;
+			}
+			
+			// field must not be at the bottom layer
+			if ($selected_field.zIndex() != globZIndex.getBottomZ()) {	
+				var selected_zIndex = $selected_field.zIndex();
+				
+				// elevate all fields directly below the current one
+				$(".selected_page .field, .selected_page .img_div").each(function() {								
+					if ($(this).zIndex() == selected_zIndex - 1) {
+						$(this).zIndex(selected_zIndex);
+					}
+				});
+				
+				// decrease current field's zIndex
+				$selected_field.zIndex(selected_zIndex - 1);
+			}
+		},
+		sendToBack: function() {
+			var $selected_field = $(".selected_field");		
+
+			// field must be selected
+			if ($selected_field.length == 0) {
+				return;
+			}
+			
+			// field must not be at the bottom layer
+			if ($selected_field.zIndex() != globZIndex.getBottomZ()) {	
+				var selected_zIndex = $selected_field.zIndex();
+				// elevate all fields below the selected field
+				$(".selected_page .field, .selected_page .img_div").each(function() {								
+					if ($(this).zIndex() < selected_zIndex) {
+						$(this).zIndex($(this).zIndex() + 1);
+					}
+				});
+				
+				$selected_field.zIndex(globZIndex.getBottomZ());
+			}
+		},
+		sendForward: function() {
+			var $selected_field = $(".selected_field");		
+			
+			// field must be selected
+			if ($selected_field.length == 0) {
+				return;
+			}
+
+			// field must not be at the top layer
+			if ($selected_field.zIndex() != globZIndex.getTopZ()) {	
+				var selected_zIndex = $selected_field.zIndex();
+				
+				// lower all fields directly above the current one
+				$(".selected_page .field, .selected_page .img_div").each(function() {								
+					if ($(this).zIndex() == selected_zIndex + 1) {
+						$(this).zIndex(selected_zIndex);
+					}
+				});
+				
+				// increase current field's zIndex
+				$selected_field.zIndex(selected_zIndex + 1);
+			}
+		},
+		sendToFront: function() {
+			var $selected_field = $(".selected_field");		
+
+			// field must be selected
+			if ($selected_field.length == 0) {
+				return;
+			}
+			
+			// field must not be at the top layer
+			if ($selected_field.zIndex() != globZIndex.getTopZ()) {	
+				var selected_zIndex = $selected_field.zIndex();
+				// lower all fields above the selected field
+				$(".selected_page .field, .selected_page .img_div").each(function() {								
+					if ($(this).zIndex() > selected_zIndex) {
+						$(this).zIndex($(this).zIndex() - 1);
+					}
+				});
+						
+				// elevate the selected field to the front
+				$selected_field.zIndex(globZIndex.getTopZ());
+			}
+		},
 		newDoc: function() {
 			var $all_pages = $(".scan_page");
-			if ($all_pages.children(".field").length == 0 && $all_pages.children(".img_div").length == 0) {
+			if ($all_pages.children(".field").length == 0 
+				&& $all_pages.children(".img_div").length == 0) {
 				$("#new_doc_dialog").dialog("open");
 			} else {
 				$("#save_check_dialog").dialog("open");
@@ -461,7 +541,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// create new page div
 			$(".selected_page").removeClass("selected_page");
 			var $new_page = $("<div/>");
-			$new_page.addClass("scan_page selected_page");
+			$new_page.addClass("scan_page selected_page");						
 			
 			// set page style	
 			if (page_size) { // check if passed a page size argument
@@ -470,16 +550,19 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// use the current page size
 				$new_page.addClass(this.get("pageStyle"));
 			}
+
+			$("#page_container").append($new_page);		
+			globZIndex.registerPage();			
 			
-			$new_page.addClass($("#page_size").val());
-			$("#page_container").append($new_page);	
-			
-			// deselect current page tab
-			Ember.set(this.get('selectedPageTab'), 'isActive', false);
+			var currSelectedPageTab = this.get("selectedPageTab");
+			if (currSelectedPageTab != null) {
+				// deselect current page tab
+				Ember.set(currSelectedPageTab, "isActive", false);
+			}
 			
 			// create new page tab
-			var new_page_num = this.get('currPage') + 1;
-			this.set('currPage', new_page_num);
+			var new_page_num = this.get('currPage');
+			this.set('currPage', new_page_num + 1);
 			var new_page_tab = {pageNum: new_page_num, isActive: true, pageDiv: $new_page};
 			
 			// store the new page tab in the controller
@@ -571,6 +654,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							img_width: img_json.orig_width, 
 							top_pos: img_json.img_top,
 							left_pos: img_json.img_left};
+							
+				// check if the current zIndex should be updated
+				if (img_json.zIndex > globZIndex.getTopZ()) {
+					globZIndex.setZ(img_json.zIndex + 1);
+				}
 				
 				// load the image into the dom
 				var $img_container = crop_image(image);		
@@ -589,7 +677,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 									img_left: img_json.img_left,
 									div_top: img_json.div_top,
 									div_left: img_json.div_left};
-						var $new_img_div = image_to_field(cropped_image);
+						var $new_img_div = image_to_field(cropped_image, img_json.zIndex);
 						// store a reference to the image that was loaded
 						controller.send("addImageRef", img_json.img_name, img_src);
 						controller.send("loadImages", images, curr_index + 1, curr_directory, zip);
@@ -620,7 +708,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				}
 			} else {
 				// recursive case, load the next page
-				var page_json = JSON.parse(zip.file(new RegExp(curr_directory + "page.json"))[0].asText());
+				var json_file = new RegExp(curr_directory + "page.json");
+				var page_json = JSON.parse(zip.file(json_file)[0].asText());
+				console.log(JSON.stringify(page_json, null, "\t"));
 				// create a new page
 				this.send("newPage", page_json.doc_info.page_size, true);		
 
@@ -628,6 +718,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var fields = page_json.fields;
 				for (var i = 0; i < fields.length; i++) {								
 					var f_json = fields[i];
+
+					// check if the current zIndex should be updated
+					if (f_json.zIndex > globZIndex.getTopZ()) {
+						globZIndex.setZ(f_json.zIndex + 1);
+					}								
+										
 					if (f_json.field_type == 'checkbox') {
 						var cb_field = new CheckboxField(f_json);
 						cb_field.constructGrid();			
@@ -648,7 +744,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						form_num_field.constructGrid();		
 					} else {
 						console.log("unsupported field");
-					}
+					}					
 				}		
 				// load all of the images for the current page
 				this.send("loadImages", page_json.images, 0, curr_directory, zip);										
@@ -656,7 +752,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		loadZip: function() {
 			// delete all current pages, fields
-			this.set("currPage", 0);
+			this.set("currPage", 1);
 			this.set("pages", []);
 			$(".img_div").remove();
 			$(".field").remove();
@@ -718,7 +814,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					img_div.img_left = $(this).children("img").data('left');
 					img_div.orig_height = $(this).children("img").data('orig_height');
 					img_div.orig_width = $(this).children("img").data('orig_width');
-					img_div.img_name = $(this).data('img_name');					
+					img_div.img_name = $(this).data('img_name');			
+					img_div.zIndex = $(this).zIndex();
 					savedDoc.images.push(img_div);
 				});
 		

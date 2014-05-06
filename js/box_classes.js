@@ -18,21 +18,27 @@ function Box(json_init, update_init) {
 					height: rem(json_init.box_height),
 					left: rem(json_init.left),
 					top: rem(json_init.top),
-					borderWidth: rem(json_init.border_width)});
+					borderWidth: rem(json_init.border_width),
+					zIndex: json_init.zIndex});
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;
 	} else {	
 		if (update_init) {
+			// invoked from Update Field button
 			this.$box.css({top: rem(update_init.top), 
 						left: rem(update_init.left), 
 						width: rem(update_init.box_width), 
-						height: rem(update_init.box_height)});
+						height: rem(update_init.box_height),
+						zIndex: update_init.zIndex});
 		} else {
+			// invoked by Dialog menu
+			
 			// NOTE: initial width and height are aligned
 			// to the grid size
-			this.$box.css({top: rem(0), left: rem(0), 
-			width: rem(GRID_X * 10), height: rem(GRID_Y * 10)});
+			this.$box.css({top: rem(0), left: rem(0), width: rem(GRID_X * 10), 
+						height: rem(GRID_Y * 10), zIndex: globZIndex.getZ()});					
+			globZIndex.incrZ();
 		}
 		this.border_width = $("#border_width").val();
 		this.$box.css({borderWidth: rem(this.border_width)});
@@ -125,17 +131,18 @@ Box.prototype.getFieldJSON = function() {
 	the document.
 */
 Box.prototype.getProperties = function() {
-	var fieldJSON = {};
-	fieldJSON.left = this.$box.css('left');
-	fieldJSON.top = this.$box.css('top');
-	fieldJSON.box_width = this.$box.css('width');
-	fieldJSON.box_height = this.$box.css('height');
-	fieldJSON.border_width = this.border_width;	
-	fieldJSON.field_type = this.field_type;	
-	fieldJSON.name = this.name;
-	fieldJSON.label = this.label;
+	var json = {};
+	json.left = this.$box.css('left');
+	json.top = this.$box.css('top');
+	json.box_width = this.$box.css('width');
+	json.box_height = this.$box.css('height');
+	json.border_width = this.border_width;	
+	json.field_type = this.field_type;	
+	json.name = this.name;
+	json.label = this.label;
+	json.zIndex = this.$box.zIndex();
 	
-	return fieldJSON;
+	return json;
 };
 
 /*	Makes a copy of the box, adds event handlers to it,
@@ -157,7 +164,8 @@ Box.prototype.copyField = function() {
 						grid: [GRID_X, GRID_Y],
 						minWidth: GRID_X * 1,
 						minHeight: GRID_Y * 1});
-	$new_box.css({left: rem(0), top: rem(0)});
+	$new_box.css({left: rem(0), top: rem(0), zIndex: globZIndex.getZ()});
+	globZIndex.incrZ();
 	$new_box.draggable({containment: 'parent', grid: [GRID_X, GRID_Y]});
 	$new_box.resizable({handles: 'all', 
 						containment: 'parent', 

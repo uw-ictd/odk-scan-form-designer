@@ -70,8 +70,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var ias = $('#loaded_image').imgAreaSelect({
 											instance: true,
 											handles: true});				
-			controller.set('imgSelect', ias);							
-			controller.send("newPage", controller.get("pageStyle"));
+			controller.set('imgSelect', ias);									
 			
 			// code snippet from 
 			// http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
@@ -86,8 +85,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				ctx.drawImage(img,0,0);
 				var dataURL = canvas.toDataURL('image/jpeg');
 				controller.set("defaultFormSrc", dataURL);
-				// add default images to page
-				controller.send("addDefaultImages");
+				controller.send("newPage", controller.get("pageStyle"));
 				controller.notifyPropertyChange("imageList");			
 				canvas = null; 
 			};			

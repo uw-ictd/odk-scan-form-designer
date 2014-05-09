@@ -214,12 +214,12 @@ GridField.prototype.alignToGrid = function() {
 	this.$grid_div.css("left", rem(this.$grid_div.css("left")));
 }
 
-/*	Adds event handlers (on click, on double click) to $grid.
+/*	Adds event handlers to $grid.
 	$grid: jQuery div representing the box
 */
 GridField.prototype.addEventHandlers = function($grid) {
 	var obj = this;
-	$grid.click(function() {
+	$grid.mousedown(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");		
 		

@@ -49,8 +49,7 @@ function Box(json_init, update_init) {
 	}
 }
 
-/*	Adds event handlers (on click, on resize)
-	to this box.
+/*	Adds event handlers to this box.
 	$box: jQuery div representing the box
 */
 Box.prototype.addEventHandlers = function($box) {
@@ -74,7 +73,7 @@ Box.prototype.addEventHandlers = function($box) {
 	});
 	
 	var obj = this;
-	$box.click(function() {
+	$box.mousedown(function() {
 		$(".selected_field").removeClass("selected_field");	
 		$(this).addClass("selected_field");
 		

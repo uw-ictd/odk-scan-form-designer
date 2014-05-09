@@ -135,7 +135,7 @@ var image_to_field = function(image, json_zIndex) {
 	});
 	
 	// add event listeners
-	$img_draggable.click(function() {
+	$img_draggable.mousedown(function() {
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);	
 		$(".selected_field").removeClass("selected_field");

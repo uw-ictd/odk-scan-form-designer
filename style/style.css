@@ -238,28 +238,28 @@ input[type=text], input[type=number] {
 }
 
 .letter_landscape{
-	width: 11in;
-	height: 8.5in;
+	width: 110rem;
+	height: 85rem;
 }
 
 .a4_portrait{
-	width: 8.27in;
-	height: 11.69in;
+	width: 82.7rem;
+	height: 116.9rem;
 }
 
 .a4_landscape {
-	width: 11.69in;
-	height: 8.27in;
+	width: 116.9rem;
+	height: 82.7rem;
 }
 
 .legal_size {
-	width: 11.69in;
-	height: 8.27in;
+	width: 116.9rem;
+	height: 82.7rem;
 }
 
 .index_size {
-	width: 8in;
-	height: 5in;
+	width: 80rem;
+	height: 50rem;
 }
 
 /************************************************************

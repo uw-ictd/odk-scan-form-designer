@@ -126,8 +126,8 @@ $(document).bind("keydown", "left", function() {
 			var new_left = rem(curr_left - GRID_X);
 			$field.css('left', new_left);
 		}					
+		return false;
 	}
-	return false;
 });
 
 $(document).bind("keydown", "right", function() {
@@ -144,8 +144,8 @@ $(document).bind("keydown", "right", function() {
 			var new_left = rem(curr_left + GRID_X);
 			$field.css('left', new_left);
 		}					
+		return false;
 	}
-	return false;
 });
 
 $(document).bind("keydown", "up", function() {
@@ -158,8 +158,8 @@ $(document).bind("keydown", "up", function() {
 			var new_top = rem(curr_top - GRID_Y);
 			$field.css('top', new_top);
 		}					
+		return false;
 	}
-	return false;
 });
 
 $(document).bind("keydown", "down", function() {
@@ -176,6 +176,6 @@ $(document).bind("keydown", "down", function() {
 			var new_top = rem(curr_top + GRID_X);
 			$field.css('top', new_top);
 		}					
+		return false;
 	}
-	return false;
 });

@@ -118,11 +118,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		openPageStyleDialog: function() {
 			$("#page_style_warning_dialog").dialog("open");
 		},
+		deleteAllPages: function() {
+			// delete all current pages, fields
+			this.set("currPage", 1);
+			this.set("pages", []);
+			$(".img_div").remove();
+			$(".field").remove();
+			Ember.set(this.get('selectedPageTab'), 'isActive', false);
+		},
 		setPageStyle: function() {		
 			// delete all pages, update page style
 			var num_pages = this.get("pages").length;
-			this.set("pages", []);		
-			this.set("currPage", 0);
+			this.send("deleteAllPages");			
 			this.set("pageStyle", $("#page_size").val());
 			
 			for (var i = 0; i < num_pages; i++) {
@@ -522,7 +529,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$selected_field.zIndex(globZIndex.getTopZ());
 			}
 		},
-		newDoc: function() {
+		openNewDocDialog: function() {
 			var $all_pages = $(".scan_page");
 			if ($all_pages.children(".field").length == 0 
 				&& $all_pages.children(".img_div").length == 0) {
@@ -530,6 +537,19 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			} else {
 				$("#save_check_dialog").dialog("open");
 			}
+		},
+		createNewDoc: function() {
+			// delete all current pages, fields
+			this.send("deleteAllPages");
+			
+			// create a single page
+			this.set("pageStyle", $("#doc_size").val());			
+			this.send("newPage", this.get("pageStyle"));
+			
+			$("#new_doc_dialog").dialog("close");
+		},
+		closeNewDocDialog: function() {
+			$("#new_doc_dialog").dialog("close");
 		},
 		newPage: function(page_size, load_from_zip) {
 			// cancel any currently selected image region
@@ -750,11 +770,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		loadZip: function() {
 			// delete all current pages, fields
-			this.set("currPage", 1);
-			this.set("pages", []);
-			$(".img_div").remove();
-			$(".field").remove();
-			Ember.set(this.get('selectedPageTab'), 'isActive', false);
+			this.send("deleteAllPages");
 
 			if (!$("#uploaded_zip").data("zip")) {
 				alert("Please choose a zip file to load.");

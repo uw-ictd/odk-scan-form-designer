@@ -82,7 +82,7 @@
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
 					<ul class="dropdown-menu">
-						<li><a {{action 'newDoc'}}>New</a></li>
+						<li><a {{action 'openNewDocDialog'}}>New</a></li>
 						<li><a {{action 'openPageStyleDialog'}}>Set page style</a></li>
 						<li class="divider"></li>
 						<li><a {{action 'openLoadDialog'}}>Load</a></li>	
@@ -488,6 +488,9 @@
 				<option value="legal_size">Legal</option>		
 				<option value="index_size">Index</option>						
 			</select><br>		
+			<hr class="horz_divider">
+			<button class="input_button" {{action "closeNewDocDialog"}}>Cancel</button>
+			<button class="input_button" {{action "createNewDoc"}}>Ok</button>
 		</div>
 	</script>
 

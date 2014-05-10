@@ -1,23 +1,10 @@
 /* Dialog menu initializations are provided below */
 $(document).ready(function() {			
+	// NOTE: buttons are implemented in the elements controller in 
+	// order to allow communication between the controller and dialog menu
 	$("#new_doc_dialog").dialog({
 		autoOpen: false,
-		modal: true,
-		buttons: {
-			"Ok": function() {
-				console.log("making new document...");
-				$(".selected_page").children().remove();
-				$(".selected_page").removeClass();
-				$(".selected_page").addClass($("#doc_size").val());
-				ODKScan.FieldContainer.popObject();
-				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
-			
-				$("#new_doc_dialog").dialog("close");
-			},
-			"Cancel": function() {
-				$("#new_doc_dialog").dialog("close");
-			}
-		}
+		modal: true
 	});			
 	
 	// NOTE: buttons are implemented in the elements controller in 

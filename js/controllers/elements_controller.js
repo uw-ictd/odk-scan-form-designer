@@ -61,7 +61,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		this._super();		
 		
 		var controller = this;
-		$(document).ready(function() {		
+		$(document).ready(function() {							
 			/* 	imgAreaSelect field is initialized here,
 				setting it as field allows the controller to 
 				access/modify the the selected image region
@@ -185,7 +185,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#image_select").val("");
 			
 			/* 	NOTE: Pressing 'Select Image' triggers a hidden html 
-				file-input button #image_select. The button is hidden
+				file-input arrow #image_select. The arrow is hidden
 				in order to override its appearance. 
 			*/
 			$("#image_select").click();

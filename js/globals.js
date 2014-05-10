@@ -84,3 +84,71 @@ var convert_position = function($obj) {
 	$obj.css("top", rem($obj.css("top")));
 	$obj.css("left", rem($obj.css("left")));
 };	
+
+/*
+*	These key bindings allow selected fields to be nudged
+*	up, down, left, or right be using the arrow keys.
+*/
+$(document).bind("keydown", "left", function() {				
+	var $field = $(".selected_field");
+	if ($field.length != 0) {
+		// check if the field can be moved
+		var curr_left = parseInt($field.css('left'));
+		if (curr_left - GRID_X >= 0) {
+			// move the field
+			var new_left = rem(curr_left - GRID_X);
+			$field.css('left', new_left);
+		}					
+	}
+	return false;
+});
+
+$(document).bind("keydown", "right", function() {
+	var $field = $(".selected_field");
+	if ($field.length != 0) {
+		// check if the field can be moved
+		var curr_left = parseInt($field.css('left'));
+		var field_width = parseInt($field.css('width'));
+		var page_width = parseInt($(".selected_page").css('width'));
+		
+		var right_most_pos = curr_left + field_width + GRID_X;
+		if (right_most_pos <  page_width) {
+			// move the field
+			var new_left = rem(curr_left + GRID_X);
+			$field.css('left', new_left);
+		}					
+	}
+	return false;
+});
+
+$(document).bind("keydown", "up", function() {
+	var $field = $(".selected_field");
+	if ($field.length != 0) {
+		// check if the field can be moved
+		var curr_top = parseInt($field.css('top'));
+		if (curr_top - GRID_Y >= 0) {
+			// move the field
+			var new_top = rem(curr_top - GRID_Y);
+			$field.css('top', new_top);
+		}					
+	}
+	return false;
+});
+
+$(document).bind("keydown", "down", function() {
+	var $field = $(".selected_field");
+	if ($field.length != 0) {
+		// check if the field can be moved
+		var curr_top = parseInt($field.css('top'));
+		var field_height = parseInt($field.css('height'));
+		var page_height = parseInt($(".selected_page").css('height'));
+		
+		var bottom_most_pos = curr_top + field_height + GRID_Y;
+		if (bottom_most_pos <  page_height) {
+			// move the field
+			var new_top = rem(curr_top + GRID_X);
+			$field.css('top', new_top);
+		}					
+	}
+	return false;
+});

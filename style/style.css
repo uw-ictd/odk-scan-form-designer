@@ -279,7 +279,9 @@ input[type=text], input[type=number] {
 }
 
 .selected_field.img_div {
-	border: 2px dashed black;
+	outline-width: 2px;
+	outline-color: black;
+	outline-style: dashed;
 }
 
 .img_div {

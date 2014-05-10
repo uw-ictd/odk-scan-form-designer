@@ -62,16 +62,43 @@ var globZIndex = new ZIndex();
 
 /* 	Returns true if the field name in the #field_name
 	input box is unique (no other field in the Scan 
-	doc has the name), false otherwise.
+	doc has the name), false otherwise. Prompts user
+	with an alert box if the field name is not unique.
 */
 var is_name_unique = function() {
 	var name_unique = true;
+	var field_name = $("#field_name").val()
+	
+	// iterate over all fields and check for a
+	// duplicate name
 	$(".field").each(function() {
-		if ($(this).data('obj').name == $("#field_name").val() && !$(this).hasClass("selected_field")) {				
+		var is_name_match = $(this).data('obj').name == field_name;
+		var is_other_field = !$(this).hasClass("selected_field");
+		
+		// check for duplicate name
+		if (is_name_match && is_other_field) {				
 			name_unique = false
 		}
 	});
+	
+	if (!name_unique) {
+		alert("\"" + $("#field_name").val() + "\" is a duplicate field name.");
+	}
 	return name_unique;
+};
+
+/* 	Returns true if the field label in the #field_label
+	input box has no spaces, false otherwise. Prompts
+	user with alert box if the field label contains spaces.
+*/
+var is_label_valid = function() {	
+	var label_valid = $("#field_label").val().indexOf(" ") == -1;
+
+	if (!label_valid) {
+		alert("\"" + $("#field_label").val() + "\" contains spaces.");
+	}
+	
+	return label_valid;
 };
 
 // converts a numeric value to an rem unit

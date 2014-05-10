@@ -115,7 +115,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique()) {	
+				if (is_name_unique() && is_label_valid()) {	
 					var new_box = new EmptyBox();
 					new_box.constructBox();
 					
@@ -123,19 +123,11 @@ $(document).ready(function() {
 					ODKScan.FieldContainer.popObject();
 					ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);						
 					$("#box_dialog").dialog("close");
-				} else {
-					alert($("#field_name").val() + " is a duplicate field name.");
-				}
+				} 
 			},
 			"Cancel": function() {
 				ODKScan.EmptyBoxContainer.popObject();
 				$("#box_dialog").dialog("close");
-			}
-		},
-		close: function(event) {
-			// check if the dialog menu was closed with the 'close' button
-			if (event.originalEvent) {				
-				ODKScan.EmptyBoxContainer.popObject();
 			}
 		}
 	});
@@ -144,9 +136,8 @@ $(document).ready(function() {
 		autoOpen: false,
 		modal: true,
 		buttons: {
-			"Ok": function() {
-				console.log("making checkboxes...");		
-				if (is_name_unique()) {				
+			"Ok": function() {	
+				if (is_name_unique() && is_label_valid()) {				
 					var cbField = new CheckboxField();
 					cbField.constructGrid();							
 
@@ -154,19 +145,11 @@ $(document).ready(function() {
 					ODKScan.FieldContainer.popObject();
 					ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);	
 					$("#checkbox_dialog").dialog("close");
-				} else {
-					alert($("#field_name").val() + " is a duplicate field name.");
 				}
 			},
 			"Cancel": function() {
 				ODKScan.CheckboxContainer.popObject();
 				$("#checkbox_dialog").dialog("close");
-			}
-		},
-		close: function(event) {
-			// check if the dialog menu was closed with the 'close' button
-			if (event.originalEvent) {				
-				ODKScan.CheckboxContainer.popObject();
 			}
 		}
 	});			
@@ -176,7 +159,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique()) {		
+				if (is_name_unique() && is_label_valid()) {		
 					var bubbField = new BubbleField();
 					bubbField.constructGrid();		
 
@@ -184,19 +167,11 @@ $(document).ready(function() {
 					ODKScan.FieldContainer.popObject();
 					ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);										
 					$("#bubble_dialog").dialog("close");
-				} else {
-					alert($("#field_name").val() + " is a duplicate field name.");
 				}
 			},
 			"Cancel": function() {
 				ODKScan.BubbleContainer.popObject();
 				$("#bubble_dialog").dialog("close");
-			}
-		},
-		close: function(event) {
-			// check if the dialog menu was closed with the 'close' button
-			if (event.originalEvent) {				
-				ODKScan.BubbleContainer.popObject();
 			}
 		}
 	});
@@ -206,7 +181,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique()) {	
+				if (is_name_unique() && is_label_valid()) {	
 					var numField = new SegNumField();
 					numField.constructGrid();
 					
@@ -214,19 +189,11 @@ $(document).ready(function() {
 					ODKScan.FieldContainer.popObject();
 					ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);									
 					$("#seg_num_dialog").dialog("close");
-				} else {
-					alert($("#field_name").val() + " is a duplicate field name.");
 				}
 			},
 			"Cancel": function() {
 				ODKScan.SegNumContainer.popObject();
 				$("#seg_num_dialog").dialog("close");
-			},
-		}, 
-		close: function(event) {
-			// check if the dialog menu was closed with the 'close' button
-			if (event.originalEvent) {				
-				ODKScan.SegNumContainer.popObject();
 			}
 		}
 	});		
@@ -236,7 +203,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique()) {		
+				if (is_name_unique() && is_label_valid()) {		
 					var text_box = new TextBox();
 					text_box.constructBox();
 					
@@ -244,19 +211,11 @@ $(document).ready(function() {
 					ODKScan.FieldContainer.popObject();
 					ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);					
 					$("#text_dialog").dialog("close");
-				} else {
-					alert($("#field_name").val() + " is a duplicate field name.");
 				}
 			},
 			"Cancel": function() {
 				ODKScan.TextBoxContainer.popObject();
 				$("#text_dialog").dialog("close");
-			}
-		},
-		close: function(event) {
-			// check if the dialog menu was closed with the 'close' button
-			if (event.originalEvent) {				
-				ODKScan.TextBoxContainer.popObject();
 			}
 		}
 	});			
@@ -266,7 +225,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {	
-				if (is_name_unique()) {
+				if (is_name_unique() && is_label_valid()) {
 					var formNumField = new FormNumField();
 					formNumField.constructGrid();		
 					
@@ -274,19 +233,11 @@ $(document).ready(function() {
 					ODKScan.FieldContainer.popObject();
 					ODKScan.FieldContainer.pushObject(ODKScan.FormNumView);						
 					$("#form_num_dialog").dialog("close");
-				} else {
-					alert($("#field_name").val() + " is a duplicate field name.");
 				}
 			},
 			"Cancel": function() {
 				ODKScan.FormNumContainer.popObject();
 				$("#form_num_dialog").dialog("close");
-			}
-		},
-		close: function(event) {
-			// check if the dialog menu was closed with the 'close' button
-			if (event.originalEvent) {	
-				ODKScan.FormNumContainer.popObject();
 			}
 		}
 	});			

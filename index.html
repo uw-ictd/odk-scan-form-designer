@@ -526,6 +526,10 @@
 	<script type="text/x-handlebars" data-template-name="_saveCheckDialog">
 		<div id="save_check_dialog" title="ODK Scan">		
 			<label for="name">Do you want to save your changes?</label>
+			<hr class="horz_divider">
+			<button class="input_button" {{action "saveCheckDialogCancel"}}>Cancel</button>
+			<button class="input_button" {{action "saveCheckDialogNoSave"}}>Don't Save</button>
+			<button class="input_button" {{action "saveCheckDialogSave"}}>Save</button>
 		</div>
 	</script>
 	

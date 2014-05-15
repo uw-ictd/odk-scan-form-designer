@@ -551,6 +551,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		closeNewDocDialog: function() {
 			$("#new_doc_dialog").dialog("close");
 		},
+		saveCheckDialogNoSave: function() {
+			$("#save_check_dialog").dialog("close");
+			$("#new_doc_dialog").dialog("open");
+		},	
+		saveCheckDialogSave: function() {
+			$("#save_check_dialog").dialog("close");
+			this.send("saveDoc");
+			$("#new_doc_dialog").dialog("open");
+		},
+		saveCheckDialogCancel: function() {
+			$("#save_check_dialog").dialog("close");
+		},
 		newPage: function(page_size, load_from_zip) {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');

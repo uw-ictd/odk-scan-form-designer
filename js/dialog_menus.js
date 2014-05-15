@@ -42,6 +42,13 @@ $(document).ready(function() {
 		modal: true
 	});	
 	
+	// NOTE: buttons are implemented in the elements controller in 
+	// order to allow communication between the controller and dialog menu
+	$("#save_check_dialog").dialog({
+		autoOpen: false,
+		modal: true
+	});	
+	
 	$("#page_style_warning_dialog").dialog({
 		autoOpen: false,
 		modal: true,
@@ -52,24 +59,6 @@ $(document).ready(function() {
 			},
 			"Cancel": function() {
 				$(this).dialog("close");
-			}
-		}
-	});	
-	
-	$("#save_check_dialog").dialog({
-		autoOpen: false,
-		modal: true,
-		buttons: {
-			"Save": function() {
-				$("#save_dialog").dialog("open");
-				$("#save_check_dialog").dialog("close");
-			},
-			"Don't Save": function() {
-				$("#new_doc_dialog").dialog("open");
-				$("#save_check_dialog").dialog("close");
-			},
-			"Cancel": function() {						
-				$("#save_check_dialog").dialog("close");
 			}
 		}
 	});	

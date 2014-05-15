@@ -23,7 +23,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		// added to.
 		
 		var images = {};
-		images.top_left = {img_name: "form.jpg",
+		images.top_left = {img_name: "form",
 							img_src: "default_images/top_left.jpg",
 							img_height: 67,
 							img_width: 197,
@@ -31,7 +31,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_width: 197,
 							img_top: 0,
 							img_left: 0,};
-		images.top_right = {img_name: "form.jpg",
+		images.top_right = {img_name: "form",
 							img_src: "default_images/top_right.jpg",
 							img_height: 56,
 							img_width: 260,
@@ -39,7 +39,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_width: 260,
 							img_top: 0,
 							img_left: -568};						
-		images.bottom_left = {img_name: "form.jpg",
+		images.bottom_left = {img_name: "form",
 							img_src: "default_images/bottom_left.jpg",
 							img_height: 89,
 							img_width: 92,
@@ -47,7 +47,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 							orig_width: 92,
 							img_top: -998,
 							img_left: 0};		
-		images.bottom_right = {img_name: "form.jpg",
+		images.bottom_right = {img_name: "form",
 							img_src: "default_images/bottom_right.jpg",
 							img_height: 71,
 							img_width: 114,
@@ -207,7 +207,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		
 			// set the selected image
 			$("#loaded_image").attr("src", image.data);	
-			console.log("filename is: " + image.name);
 			$("#loaded_image").data("filename", image.name);	
 		},
 		openImageTabDialog: function() {

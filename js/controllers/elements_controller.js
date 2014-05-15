@@ -557,8 +557,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},	
 		saveCheckDialogSave: function() {
 			$("#save_check_dialog").dialog("close");
-			this.send("saveDoc");
-			$("#new_doc_dialog").dialog("open");
+			this.send("saveDoc", function() {
+				$("#new_doc_dialog").dialog("open");
+				
+				// remove this binded function
+				$("#save_dialog").unbind("dialogclose");
+			});			
 		},
 		saveCheckDialogCancel: function() {
 			$("#save_check_dialog").dialog("close");
@@ -803,7 +807,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			$("#load_dialog").dialog("close");
 		},
-		saveDoc: function() {
+		saveDoc: function(func_callback) {
 			/*	Saves metadata about all pages, fields (including all
 				parameters that were used to make them) and images.
 			*/						
@@ -879,8 +883,14 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			var zip_contents = zip.generate();
 			var scan_doc_zip = "data:application/zip;base64," + zip_contents;				
-			$("#scan_json_link").attr('href', scan_doc_zip);				
-			$("#save_dialog").dialog("open");
+			$("#scan_json_link").attr('href', scan_doc_zip);
+
+			// perform action after user exits the save dialog
+			if (func_callback) {
+				$("#save_dialog").bind("dialogclose", func_callback);
+			}
+			
+			$("#save_dialog").dialog("open");			
 		},
 		exportZIP: function() {
 			$("#export_progress_dialog").dialog("open");

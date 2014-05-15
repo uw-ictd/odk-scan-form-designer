@@ -14,7 +14,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		for (img in images) {
 			image_list.push(images[img]);
 		}
-		console.log(image_list);
 		return image_list;
 	}.property(),
 	defaultImages: function() {
@@ -220,18 +219,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					return $(this).data("img_name") == img_name
 				}).remove();
 				
-				delete this.get('images')[this.get("selectedImageTab").name];	
-
+				delete this.get('images')[this.get("selectedImageTab").name];					
+				
 				// notify the image tabs to update
 				this.notifyPropertyChange("imageList");				
-			} else {
-				// delete the selected image tab
-				this.get("imageList").removeObject(this.get("selectedImageTab"));
-				this.set("selectedImageTab", null);
-			}		
-				
-			$("#loaded_image").attr("src", null);
+			} 	
+			
+			// remove the currently selected image tab, reset other fields
+			this.get("imageList").removeObject(this.get("selectedImageTab"));
 			this.set("selectedImageTab", null);				
+			$("#loaded_image").attr("src", null);
+			
 			$("#itab_remove_dialog").dialog("close");
 		},
 		addImage: function(image_name, img_src) {
@@ -276,9 +274,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var ias = this.get('imgSelect');
 			var reg = ias.getSelection();
 			// check that a region is currently selected
-			if (!(reg.width == 0 && reg.height == 0)) {
-				console.log(reg);
-			
+			if (!(reg.width == 0 && reg.height == 0)) {						
 				// load the image into the dom
 				var img_src = $("#loaded_image").attr('src');
 				var image = {img_src: img_src, 
@@ -745,7 +741,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// recursive case, load the next page
 				var json_file = new RegExp(curr_directory + "page.json");
 				var page_json = JSON.parse(zip.file(json_file)[0].asText());
-				console.log(JSON.stringify(page_json, null, "\t"));
 				// create a new page
 				this.send("newPage", page_json.doc_info.page_size, true);		
 

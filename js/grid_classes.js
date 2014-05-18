@@ -220,21 +220,40 @@ GridField.prototype.alignToGrid = function() {
 GridField.prototype.addEventHandlers = function($grid) {
 	var obj = this;
 	$grid.mousedown(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");		
-		
-		// change the view in the properties sidebar to 
-		// match this field's view
 		ODKScan.FieldContainer.popObject();
-		if (obj.field_type == 'checkbox') {
-			ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);
-		} else if (obj.field_type == "bubble") {
-			ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);
-		} else if (obj.field_type == "seg_num") {
-			ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);
+	
+		// check if user pressed control during the click
+		if (event.ctrlKey) {
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+		
+			// add this field to the set of group fields
+			$(this).addClass("group_field");	
+
+			// if a single field was already selected then add
+			// it to the group of selected fields
+			$(".selected_field").addClass("group_field");
+			$(".selected_field").removeClass("selected_field");	
 		} else {
-			console.log("error - unsupported field type");
-		}		
+			// single field has been selected, remove group
+			// selectors from other fields
+			$(".group_field").removeClass("group_field");	
+			
+			// make this field the only selected field
+			$(".selected_field").removeClass("selected_field");	
+			$(this).addClass("selected_field");
+		
+			// change the view in the properties sidebar to 
+			// match this field's view
+			if (obj.field_type == 'checkbox') {
+				ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);
+			} else if (obj.field_type == "bubble") {
+				ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);
+			} else if (obj.field_type == "seg_num") {
+				ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);
+			} else {
+				console.log("error - unsupported field type");
+			}	
+		}
 	});
 	
 	$grid.on('dragstop', function() {

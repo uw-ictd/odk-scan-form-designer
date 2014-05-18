@@ -278,6 +278,10 @@ input[type=text], input[type=number] {
 	background-color: rgba(7, 197, 223, 1);
 }
 
+.group_field {
+	background-color: lightgreen;
+}
+
 .selected_field.img_div {
 	outline-width: 2px;
 	outline-color: black;

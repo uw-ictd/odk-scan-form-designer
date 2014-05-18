@@ -70,21 +70,39 @@ Box.prototype.addEventHandlers = function($box) {
 	
 	$box.on('dragstop', function() {
 		convert_position($(this));
-	});
+	});	
 	
 	var obj = this;
-	$box.mousedown(function() {
-		$(".selected_field").removeClass("selected_field");	
-		$(this).addClass("selected_field");
-		
+	$box.mousedown(function(event) {	
 		ODKScan.FieldContainer.popObject();
-		if (obj.field_type == 'text_box') {
-			ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);
-		} else if (obj.field_type == "empty_box") {
-			ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);
+	
+		// check if user pressed control during the click
+		if (event.ctrlKey) {
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+		
+			// add this field to the set of group fields
+			$(this).addClass("group_field");	
+
+			// if a single field was already selected then add
+			// it to the group of selected fields
+			$(".selected_field").addClass("group_field");
+			$(".selected_field").removeClass("selected_field");	
 		} else {
-			console.log("error - unsupported field type");
-		}		
+			// single field has been selected, remove group
+			// selectors from other fields
+			$(".group_field").removeClass("group_field");	
+			
+			// make this field the only selected field
+			$(".selected_field").removeClass("selected_field");	
+			$(this).addClass("selected_field");
+			if (obj.field_type == 'text_box') {
+				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);
+			} else if (obj.field_type == "empty_box") {
+				ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);
+			} else {
+				console.log("error - unsupported field type");
+			}		
+		}					
 	});
 }
 

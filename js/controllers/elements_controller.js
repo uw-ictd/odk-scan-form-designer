@@ -121,6 +121,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// delete all current pages, fields
 			this.set("currPage", 1);
 			this.set("pages", []);
+			this.set("images", {});
 			$(".img_div").remove();
 			$(".field").remove();
 			Ember.set(this.get('selectedPageTab'), 'isActive', false);
@@ -525,6 +526,70 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// elevate the selected field to the front
 				$selected_field.zIndex(globZIndex.getTopZ());
 			}
+		},
+		alignFieldLeft: function() {
+			// get the left most field position
+			var min_left = Math.min.apply(null,
+				$('.group_field').map(function(){ 
+					return parseFloat($(this).css('left'))}).get());
+			
+			// set new left position for all fields
+			$(".group_field").css("left", rem(min_left));
+		},
+		alignFieldCenter: function() {
+			// compute page's horizontal center point
+			var center_val = parseFloat($(".selected_page").css("width")) / 2;
+			
+			// set new left position for all fields
+			$(".group_field").each(function() {
+				var curr_width = parseFloat($(this).css('width'));
+				$(this).css('left', rem(center_val - (curr_width / 2)));
+			});
+		},
+		alignFieldRight: function() {
+			// get the left most field position
+			var max_right = Math.max.apply(null,
+				$('.group_field').map(function(){ 
+					return parseFloat($(this).css('left'))
+						+ parseFloat($(this).css('width'))}).get());
+			
+			// set new left position for all fields
+			$(".group_field").each(function() {
+				var curr_width = parseFloat($(this).css('width'));
+				$(this).css('left', rem(max_right - curr_width));
+			});
+		},
+		alignFieldTop: function() {
+			// get the top most field position
+			var min_top = Math.min.apply(null,
+				$('.group_field').map(function(){ 
+					return parseFloat($(this).css('top'))}).get());
+			
+			// set new top position for all fields
+			$(".group_field").css("top", rem(min_top));
+		},
+		alignFieldMiddle: function() {
+			// compute page's vertical center point
+			var center_val = parseFloat($(".selected_page").css("height")) / 2;
+			
+			// set new left position for all fields
+			$(".group_field").each(function() {
+				var curr_height = parseFloat($(this).css('height'));
+				$(this).css('top', rem(center_val - (curr_height / 2)));
+			});
+		},
+		alignFieldBottom: function() {
+			// get the bottom most field position
+			var max_bottom = Math.max.apply(null,
+				$('.group_field').map(function(){ 
+					return parseFloat($(this).css('top'))
+						+ parseFloat($(this).css('height'))}).get());
+			
+			// set new left position for all fields
+			$(".group_field").each(function() {
+				var curr_height = parseFloat($(this).css('height'));
+				$(this).css('top', rem(max_bottom - curr_height));
+			});
 		},
 		openNewDocDialog: function() {
 			var $all_pages = $(".scan_page");

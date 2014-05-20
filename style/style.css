@@ -288,6 +288,12 @@ input[type=text], input[type=number] {
 	outline-style: dashed;
 }
 
+.group_field.img_div {
+	outline-width: 2px;
+	outline-color: lightgreen;
+	outline-style: dashed;
+}
+
 .img_div {
 	overflow: hidden;
 	position: absolute;

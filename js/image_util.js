@@ -135,11 +135,28 @@ var image_to_field = function(image, json_zIndex) {
 	});
 	
 	// add event listeners
-	$img_draggable.mousedown(function() {
+	$img_draggable.mousedown(function(event) {		
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);	
-		$(".selected_field").removeClass("selected_field");
-		$(this).addClass("selected_field");
+		
+		// check if user pressed control during the click
+		if (event.ctrlKey) {
+				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);			
+				// add this field to the set of group fields
+				$(this).addClass("group_field");	
+
+				// if a single field was already selected then add
+				// it to the group of selected fields
+				$(".selected_field").addClass("group_field");
+				$(".selected_field").removeClass("selected_field");	
+		} else {
+			// single field has been selected, remove group
+			// selectors from other fields
+			$(".group_field").removeClass("group_field");	
+			
+			$(".selected_field").removeClass("selected_field");
+			$(this).addClass("selected_field");
+		}
 	});
 	
 	// image fields are identified by the 'img_div' class

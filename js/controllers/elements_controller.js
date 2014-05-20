@@ -530,18 +530,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		alignFieldLeft: function() {
 			// get the left most field position
 			var min_left = Math.min.apply(null,
-				$('.group_field').map(function(){ 
+				$('.selected_page .group_field').map(function(){ 
 					return parseFloat($(this).css('left'))}).get());
 			
 			// set new left position for all fields
-			$(".group_field").css("left", rem(min_left));
+			$(".selected_page .group_field").css("left", rem(min_left));
 		},
 		alignFieldCenter: function() {
 			// compute page's horizontal center point
 			var center_val = parseFloat($(".selected_page").css("width")) / 2;
 			
 			// set new left position for all fields
-			$(".group_field").each(function() {
+			$(".selected_page .group_field").each(function() {
 				var curr_width = parseFloat($(this).css('width'));
 				$(this).css('left', rem(center_val - (curr_width / 2)));
 			});
@@ -549,12 +549,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		alignFieldRight: function() {
 			// get the left most field position
 			var max_right = Math.max.apply(null,
-				$('.group_field').map(function(){ 
+				$('.selected_page .group_field').map(function(){ 
 					return parseFloat($(this).css('left'))
 						+ parseFloat($(this).css('width'))}).get());
 			
 			// set new left position for all fields
-			$(".group_field").each(function() {
+			$(".selected_page .group_field").each(function() {
 				var curr_width = parseFloat($(this).css('width'));
 				$(this).css('left', rem(max_right - curr_width));
 			});
@@ -562,18 +562,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		alignFieldTop: function() {
 			// get the top most field position
 			var min_top = Math.min.apply(null,
-				$('.group_field').map(function(){ 
+				$('.selected_page .group_field').map(function(){ 
 					return parseFloat($(this).css('top'))}).get());
 			
 			// set new top position for all fields
-			$(".group_field").css("top", rem(min_top));
+			$(".selected_page .group_field").css("top", rem(min_top));
 		},
 		alignFieldMiddle: function() {
 			// compute page's vertical center point
 			var center_val = parseFloat($(".selected_page").css("height")) / 2;
 			
 			// set new left position for all fields
-			$(".group_field").each(function() {
+			$(".selected_page .group_field").each(function() {
 				var curr_height = parseFloat($(this).css('height'));
 				$(this).css('top', rem(center_val - (curr_height / 2)));
 			});
@@ -586,7 +586,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						+ parseFloat($(this).css('height'))}).get());
 			
 			// set new left position for all fields
-			$(".group_field").each(function() {
+			$(".selected_page .group_field").each(function() {
 				var curr_height = parseFloat($(this).css('height'));
 				$(this).css('top', rem(max_bottom - curr_height));
 			});

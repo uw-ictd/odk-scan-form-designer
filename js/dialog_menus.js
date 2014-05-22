@@ -104,7 +104,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique() && is_label_valid()) {	
+				if (is_name_valid()) {	
 					var new_box = new EmptyBox();
 					new_box.constructBox();
 					
@@ -126,7 +126,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {	
-				if (is_name_unique() && is_label_valid()) {				
+				if (is_name_valid) {				
 					var cbField = new CheckboxField();
 					cbField.constructGrid();							
 
@@ -148,7 +148,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique() && is_label_valid()) {		
+				if (is_name_valid()) {		
 					var bubbField = new BubbleField();
 					bubbField.constructGrid();		
 
@@ -170,7 +170,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique() && is_label_valid()) {	
+				if (is_name_valid()) {	
 					var numField = new SegNumField();
 					numField.constructGrid();
 					
@@ -192,7 +192,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {
-				if (is_name_unique() && is_label_valid()) {		
+				if (is_name_valid()) {		
 					var text_box = new TextBox();
 					text_box.constructBox();
 					
@@ -214,7 +214,7 @@ $(document).ready(function() {
 		modal: true,
 		buttons: {
 			"Ok": function() {	
-				if (is_name_unique() && is_label_valid()) {
+				if (is_name_valid()) {
 					var formNumField = new FormNumField();
 					formNumField.constructGrid();		
 					

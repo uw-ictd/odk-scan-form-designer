@@ -65,9 +65,9 @@ var globZIndex = new ZIndex();
 	doc has the name), false otherwise. Prompts user
 	with an alert box if the field name is not unique.
 */
-var is_name_unique = function() {
+var is_name_valid = function() {
 	var name_unique = true;
-	var field_name = $("#field_name").val()
+	var field_name = $("#field_name").val().replace(/\s/g, "_");
 	
 	// iterate over all fields and check for a
 	// duplicate name
@@ -83,22 +83,11 @@ var is_name_unique = function() {
 	
 	if (!name_unique) {
 		alert("\"" + $("#field_name").val() + "\" is a duplicate field name.");
-	}
-	return name_unique;
-};
-
-/* 	Returns true if the field label in the #field_label
-	input box has no spaces, false otherwise. Prompts
-	user with alert box if the field label contains spaces.
-*/
-var is_label_valid = function() {	
-	var label_valid = $("#field_label").val().indexOf(" ") == -1;
-
-	if (!label_valid) {
-		alert("\"" + $("#field_label").val() + "\" contains spaces.");
-	}
+	} else {
+		$("#field_name").val(field_name);
+	}	
 	
-	return label_valid;
+	return name_unique;
 };
 
 // converts a numeric value to an rem unit

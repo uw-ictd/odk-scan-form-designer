@@ -9,7 +9,7 @@ $(document).ready(function() {
 	$("#update_prop").click(function() {
 		console.log("updating field properties");
 		if ($(".selected_field").length != 0) {
-			if (is_name_unique() && is_label_valid()) {
+			if (is_name_valid()) {
 				var origField = $(".selected_field");
 				$(".selected_field").data("obj").updateProperties();
 				origField.remove();

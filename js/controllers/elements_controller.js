@@ -591,6 +591,69 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$(this).css('top', rem(max_bottom - curr_height));
 			});
 		},
+		groupFields: function() {
+			// get the top most field position
+			var min_top = Math.min.apply(null,
+				$('.selected_page .group_field').map(function(){ 
+					return parseFloat($(this).css('top'))}).get());
+					
+			// get the left most field position
+			var min_left = Math.min.apply(null,
+				$('.selected_page .group_field').map(function(){ 
+					return parseFloat($(this).css('left'))}).get());
+					
+			// get the bottom most field position
+			var max_bottom = Math.max.apply(null,
+				$('.group_field').map(function(){ 
+					return parseFloat($(this).css('top'))
+						+ parseFloat($(this).css('height'))}).get());
+						
+			// get the right most field position
+			var max_right = Math.max.apply(null,
+				$('.selected_page .group_field').map(function(){ 
+					return parseFloat($(this).css('left'))
+						+ parseFloat($(this).css('width'))}).get());
+					
+			var $group_container = $("<div/>");
+			$group_container.addClass("grouped_fields");
+			$group_container.css("backgroundColor", "lightblue");
+			$group_container.css("width", rem(max_right - min_left));
+			$group_container.css("height", rem(max_bottom - min_top));
+			
+			// re-position all fields to align with the group
+			// container at the top-left of the page
+			$(".group_field").each(function() {
+				var curr_top = parseInt($(this).css("top"));
+				var curr_left = parseInt($(this).css("left"));
+				$(this).css("top", rem(curr_top - min_top));
+				$(this).css("left", rem(curr_left - min_left));
+			});
+			
+			// disable draggable/resizable features from group fields
+			$(".group_field").draggable("disable");
+			$(".group_field.box,.group_field.img_div").resizable("disable");
+			
+			$group_container.append($(".group_field"));
+			$(".selected_page").append($group_container);
+			$group_container.draggable({containment: "parent", 
+										grid: [GRID_X, GRID_Y]});
+			$group_container.css({top: rem(min_top), left: rem(min_left)});
+		},
+		ungroupFields: function() {
+			var group_top = parseInt($(".grouped_fields").css('top'));
+			var group_left = parseInt($(".grouped_fields").css('left'));			
+			$(".group_field").unwrap();
+			$(".group_field").each(function() {
+				var curr_top = parseInt($(this).css("top"));
+				var curr_left = parseInt($(this).css("left"));
+				$(this).css("top", rem(curr_top + group_top));
+				$(this).css("left", rem(curr_left + group_left));
+			});
+			
+			// restore draggable/resizable features
+			$(".group_field").draggable("enable");
+			$(".group_field.box,.group_field.img_div").resizable("enable");
+		},
 		openNewDocDialog: function() {
 			var $all_pages = $(".scan_page");
 			if ($all_pages.children(".field").length == 0 

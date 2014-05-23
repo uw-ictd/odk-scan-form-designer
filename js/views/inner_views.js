@@ -44,3 +44,7 @@ MarginOptions = Ember.View.extend({
 AttributeOptions = Ember.View.extend({
 	templateName: 'field-attributes-view'
 });
+
+PriorityOptions = Ember.View.extend({
+	templateName: 'priority-view'
+});

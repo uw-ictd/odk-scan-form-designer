@@ -49,6 +49,7 @@ function FormField(json_init, update_init) {
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;
+		this.field_priority = json_init.field_priority;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
@@ -73,6 +74,7 @@ function FormField(json_init, update_init) {
 		// set other field attributes
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
+		this.field_priority = $("#field_priority").val();
 	}
 }
 
@@ -250,6 +252,7 @@ FormField.prototype.getFieldJSON = function() {
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
+	f_info.priority = this.field_priority;
 	
 	var cf = {};
 	// initialize classifier 
@@ -629,6 +632,14 @@ FormNumField.prototype.loadProperties = function() {
 	// set field attributes
 	$("#field_name").val(this.name);
 	$("#field_label").val(this.label);
+	
+	if (this.field_priority == "low") {
+		$("#field_priority").prop('selectedIndex', 0);
+	} else if (this.field_priority == "medium") {
+		$("#field_priority").prop('selectedIndex', 1);
+	} else {
+		$("#field_priority").prop('selectedIndex', 2);
+	}
 }
 
 /*	Creates a new formatted number field with 

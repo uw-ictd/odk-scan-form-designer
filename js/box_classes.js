@@ -20,9 +20,10 @@ function Box(json_init, update_init) {
 					top: rem(json_init.top),
 					borderWidth: rem(json_init.border_width),
 					zIndex: json_init.zIndex});
-		this.border_width = json_init.border_width;
+		this.border_width = json_init.border_width;	
 		this.name = json_init.name;
 		this.label = json_init.label;
+		this.field_priority = json_init.field_priority;
 	} else {	
 		if (update_init) {
 			// invoked from Update Field button
@@ -32,8 +33,7 @@ function Box(json_init, update_init) {
 						height: rem(update_init.box_height),
 						zIndex: update_init.zIndex});
 		} else {
-			// invoked by Dialog menu
-			
+			// invoked by Dialog menu			
 			// NOTE: initial width and height are aligned
 			// to the grid size
 			this.$box.css({top: rem(0), left: rem(0), width: rem(GRID_X * 10), 
@@ -46,6 +46,7 @@ function Box(json_init, update_init) {
 		// set other field attributes
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
+		this.field_priority = $("#field_priority").val();
 	}
 }
 
@@ -131,6 +132,7 @@ Box.prototype.getFieldJSON = function() {
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
+	f_info.priority = this.field_priority;
 	f_info.segments = [];
 
 	var seg = {};
@@ -211,6 +213,14 @@ Box.prototype.loadBoxProp = function() {
 	// set field attributes
 	$("#field_name").val(this.name);
 	$("#field_label").val(this.label);
+	
+	if (this.field_priority == "low") {
+		$("#field_priority").prop('selectedIndex', 0);
+	} else if (this.field_priority == "medium") {
+		$("#field_priority").prop('selectedIndex', 1);
+	} else {
+		$("#field_priority").prop('selectedIndex', 2);
+	}
 }
 
 /*	Represents an empty box field.
@@ -302,7 +312,7 @@ TextBox.prototype.loadProperties = function() {
 	
 	// set text size
 	$("#text_size").prop('selectedIndex', (this.font_size == "small") ? 0 :
-						(this.font_size == "medium") ? 1 : 2);			
+						(this.font_size == "medium") ? 1 : 2);		
 }
 
 /*	Creates a new text box field with the updated

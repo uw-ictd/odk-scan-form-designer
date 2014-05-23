@@ -257,6 +257,15 @@
 		</div>
 	</script>
 	
+	<script type="text/x-handlebars" data-template-name="priority-view">
+		<label>Field Priority</label>
+		<select id="field_priority">
+			<option value="low">Low</option>
+			<option value="medium" selected="selected">Medium</option>
+			<option value="high">High</option>			
+		</select>
+	</script>
+	
 	<script type="text/x-handlebars" data-template-name="margin-options-view">
 		<label for="name">Top Margin</label>
 		<input type="number" id="margin_top" value="1" class="int_input ui-widget-content ui-corner-all" min="0"><br>
@@ -291,6 +300,7 @@
 		{{yield}}
 		<hr class="horz_divider">		
 		{{view BorderOptions viewName='bdOptions'}}	
+		{{view PriorityOptions}}
 		<hr class="horz_divider">
 		{{view MarginOptions}}
 	</script>
@@ -299,6 +309,7 @@
 		{{view AttributeOptions}}
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
+		{{view PriorityOptions}}
 	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
@@ -314,6 +325,7 @@
 		<input type="text" id="text_input" class="ui-widget-content ui-corner-all long_text_input">		
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
+		{{view PriorityOptions}}
 	</script>
 	
 	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
@@ -398,7 +410,7 @@
 		</select><br>
 		
 		{{view BorderOptions viewName="bdOptions"}}
-		
+		{{view PriorityOptions}}
 		<hr class="horz_divider">
 		
 		<label for="name">Number of groups</label>
@@ -420,7 +432,7 @@
 		<input type="number" id="form_num_group_dx" value="10" class="int_input ui-widget-content ui-corner-all" min="0"><br>
 		
 		<hr class="horz_divider">
-		{{view MarginOptions}}
+		{{view MarginOptions}}		
 	</script>
 	
 	<!-- Dialog menu html -->

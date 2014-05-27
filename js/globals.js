@@ -83,11 +83,13 @@ var is_name_valid = function() {
 	
 	if (!name_unique) {
 		alert("\"" + $("#field_name").val() + "\" is a duplicate field name.");
+	} else if (field_name.length == 0) {
+		alert("Please enter an ID with 1 or more characters.");
 	} else {
 		$("#field_name").val(field_name);
 	}	
 	
-	return name_unique;
+	return name_unique && field_name.length != 0;
 };
 
 // converts a numeric value to an rem unit

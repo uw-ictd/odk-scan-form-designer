@@ -278,6 +278,12 @@ input[type=text], input[type=number] {
 	background-color: rgba(7, 197, 223, 1);
 }
 
+.field_group {
+	border-width: 1px;
+	border-color: grey;
+	border-style: dashed;
+}
+
 .group_field {
 	background-color: lightgreen;
 }

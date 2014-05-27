@@ -529,12 +529,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		alignFieldLeft: function() {
 			// get the left most field position
-			var min_left = Math.min.apply(null,
-				$('.selected_page .group_field').map(function(){ 
-					return parseFloat($(this).css('left'))}).get());
+			var $fields = $(".selected_page .group_field");
+			var min_left = FieldGroup.minLeft($fields);
 			
 			// set new left position for all fields
-			$(".selected_page .group_field").css("left", rem(min_left));
+			$fields.css("left", rem(min_left));
 		},
 		alignFieldCenter: function() {
 			// compute page's horizontal center point
@@ -548,25 +547,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		alignFieldRight: function() {
 			// get the left most field position
-			var max_right = Math.max.apply(null,
-				$('.selected_page .group_field').map(function(){ 
-					return parseFloat($(this).css('left'))
-						+ parseFloat($(this).css('width'))}).get());
+			var $fields = $(".selected_page .group_field");
+			var max_right = FieldGroup.maxRight($fields);
 			
 			// set new left position for all fields
-			$(".selected_page .group_field").each(function() {
+			$fields.each(function() {
 				var curr_width = parseFloat($(this).css('width'));
 				$(this).css('left', rem(max_right - curr_width));
 			});
 		},
 		alignFieldTop: function() {
 			// get the top most field position
-			var min_top = Math.min.apply(null,
-				$('.selected_page .group_field').map(function(){ 
-					return parseFloat($(this).css('top'))}).get());
+			var $fields = $(".selected_page .group_field");
+			var min_top = FieldGroup.minTop($fields);
 			
 			// set new top position for all fields
-			$(".selected_page .group_field").css("top", rem(min_top));
+			$fields.css("top", rem(min_top));
 		},
 		alignFieldMiddle: function() {
 			// compute page's vertical center point
@@ -580,64 +576,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		alignFieldBottom: function() {
 			// get the bottom most field position
-			var max_bottom = Math.max.apply(null,
-				$('.group_field').map(function(){ 
-					return parseFloat($(this).css('top'))
-						+ parseFloat($(this).css('height'))}).get());
+			var $fields = $(".selected_page .group_field");
+			var max_bottom = FieldGroup.maxBottom($fields);
 			
 			// set new left position for all fields
-			$(".selected_page .group_field").each(function() {
+			$fields.each(function() {
 				var curr_height = parseFloat($(this).css('height'));
 				$(this).css('top', rem(max_bottom - curr_height));
 			});
 		},
-		groupFields: function() {
-			// get the top most field position
-			var min_top = Math.min.apply(null,
-				$('.selected_page .group_field').map(function(){ 
-					return parseFloat($(this).css('top'))}).get());
-					
-			// get the left most field position
-			var min_left = Math.min.apply(null,
-				$('.selected_page .group_field').map(function(){ 
-					return parseFloat($(this).css('left'))}).get());
-					
-			// get the bottom most field position
-			var max_bottom = Math.max.apply(null,
-				$('.group_field').map(function(){ 
-					return parseFloat($(this).css('top'))
-						+ parseFloat($(this).css('height'))}).get());
-						
-			// get the right most field position
-			var max_right = Math.max.apply(null,
-				$('.selected_page .group_field').map(function(){ 
-					return parseFloat($(this).css('left'))
-						+ parseFloat($(this).css('width'))}).get());
-					
-			var $group_container = $("<div/>");
-			$group_container.addClass("grouped_fields");
-			$group_container.css("backgroundColor", "lightblue");
-			$group_container.css("width", rem(max_right - min_left));
-			$group_container.css("height", rem(max_bottom - min_top));
-			
-			// re-position all fields to align with the group
-			// container at the top-left of the page
-			$(".group_field").each(function() {
-				var curr_top = parseInt($(this).css("top"));
-				var curr_left = parseInt($(this).css("left"));
-				$(this).css("top", rem(curr_top - min_top));
-				$(this).css("left", rem(curr_left - min_left));
-			});
-			
-			// disable draggable/resizable features from group fields
-			$(".group_field").draggable("disable");
-			$(".group_field.box,.group_field.img_div").resizable("disable");
-			
-			$group_container.append($(".group_field"));
-			$(".selected_page").append($group_container);
-			$group_container.draggable({containment: "parent", 
-										grid: [GRID_X, GRID_Y]});
-			$group_container.css({top: rem(min_top), left: rem(min_left)});
+		groupFields: function() {														
+			var fGroup = new FieldGroup($(".selected_page .group_field"));
 		},
 		ungroupFields: function() {
 			var group_top = parseInt($(".grouped_fields").css('top'));
@@ -984,6 +933,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}		
 			
 			// add all images to the top-level images/ directory
+			/*
 			var images = this.get("images");
 			for (image_name in images) {
 				var img_info = images[image_name];
@@ -992,6 +942,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					zip.file("images/" + image_name, img_base64, {base64: true});
 				}
 			}
+			*/
 			
 			// save all image tabs, add them to top-level image_tabs/ directory
 			var itab_folder = zip.folder("image_tabs");
@@ -1006,7 +957,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.send("selectPageTab", pages[0]);
 			
 			var zip_contents = zip.generate();
-			var scan_doc_zip = "data:application/zip;base64," + zip_contents;				
+			var scan_doc_zip = "data:application/scan;base64," + zip_contents;				
 			$("#scan_json_link").attr('href', scan_doc_zip);
 
 			// perform action after user exits the save dialog
@@ -1031,7 +982,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			if (curr_index == pages.length) { 
 				// base case
 				var content = zip.generate();
-				var scanDoc = "data:application/zip;base64," + content;				
+				var scanDoc = "data:application/scan;base64," + content;				
 				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
 				$("#export_progress_dialog").dialog("close");

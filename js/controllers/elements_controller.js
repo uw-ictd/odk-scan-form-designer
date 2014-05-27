@@ -589,19 +589,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var fGroup = new FieldGroup($(".selected_page .group_field"));
 		},
 		ungroupFields: function() {
-			var group_top = parseInt($(".grouped_fields").css('top'));
-			var group_left = parseInt($(".grouped_fields").css('left'));			
-			$(".group_field").unwrap();
-			$(".group_field").each(function() {
-				var curr_top = parseInt($(this).css("top"));
-				var curr_left = parseInt($(this).css("left"));
-				$(this).css("top", rem(curr_top + group_top));
-				$(this).css("left", rem(curr_left + group_left));
-			});
-			
-			// restore draggable/resizable features
-			$(".group_field").draggable("enable");
-			$(".group_field.box,.group_field.img_div").resizable("enable");
+			var $parent_field = $(".selected_field").parent();
+			if ($parent_field.hasClass("field_group")) {
+				$parent_field.data("obj").ungroupFields();
+			}
 		},
 		openNewDocDialog: function() {
 			var $all_pages = $(".scan_page");

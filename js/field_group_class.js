@@ -4,8 +4,15 @@
 function FieldGroup($grouped_fields) {
 	this.$grouped_fields = $grouped_fields;
 	// disable draggable/resizable features from group fields
-	this.$grouped_fields.draggable("disable");
-	this.$grouped_fields.filter(".box, .img_div").resizable("disable");
+	this.$grouped_fields.each(function() {
+		if ($(this).hasClass("ui-draggable")) {
+			$(this).draggable("destroy");		
+		}
+		if ($(this).hasClass("ui-resizable") 
+			&& ($(this).hasClass("box") || $(this).hasClass("img_div"))) {
+			$(this).resizable("destroy");
+		}
+	});
 
 	// create group container
 	this.$group_div = $("<div/>");
@@ -18,6 +25,52 @@ function FieldGroup($grouped_fields) {
 								grid: [GRID_X, GRID_Y]});	
 	this.adjustGroupSize();															
 }
+
+/**
+*	Removes the selected field from the group.
+*/
+FieldGroup.prototype.removeSelected = function() {
+	this.$grouped_fields = this.$grouped_fields.not($(".selected_field"));
+}
+
+/**
+*	Ungroups the fields.
+*/
+FieldGroup.prototype.ungroupFields = function() {
+	var group_top = parseInt(this.$group_div.css('top'));
+	var group_left = parseInt(this.$group_div.css('left'));			
+
+	this.$grouped_fields.unwrap();		
+	
+	this.$grouped_fields.each(function() {
+		var curr_top = parseInt($(this).css("top"));
+		var curr_left = parseInt($(this).css("left"));
+		$(this).css("top", rem(curr_top + group_top));
+		$(this).css("left", rem(curr_left + group_left));
+	});
+	
+	// restore draggable/resizable features
+	this.$grouped_fields.each(function() {
+		$(this).draggable({containment: 'parent', 
+							grid: [GRID_X, GRID_Y]});
+		if ($(this).hasClass("box") || $(this).hasClass("img_div")) {
+			$(this).resizable({handles: 'all', 
+							containment: 'parent', 
+							grid: [GRID_X, GRID_Y],
+							minWidth: GRID_X,
+							minHeight: GRID_Y});
+		}
+	});	
+	
+	return this.$grouped_fields;
+}
+
+/**
+*	Returns the fields in the group.
+*/
+FieldGroup.prototype.getFields = function() {	
+	return this.$grouped_fields;
+};
 
 /**
 *	Sets the group container to the appropriate size.

@@ -43,7 +43,7 @@ var DOT_LARGE = 7;
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
 */
-function GridField(json_init, update_init) {
+function GridField(json_init, update_init, field_group) {
 	this.$grid_div = $('<div/>');
 	this.$grid_div.data("obj", this);
 	

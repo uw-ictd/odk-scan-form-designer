@@ -10,9 +10,40 @@ $(document).ready(function() {
 		console.log("updating field properties");
 		if ($(".selected_field").length != 0) {
 			if (is_name_valid()) {
-				var origField = $(".selected_field");
-				$(".selected_field").data("obj").updateProperties();
-				origField.remove();
+				var $orig_field = $(".selected_field");
+				var $field_parent = $orig_field.parent();
+				
+				// remove selected field from group
+				if ($field_parent.hasClass("field_group")) {
+					var $field_group = $field_parent.data("obj");
+					
+					// store positions of group and selected field
+					var orig_left = parseFloat($orig_field.css("left"));
+					var orig_top = parseFloat($orig_field.css("top"));
+					var group_left = parseFloat($field_parent.css("left"));
+					var group_top = parseFloat($field_parent.css("top"));
+					
+					// remove the selected field from the group, otherwise
+					// it will be added twice to the new group
+					$field_group.removeSelected();
+					var $grouped_fields = $field_group.ungroupFields();
+					
+					// create a new updated field, delete the old one
+					$(".selected_field").data("obj").updateProperties();
+					$orig_field.remove();	
+					
+					// add the selected field back to the group
+					$grouped_fields = $grouped_fields.add($(".selected_field")[0]);
+					// offset the field position of the selected field
+					$(".selected_field").css("left", rem(orig_left + group_left));
+					$(".selected_field").css("top", rem(orig_top + group_top));
+					
+					// create a new group
+					var $new_group = new FieldGroup($grouped_fields);		
+				} else {				
+					$(".selected_field").data("obj").updateProperties();
+					$orig_field.remove();					
+				}
 			}
 		}
 	});	

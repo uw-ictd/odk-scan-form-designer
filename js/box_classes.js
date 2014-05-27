@@ -104,6 +104,11 @@ Box.prototype.addEventHandlers = function($box) {
 				console.log("error - unsupported field type");
 			}		
 		}
+		
+		// if the field is contained within a group then we
+		// don't want the click action to propagate to the 
+		// group because that will cause the group to be 
+		// selected rather than this field
 		return false;
 	});
 }

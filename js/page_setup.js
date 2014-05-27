@@ -7,7 +7,6 @@ $(document).ready(function() {
 	ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 	
 	$("#update_prop").click(function() {
-		console.log("updating field properties");
 		if ($(".selected_field").length != 0) {
 			if (is_name_valid()) {
 				var $orig_field = $(".selected_field");

@@ -312,7 +312,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		},
 		deleteField: function() {
 			var $curr_field = $(".selected_field");
-			if ($curr_field.length != 0) {
+			if ($curr_field.length != 0) {				
 				var undo = {};
 				if ($curr_field.hasClass("img_div")) {
 					// store reference to image src before
@@ -924,7 +924,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			}		
 			
 			// add all images to the top-level images/ directory
-			/*
 			var images = this.get("images");
 			for (image_name in images) {
 				var img_info = images[image_name];
@@ -933,7 +932,6 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					zip.file("images/" + image_name, img_base64, {base64: true});
 				}
 			}
-			*/
 			
 			// save all image tabs, add them to top-level image_tabs/ directory
 			var itab_folder = zip.folder("image_tabs");
@@ -948,7 +946,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.send("selectPageTab", pages[0]);
 			
 			var zip_contents = zip.generate();
-			var scan_doc_zip = "data:application/scan;base64," + zip_contents;				
+			var scan_doc_zip = "data:application/zip;base64," + zip_contents;				
 			$("#scan_json_link").attr('href', scan_doc_zip);
 
 			// perform action after user exits the save dialog

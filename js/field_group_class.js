@@ -22,7 +22,16 @@ function FieldGroup($grouped_fields) {
 	
 	$(".selected_page").append(this.$group_div);
 	this.$group_div.draggable({containment: "parent", 
-								grid: [GRID_X, GRID_Y]});	
+								grid: [GRID_X, GRID_Y]});
+	this.$group_div.mousedown(function() {
+		$(".selected_field").removeClass("selected_field");
+		$(this).addClass(".selected_field");
+		
+		// set default view in properties sidebar
+		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
+	});
+									
 	this.adjustGroupSize();															
 }
 

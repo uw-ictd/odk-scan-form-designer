@@ -103,7 +103,8 @@ Box.prototype.addEventHandlers = function($box) {
 			} else {
 				console.log("error - unsupported field type");
 			}		
-		}					
+		}
+		return false;
 	});
 }
 

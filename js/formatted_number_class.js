@@ -108,6 +108,7 @@ FormField.prototype.getProperties = function() {
 	json.delim_type = this.delim_type;
 	json.name = this.name;
 	json.label = this.label;
+	json.field_priority = this.field_priority;
 	json.zIndex = this.$grid_div.zIndex();
 	
 	return json;

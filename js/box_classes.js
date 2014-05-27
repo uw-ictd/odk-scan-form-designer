@@ -160,6 +160,7 @@ Box.prototype.getProperties = function() {
 	json.field_type = this.field_type;	
 	json.name = this.name;
 	json.label = this.label;
+	json.field_priority = this.field_priority;
 	json.zIndex = this.$box.zIndex();
 	
 	return json;

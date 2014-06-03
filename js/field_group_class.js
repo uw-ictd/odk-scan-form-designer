@@ -4,15 +4,7 @@
 function FieldGroup($grouped_fields) {
 	this.$grouped_fields = $grouped_fields;
 	// disable draggable/resizable features from group fields
-	this.$grouped_fields.each(function() {
-		if ($(this).hasClass("ui-draggable")) {
-			$(this).draggable("destroy");		
-		}
-		if ($(this).hasClass("ui-resizable") 
-			&& ($(this).hasClass("box") || $(this).hasClass("img_div"))) {
-			$(this).resizable("destroy");
-		}
-	});
+	this.disableDragResize(this.$grouped_fields);
 
 	// create group container
 	this.$group_div = $("<div/>");
@@ -24,12 +16,22 @@ function FieldGroup($grouped_fields) {
 	$(".selected_page").append(this.$group_div);
 	this.$group_div.draggable({containment: "parent", 
 								grid: [GRID_X, GRID_Y]});
+	
+	this.addEventHandlers(this.$group_div);
+	this.$group_div.addClass("selected_field");
+									
+	this.adjustGroupSize();															
+}
 
-	this.$group_div.on('dragstop', function() {
+/**
+*	Adds event handlers to FieldGroup.
+*/
+FieldGroup.prototype.addEventHandlers = function($group_div) {
+	$group_div.on('dragstop', function() {
 		convert_position($(this));
 	});	
 								
-	this.$group_div.mousedown(function() {
+	$group_div.mousedown(function() {
 		$(".selected_field").removeClass("selected_field");
 		$(this).addClass("selected_field");
 		
@@ -45,10 +47,53 @@ function FieldGroup($grouped_fields) {
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 	});
+}
+
+/**
+*	Makes a copy of the FieldGroup.
+*/
+FieldGroup.prototype.copyField = function() {
+	var $new_group = this.$group_div.clone();
+	$(".selected_page").append($new_group);
+
+	$new_group.draggable({containment: "parent", 
+						grid: [GRID_X, GRID_Y]});					
+	this.addEventHandlers($new_group);
 	
-	this.$group_div.addClass("selected_field");
-									
-	this.adjustGroupSize();															
+	// copy each of the grouped fields into the new group,
+	// set their position
+	$new_group.children().remove();
+	
+	this.$group_div.children().each(function() {
+		var $curr_copy = $(this);
+		$curr_copy.data("obj").copyField();			
+		
+		// set name of new field
+		var $field_copy = $(".selected_field");
+		$field_copy.data("obj").name += "_copy";
+		
+		// set position of new field
+		$new_group.append($field_copy);
+		$field_copy.css("left", rem($curr_copy.css("left")));
+		$field_copy.css("top", rem($curr_copy.css("top")));
+	});
+	
+	// disable draggable/resizable features from group fields
+	this.disableDragResize($new_group.children());
+	
+	// copy the field object
+	var $new_field = jQuery.extend({}, this);
+	$new_group.data('obj', $new_field);
+	$new_field.$group_div = $new_group;
+	$new_field.$grouped_fields = $new_group.children();
+	
+	// unhighlight other groups
+	$(".highlighted_group").addClass("unhighlighted_group");
+	$(".highlighted_group").removeClass("highlighted_group");
+	
+	$(".selected_field").removeClass("selected_field");	
+	$new_group.addClass("selected_field");
+	$new_group.css({left: rem(0), top: rem(0)});
 }
 
 /**
@@ -56,6 +101,22 @@ function FieldGroup($grouped_fields) {
 */
 FieldGroup.prototype.removeSelected = function() {
 	this.$grouped_fields = this.$grouped_fields.not($(".selected_field"));
+}
+
+/**
+*	Disables draggable/resizable features from a
+*	group of JQuery objects.	
+*/
+FieldGroup.prototype.disableDragResize = function($group) {
+	$group.each(function() {
+		if ($(this).hasClass("ui-draggable")) {
+			$(this).draggable("destroy");		
+		}
+		if ($(this).hasClass("ui-resizable") 
+			&& ($(this).hasClass("box") || $(this).hasClass("img_div"))) {
+			$(this).resizable("destroy");
+		}
+	});
 }
 
 /**

@@ -138,7 +138,6 @@ a {
 	display: none;
 }
 
-
 /* added to all integer input boxes */
 .int_input {
 	width: 40px;
@@ -293,6 +292,10 @@ input[type=text], input[type=number] {
 	outline-width: 2px;
 	outline-color: grey;
 	outline-style: dashed;
+}
+
+.field_group {
+	position: absolute;
 }
 
 .group_field {

@@ -192,7 +192,9 @@ Box.prototype.copyField = function() {
 	// of $box is destroyed before the clone and then
 	// added back to $box.
 	
-	this.$box.resizable('destroy');
+	if (this.$box.hasClass("ui-resizable")) {
+		this.$box.resizable('destroy');
+	}
 	var $new_box = this.$box.clone();
 	this.$box.resizable({handles: 'all', 
 						containment: 'parent', 

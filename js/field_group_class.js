@@ -31,7 +31,7 @@ function FieldGroup($grouped_fields) {
 								
 	this.$group_div.mousedown(function() {
 		$(".selected_field").removeClass("selected_field");
-		$(this).addClass(".selected_field");
+		$(this).addClass("selected_field");
 		
 		// unhighlight other groups
 		$(".highlighted_group").addClass("unhighlighted_group");
@@ -45,6 +45,8 @@ function FieldGroup($grouped_fields) {
 		ODKScan.FieldContainer.popObject();
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 	});
+	
+	this.$group_div.addClass("selected_field");
 									
 	this.adjustGroupSize();															
 }

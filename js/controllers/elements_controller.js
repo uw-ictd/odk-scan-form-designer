@@ -589,9 +589,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var fGroup = new FieldGroup($(".selected_page .group_field"));
 		},
 		ungroupFields: function() {
-			var $parent_field = $(".selected_field").parent();
-			if ($parent_field.hasClass("field_group")) {
-				$parent_field.data("obj").ungroupFields();
+			var $field = $(".selected_field");
+			if ($field.hasClass("field_group")) {
+				$field.data("obj").ungroupFields();
 			}
 		},
 		openNewDocDialog: function() {

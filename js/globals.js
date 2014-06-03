@@ -109,6 +109,9 @@ var convert_position = function($obj) {
 */
 $(document).bind("keydown", "left", function() {				
 	var $field = $(".selected_field");
+	if ($field.parent().hasClass("field_group")) {
+		$field = $field.parent();
+	}
 	if ($field.length != 0) {
 		// check if the field can be moved
 		var curr_left = parseInt($field.css('left'));
@@ -123,6 +126,9 @@ $(document).bind("keydown", "left", function() {
 
 $(document).bind("keydown", "right", function() {
 	var $field = $(".selected_field");
+	if ($field.parent().hasClass("field_group")) {
+		$field = $field.parent();
+	}
 	if ($field.length != 0) {
 		// check if the field can be moved
 		var curr_left = parseInt($field.css('left'));
@@ -141,6 +147,9 @@ $(document).bind("keydown", "right", function() {
 
 $(document).bind("keydown", "up", function() {
 	var $field = $(".selected_field");
+	if ($field.parent().hasClass("field_group")) {
+		$field = $field.parent();
+	}
 	if ($field.length != 0) {
 		// check if the field can be moved
 		var curr_top = parseInt($field.css('top'));
@@ -155,6 +164,9 @@ $(document).bind("keydown", "up", function() {
 
 $(document).bind("keydown", "down", function() {
 	var $field = $(".selected_field");
+	if ($field.parent().hasClass("field_group")) {
+		$field = $field.parent();
+	}
 	if ($field.length != 0) {
 		// check if the field can be moved
 		var curr_top = parseInt($field.css('top'));

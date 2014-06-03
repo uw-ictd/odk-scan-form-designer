@@ -283,16 +283,16 @@ input[type=text], input[type=number] {
 }
 
 .highlighted_group {
-	border-width: 2px;
-	border-color: green;
-	border-style: dashed;
+	outline-width: 2px;
+	outline-color: green;
+	outline-style: dashed;
 	background-color: rgba(0, 255, 0, 0.3);
 }
 
 .unhighlighted_group {
-	border-width: 2px;
-	border-color: grey;
-	border-style: dashed;
+	outline-width: 2px;
+	outline-color: grey;
+	outline-style: dashed;
 }
 
 .group_field {

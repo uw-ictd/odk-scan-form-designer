@@ -76,6 +76,9 @@ Box.prototype.addEventHandlers = function($box) {
 	var obj = this;
 	$box.mousedown(function(event) {	
 		ODKScan.FieldContainer.popObject();
+		// unhightlight any groups
+		$(".highlighted_group").addClass("unhighlighted_group");
+		$(".highlighted_group").removeClass("highlighted_group");
 	
 		// check if user pressed control during the click
 		if (event.ctrlKey) {
@@ -124,6 +127,12 @@ Box.prototype.constructBox = function() {
 						minHeight: GRID_Y});
 	this.addEventHandlers(this.$box);
 	
+	// unhighlight any selected group
+	$(".highlighted_group").addClass("unhighlighted_group");
+	$(".highlighted_group").removeClass("highlighted_group");
+	$(".group_field").removeClass("group_field");
+	
+	// unhighlight any selected field
 	$(".selected_field").removeClass("selected_field");
 	this.$box.addClass("selected_field");
 	$(".selected_page").append(this.$box);

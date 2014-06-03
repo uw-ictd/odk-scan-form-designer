@@ -169,6 +169,12 @@ GridField.prototype.constructGrid = function() {
 	this.alignToGrid(); // align this.$grid_div to the grid
 	this.addEventHandlers(this.$grid_div);
 
+	// unhighlight any selected group
+	$(".highlighted_group").addClass("unhighlighted_group");
+	$(".highlighted_group").removeClass("highlighted_group");
+	$(".group_field").removeClass("group_field");
+	
+	// unhighlight any selected field
 	$(".selected_field").removeClass("selected_field");
 	this.$grid_div.addClass("selected_field");
 };
@@ -223,7 +229,10 @@ GridField.prototype.alignToGrid = function() {
 GridField.prototype.addEventHandlers = function($grid) {
 	var obj = this;
 	$grid.mousedown(function() {
-		ODKScan.FieldContainer.popObject();
+		ODKScan.FieldContainer.popObject();		
+		// unhightlight any groups
+		$(".highlighted_group").addClass("unhighlighted_group");
+		$(".highlighted_group").removeClass("highlighted_group");
 	
 		// check if user pressed control during the click
 		if (event.ctrlKey) {

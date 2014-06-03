@@ -18,14 +18,28 @@ function FieldGroup($grouped_fields) {
 	this.$group_div = $("<div/>");
 	this.$group_div.data("obj", this);
 	this.$group_div.addClass("field_group");	
+	this.$group_div.addClass("highlighted_group");
 	this.$group_div.append(this.$grouped_fields);
 	
 	$(".selected_page").append(this.$group_div);
 	this.$group_div.draggable({containment: "parent", 
 								grid: [GRID_X, GRID_Y]});
+
+	this.$group_div.on('dragstop', function() {
+		convert_position($(this));
+	});	
+								
 	this.$group_div.mousedown(function() {
 		$(".selected_field").removeClass("selected_field");
 		$(this).addClass(".selected_field");
+		
+		// unhighlight other groups
+		$(".highlighted_group").addClass("unhighlighted_group");
+		$(".highlighted_group").removeClass("highlighted_group");
+		
+		// hightlight this group
+		$(this).removeClass("unhighlighted_group");
+		$(this).addClass("highlighted_group");
 		
 		// set default view in properties sidebar
 		ODKScan.FieldContainer.popObject();

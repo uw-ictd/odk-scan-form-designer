@@ -152,6 +152,12 @@ FormField.prototype.constructGrid = function() {
 	this.alignToGrid();
 	this.addEventHandlers(this.$grid_div);
 
+	// unhighlight any selected group
+	$(".highlighted_group").addClass("unhighlighted_group");
+	$(".highlighted_group").removeClass("highlighted_group");
+	$(".group_field").removeClass("group_field");
+	
+	// unhighlight any selected field
 	$(".selected_field").removeClass("selected_field");
 	this.$grid_div.addClass("selected_field");
 };
@@ -211,6 +217,9 @@ FormField.prototype.addEventHandlers = function($grid) {
 	var obj = this;
 	$grid.mousedown(function() {
 		ODKScan.FieldContainer.popObject();
+		// unhightlight any groups
+		$(".highlighted_group").addClass("unhighlighted_group");
+		$(".highlighted_group").removeClass("highlighted_group");
 	
 		// check if user pressed control during the click
 		if (event.ctrlKey) {

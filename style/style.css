@@ -13,6 +13,10 @@ html, body {
 	z-index: 10000 !important;
 }
 
+a {
+	cursor: pointer;
+}
+
 /* Removes the close button from dialog menus. */
 .ui-dialog-titlebar-close {
 	display: none;
@@ -278,8 +282,15 @@ input[type=text], input[type=number] {
 	background-color: rgba(7, 197, 223, 1);
 }
 
-.field_group {
-	border-width: 1px;
+.highlighted_group {
+	border-width: 2px;
+	border-color: green;
+	border-style: dashed;
+	background-color: rgba(0, 255, 0, 0.3);
+}
+
+.unhighlighted_group {
+	border-width: 2px;
 	border-color: grey;
 	border-style: dashed;
 }

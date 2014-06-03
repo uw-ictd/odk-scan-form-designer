@@ -150,10 +150,12 @@ var image_to_field = function(image, json_zIndex) {
 				$(".selected_field").addClass("group_field");
 				$(".selected_field").removeClass("selected_field");	
 		} else {
-			// single field has been selected, remove group
-			// selectors from other fields
-			$(".group_field").removeClass("group_field");	
+			// unhighlight any selected group
+			$(".highlighted_group").addClass("unhighlighted_group");
+			$(".highlighted_group").removeClass("highlighted_group");
+			$(".group_field").removeClass("group_field");
 			
+			// unhighlight any selected field
 			$(".selected_field").removeClass("selected_field");
 			$(this).addClass("selected_field");
 		}

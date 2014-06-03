@@ -313,18 +313,32 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		deleteField: function() {
 			var $curr_field = $(".selected_field");
 			if ($curr_field.length != 0) {				
-				var undo = {};
-				if ($curr_field.hasClass("img_div")) {
-					// store reference to image src before
-					// deleting the image
-					var image_name = $curr_field.data("img_name");
-					var img_src = this.get("images")[image_name].data;
-					undo.img_src = img_src;
+				// Deleted fields are stored in an 'undo' JSON object.
+				// An 'undo' object stores a reference to the field 
+				// that was deleted as well as a list of references
+				// to any images that the field contained.
+				var undo = {$deleted_field: null, img_ref_list: []};
 				
-					// decrement the image reference count
-					this.send("removeImageRef", $curr_field.data("img_name"));
+				// get fields which contain images
+				var img_field_list = [];				
+				if ($curr_field.hasClass(".img_div")) {
+					img_field_list.push($curr_field);
+				} else if ($curr_field.children(".img_div").length != 0) {
+					img_field_list.push($curr_field.children(".img_div"));
 				}
-			
+				
+				// store references to all deleted images snippets
+				for (var i = 0; i < img_field_list.length; i++) {
+					var image_name = img_field_list[i].data("img_name");
+					var img_src = this.get("images")[image_name].data;
+					undo.img_ref_list.push({img_name: image_name, 
+											img_src: img_src});
+				
+					// decrement the image reference count for
+					// the image which this image snippet was from
+					this.send("removeImageRef", image_name);				
+				}
+
 				var deletedFields = this.get("deletedFields");	
 				undo.$deleted_field = $curr_field;
 				undo.$page = $(".selected_page");
@@ -353,9 +367,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// respective page
 				var undo = deletedFields.pop();	
 				
-				if (undo.$deleted_field.hasClass("img_div")) {									
-					// restore the image reference count
-					this.send("addImageRef", undo.$deleted_field.data("img_name"), undo.img_src);
+				// restore the image reference count
+				for (var i = 0; i < undo.img_ref_list.length; i++) {
+					var img_ref = undo.img_ref_list[i];
+					this.send("addImageRef", img_ref.img_name, img_ref.img_src);
 				}
 				
 				$(".selected_field").removeClass("selected_field");

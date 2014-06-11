@@ -1,6 +1,6 @@
 ODKScan.FieldController = Ember.View.extend({
 	idCounts: {checkbox: 1, bubble: 1, seg_num: 1,
-						box: 1, text: 1, form_num: 1},
+				box: 1, text: 1, form_num: 1},
 	didInsertElement: function() {		
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar

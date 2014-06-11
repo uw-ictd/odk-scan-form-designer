@@ -1,9 +1,11 @@
+var FIELD_GROUP_COUNTER = 0;
+
 /**
 *	Initializes a new FieldGroup.
 */
-function FieldGroup($grouped_fields) {
+function FieldGroup($grouped_fields, top_pos, left_pos) {
 	this.$grouped_fields = $grouped_fields;
-	// disable draggable/resizable features from group fields
+	// disable draggable/resizable features from group fields	
 	this.disableDragResize(this.$grouped_fields);
 
 	// create group container
@@ -13,14 +15,23 @@ function FieldGroup($grouped_fields) {
 	this.$group_div.addClass("highlighted_group");
 	this.$group_div.append(this.$grouped_fields);
 	
+	// use the global counter to assign this group
+	// a unique name
+	this.$group_div.data("id", FIELD_GROUP_COUNTER);
+	FIELD_GROUP_COUNTER += 1;
+	
 	$(".selected_page").append(this.$group_div);
 	this.$group_div.draggable({containment: "parent", 
 								grid: [GRID_X, GRID_Y]});
 	
-	this.addEventHandlers(this.$group_div);
-	this.$group_div.addClass("selected_field");
-									
-	this.adjustGroupSize();															
+	this.addEventHandlers(this.$group_div);					
+	this.adjustGroupSize();						
+
+	// check if position parameters were passed in
+	if (top_pos != null && left_pos != null) {
+		this.$group_div.css("top", rem(top_pos));
+		this.$group_div.css("left", rem(left_pos));
+	}	
 }
 
 /**

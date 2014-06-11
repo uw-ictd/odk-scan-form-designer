@@ -825,7 +825,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				var json_file = new RegExp(curr_directory + "page.json");
 				var page_json = JSON.parse(zip.file(json_file)[0].asText());
 				// create a new page
-				this.send("newPage", page_json.doc_info.page_size, true);		
+				this.send("newPage", page_json.doc_info.page_size, true);	
+
+				// maps groups to sets of fields that they contain
+				var field_groups = {};
 
 				// add all of the fields to the page
 				var fields = page_json.fields;
@@ -835,7 +838,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					// check if the current zIndex should be updated
 					if (f_json.zIndex > globZIndex.getTopZ()) {
 						globZIndex.setZ(f_json.zIndex + 1);
-					}								
+					}			
 										
 					if (f_json.field_type == 'checkbox') {
 						var cb_field = new CheckboxField(f_json);
@@ -857,8 +860,35 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 						form_num_field.constructGrid();		
 					} else {
 						console.log("unsupported field");
+					}	
+
+					// check if field should be added to a group
+					if (f_json.group_id != null) {
+						// check if a new field list should be created
+						if (field_groups[f_json.group_id] == null) {
+							field_groups[f_json.group_id] = [];
+						}
+						
+						field_groups[f_json.group_id].push($(".selected_field")[0]);
 					}					
-				}		
+				}
+
+				// create all of the groups
+				for (var id in field_groups) {
+					if (field_groups.hasOwnProperty(id)) {
+						var position = page_json.group_positions[id];
+						var field_group = new FieldGroup($(field_groups[id]), 
+														position.top, 
+														position.left);
+					}
+				}
+				
+				// unhighlight groups and other fields which were just added
+				// to the page
+				$(".highlighted_group").addClass("unhighlighted_group");
+				$(".highlighted_group").removeClass("highlighted_group");
+				$(".selected_field").removeClass("selected_field");
+				
 				// load all of the images for the current page
 				this.send("loadImages", page_json.images, 0, curr_directory, zip);										
 			}																				
@@ -928,11 +958,29 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					savedDoc.images.push(img_div);
 				});
 		
-				/*	 create a new JSON object for each field */
+				// create a new JSON object for each field 
 				$page_div.children(".field").each(function() {
-					var json = $(this).data("obj").saveJSON();
+					var json = $(this).data("obj").saveJSON();					
 					savedDoc.fields.push(json);				
-				});				
+				});			
+				
+				// store JSON for all grouped fields
+				$page_div.children(".field_group").children().each(function() {
+					var json = $(this).data("obj").saveJSON();										
+					// store the group id of this field 					
+					json.group_id = $(this).parent().data("id");					
+					savedDoc.fields.push(json);				
+				});		
+
+				// add group locations to the JSON output
+				savedDoc.group_positions = {}
+				$(".field_group").each(function() {
+					var top_pos = $(this).css("top");
+					var left_pos = $(this).css("left");
+					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, 
+																	left: left_pos}
+				});
+				
 				var json_output = JSON.stringify(savedDoc, null, '\t');												
 				zip.file(curr_directory + "page.json", json_output);				
 				curr_directory += "nextPage/";
@@ -943,8 +991,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			for (image_name in images) {
 				var img_info = images[image_name];
 				if (img_info.ref_count > 0) {
-					var img_base64 = img_info.data.split(",")[1];
-					zip.file("images/" + image_name, img_base64, {base64: true});
+				//	var img_base64 = img_info.data.split(",")[1];
+				//	zip.file("images/" + image_name, img_base64, {base64: true});
 				}
 			}
 			
@@ -968,6 +1016,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			if (func_callback) {
 				$("#save_dialog").bind("dialogclose", func_callback);
 			}
+			
+			console.log(JSON.stringify(savedDoc, null, "\t"));
 			
 			$("#save_dialog").dialog("open");			
 		},

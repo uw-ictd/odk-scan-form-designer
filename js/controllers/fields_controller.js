@@ -623,6 +623,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*	Copies the currently selected image/field.
 		*/
 		copySelected: function() {
+			// if there is not a selected field then do nothing
+			if ($(".selected_field").length == 0) {
+				return;
+			}
+		
 			if (!$(".selected_field").hasClass("img_div")) {
 					var selected_field = $(".selected_field").data('obj');
 					selected_field.copyField();		

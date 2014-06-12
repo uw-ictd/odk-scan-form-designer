@@ -88,10 +88,10 @@
 					</ul>
 				</li>
 			  <li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown">Edit Mode <b class="caret"></b></a>
+				<a class="dropdown-toggle" data-toggle="dropdown">Edit <b class="caret"></b></a>
 				<ul class="dropdown-menu">
-				  <li><a {{action "enableImageEdit"}}>Image Layer</a></li>
-				  <li><a {{action "enableFieldEdit"}}>Field Layer</a></li>				  
+				  <li><a {{action "enableImageEdit"}}>Image</a></li>
+				  <li><a {{action "enableFieldEdit"}}>Field</a></li>				  
 				</ul>
 			  </li>
 			  <input id="image_select" {{action 'loadUserImage' on="change"}} type="file" accept="image/*"></input> <!--NOTE: this element is hidden. -->
@@ -100,7 +100,7 @@
 				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
 			{{else}}
 				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown">Add Field <b class="caret"></b></a>
+					<a class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a {{action 'createBox'}}>Text Box</a></li>
 						<li><a {{action 'createText'}}>Text</a></li>
@@ -112,11 +112,10 @@
 				</li>	
 			{{/if}}
 			{{#unless isImageEditing}}
-				<li><a {{action 'copyField'}}>Copy Field</a></li>
+				<li><a {{action 'copySelected'}}>Copy</a></li>
 			{{/unless}}
 			<li><a {{action 'deleteField'}}>Delete Field</a></li>
 			<li><a {{action 'undoDeleteField'}}>Undo Delete</a></li>
-			<li><a {{action 'copyImage'}}>Copy Image</a></li>	
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown">Change Position <b class="caret"></b></a>
 				<ul class="dropdown-menu">

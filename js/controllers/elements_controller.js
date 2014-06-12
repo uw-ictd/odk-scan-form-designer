@@ -17,9 +17,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		return image_list;
 	}.property(),
 	defaultImages: function() {
-		// div_top and top_left are both set by addDefaultImages.
-		// These values depend on the size of the page they are 
-		// added to.
+		/*  Creates JSON for default images that are loaded into every 
+			new Scan page. 
+		*/
+		
+		// NOTE: the values div_top and top_left are both set by the function 
+		// addDefaultImages. These values depend on the size of the page they
+		// are added to.
 		
 		var images = {};
 		images.top_left = {img_name: "form",
@@ -1074,8 +1078,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			for (image_name in images) {
 				var img_info = images[image_name];
 				if (img_info.ref_count > 0) {
-				//	var img_base64 = img_info.data.split(",")[1];
-				//	zip.file("images/" + image_name, img_base64, {base64: true});
+					var img_base64 = img_info.data.split(",")[1];
+					zip.file("images/" + image_name, img_base64, {base64: true});
 				}
 			}
 			

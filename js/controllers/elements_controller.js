@@ -60,7 +60,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		this._super();		
 		
 		var controller = this;
-		$(document).ready(function() {							
+		$(document).ready(function() {	
+			$(window).bind('beforeunload', function(){ 
+				return 'You are about to leave the ODK Scan application.'
+			});
+		
+			// set default view in properties sidebar
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			/* 	imgAreaSelect field is initialized here,
 				setting it as field allows the controller to 
 				access/modify the the selected image region
@@ -175,6 +181,24 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			this.send("addImageRef", "form", form_src);
 			this.send("addImageRef", "form", form_src);
 			this.send("addImageRef", "form", form_src);
+		},
+		/**
+		*	Responds to a user a selecting an image to upload,
+		*	uploads the image onto the page.
+		*/
+		loadUserImage: function() {
+			// NOTE: 'event' argument is not listed as a parameter
+			// but it is still possible to be accessed from within
+			// this function, I am not sure how this is actually 
+			// possible.
+			var selectedFile = event.target.files[0];
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				// set properties of the image
+				$("#loaded_image").attr('src', event.target.result);																	
+				$("#loaded_image").data('filename', selectedFile.name);	
+			};					
+			reader.readAsDataURL(selectedFile);		
 		},
 		selectImage: function() {	
 			// cancel any currently selected image region
@@ -418,6 +442,49 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			ODKScan.FormNumContainer.pushObject(ODKScan.FormNumView);
 			$(".selected_field").removeClass("selected_field");
+		},
+		updateField: function() {
+			if ($(".selected_field").length == 0) {
+				return;
+			}
+		
+			if (is_name_valid()) {
+				var $orig_field = $(".selected_field");
+				var $field_parent = $orig_field.parent();
+				
+				// remove selected field from group, update field, 
+				// create new group for it
+				if ($field_parent.hasClass("field_group")) {
+					var $field_group = $field_parent.data("obj");
+					
+					// store positions of group and selected field
+					var orig_left = parseFloat($orig_field.css("left"));
+					var orig_top = parseFloat($orig_field.css("top"));
+					var group_left = parseFloat($field_parent.css("left"));
+					var group_top = parseFloat($field_parent.css("top"));
+					
+					// remove the selected field from the group, otherwise
+					// it will be added twice to the new group
+					$field_group.removeSelected();
+					var $grouped_fields = $field_group.ungroupFields();
+					
+					// create a new updated field, delete the old one
+					$(".selected_field").data("obj").updateProperties();
+					$orig_field.remove();	
+					
+					// add the selected field back to the group
+					$grouped_fields = $grouped_fields.add($(".selected_field")[0]);
+					// offset the field position of the selected field
+					$(".selected_field").css("left", rem(orig_left + group_left));
+					$(".selected_field").css("top", rem(orig_top + group_top));
+					
+					// create a new group
+					var $new_group = new FieldGroup($grouped_fields);		
+				} else {				
+					$(".selected_field").data("obj").updateProperties();
+					$orig_field.remove();					
+				}
+			}
 		},
 		copyField: function() {
 			if ($(".selected_field").length != 0 && !$(".selected_field").hasClass("img_div")) {
@@ -892,6 +959,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// load all of the images for the current page
 				this.send("loadImages", page_json.images, 0, curr_directory, zip);										
 			}																				
+		},
+		/**
+		*	Loads user's zip file into the browser, attaches
+		*	the zip file content to the uploaded_zip div.
+		*/
+		zipFileUploaded: function () {
+			// NOTE: 'event' argument is not listed as a parameter
+			// but it is still possible to be accessed from within
+			// this function, I am not sure how this is actually 
+			// possible.
+			var selectedFile = event.target.files[0];
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				$("#uploaded_zip").data("zip", event.target.result);
+			};								
+			reader.readAsDataURL(selectedFile);					
 		},
 		loadZip: function() {
 			// delete all current pages, fields

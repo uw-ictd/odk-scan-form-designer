@@ -100,7 +100,7 @@
 				  <li><a {{action "enableFieldEdit"}}>Field Layer</a></li>				  
 				</ul>
 			  </li>
-			  <input id="image_select" type="file" accept="image/*"></input> <!--NOTE: this element is hidden. -->
+			  <input id="image_select" {{action 'loadUserImage' on="change"}} type="file" accept="image/*"></input> <!--NOTE: this element is hidden. -->
 			{{#if isImageEditing}}				
 				<li><a id="image_button" {{action 'selectImage'}}>Select Image</a></li>
 				<li><a id="add_sel" {{action 'addSelection'}}>Add Selection</a></li>
@@ -210,7 +210,7 @@
 				<br>
 				{{#view ODKScan.FieldContainer}}			
 				{{/view}}
-				<button id="update_prop" class="prop_sidebar_content">Update Field</button>
+				<button id="update_prop" class="prop_sidebar_content" {{action 'updateField'}}>Update Field</button>
 			</div>
 			<div id="page_container">
 			</div>
@@ -496,7 +496,7 @@
 	<script type="text/x-handlebars" data-template-name="_loadDialog">
 		<div id="load_dialog" title="Load Scan Form">			
 			<label for="name">Zip File</label>
-			<input type="file" id="uploaded_zip" class="ui-corner-all" accept="application/x-zip-compressed"><br>
+			<input type="file" id="uploaded_zip" {{action "zipFileUploaded" on="change"}} class="ui-corner-all" accept="application/x-zip-compressed"><br>
 			<hr class="horz_divider">
 			<button id="load_cancel" class="input_button" {{action "cancelLoad"}}>Cancel</button>
 			<button id="load_zip" class="input_button" {{action "loadZip"}}>Ok</button>

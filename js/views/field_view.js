@@ -1,13 +1,35 @@
-ODKScan.FieldController = Ember.View.extend({
+/*
+*	This view responds to two actions that the user performs:
+*		- creating a new field
+*		- selecting a field in current page
+*
+*	The 'didInsertElement' (this event is triggered when the view is added
+*	to the DOM) function responds to both of these events.
+*
+*	This view is inherited by all other field views, the 'didInsertElement'
+*	event bubbles up to this parent view, so that all fields implement
+*	this same behavior when responding to the events listed above.
+*/
+ODKScan.FieldViewController = Ember.View.extend({
+	// contains global counts for each field type
+	// NOTE: add new field types here
 	idCounts: {checkbox: 1, bubble: 1, seg_num: 1,
 				box: 1, text: 1, form_num: 1},
-	didInsertElement: function() {		
+	didInsertElement: function() {	
+		/* 	If there is currently a selected field then the user 
+			clicked on a field in the current page, load its 
+			properties into the properties sidebar. Else
+			the user is trying to create a new field, open
+			its respective dialog menu, assign it a new 
+			unique field name.
+		*/
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar
 			var field_obj = $(".selected_field").data("obj");			
 			field_obj.loadProperties();
 			
-			// check if the selected shape has a border
+			// check if the selected field has a border, display the border
+			// input box if it does
 			if (field_obj.border_width > 0) {
 				this.get('bdOptions').get('borderYesView').set('selection', 1);
 				$("#border_width").val(field_obj.border_width); 
@@ -15,7 +37,7 @@ ODKScan.FieldController = Ember.View.extend({
 				this.get('bdOptions').get('borderNoView').set('selection', 0);
 			}
 		} else {
-			// loading view into a dialog menu, default border set to 'Yes'
+			// loading view into a dialog menu, default border option set to 'Yes'
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
 			
 			// the html for the dialog menu has finished loading, now the

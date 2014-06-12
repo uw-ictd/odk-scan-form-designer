@@ -1,11 +1,16 @@
-/* 	Radio Button
-	Code used/modified from: http://thoughts.z-dev.org/2013/07/04/radio-buttons-in-ember-js/
+/* 	This view controls the radio buttons for border options.
+	If the user chooses a field to have a border then this 
+	view makes the border width input visible, else the
+	input is not displayed.
+	
+	This view has been borrowed/modified from: 
+	http://thoughts.z-dev.org/2013/07/04/radio-buttons-in-ember-js/
 */
 Ember.RadioButton = Ember.View.extend({
     tagName : "input",
     type : "radio",
 	name: "borderOption",
-    attributeBindings : [ "name", "type", "value", "checked:checked:" ],
+    attributeBindings : ["name", "type", "value", "checked:checked:"],
     click : function() {
 		if (this.$().val() == "1") {
 			$("#border_width").val(1); // set border with to one
@@ -21,6 +26,10 @@ Ember.RadioButton = Ember.View.extend({
     }.property('selection'),
 });
 
+/*
+	These views contain field parameters and are individually 
+	added to field views which support them.
+*/
 FullGridSize = Ember.View.extend({
 	templateName: 'full-grid-size-view'
 });

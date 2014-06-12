@@ -1,15 +1,15 @@
-/*
-	NOTE:
+/**
+*	Rounds the top, left position of an image up or down to 
+*	the nearest multiple of GRID_Y and GRID_X respectively 
+*	in order to maintain grid alignment.
+*/
+var adjust_image_position = function($obj, ui) {
+/*	NOTE:
 	The top, left position of images are kept aligned to 
 	grid vertically and horizontally. Since users can resize
 	images in all directions then the top, left position of the
-	image can fall out of alignment. 
-*/
-var adjust_image_position = function($obj, ui) {
-/*
-	Rounds the top, left position of an image up or down to 
-	the nearest multiple of GRID_Y and GRID_X respectively 
-	in order to maintain grid alignment.
+	image can fall out of alignment. That's why this function is
+	neccessary to re-align their position.
 */
 	var pos = ui.position;
 	var left_rounded_down = Math.floor(pos.left / GRID_X) * GRID_X;
@@ -31,16 +31,19 @@ var adjust_image_position = function($obj, ui) {
 	}
 };
 
+/**	
+*	Wraps image in a div to eliminate the overflow
+*	and only make the selected region visible.	
+*	@param (image) A JSON object which has the following
+*		attributes:
+*		- img_src: src data for the image snippet
+*		- top_pos: top offset within original image
+*		- left_pos: left offset within original image
+*		- img_height: height of image snippet
+*		- img_width: width of image snippet
+*/		
 var crop_image = function(image) {		
-	/*	Image is wrapped in a div to eliminate the overflow
-		and only make the selected region visible.	
-		NOTE: 'image' must the following attributes:
-			- img_src: src data for the image snippet
-			- top_pos: top offset within original image
-			- left_pos: left offset within original image
-			- img_height: height of image snippet
-			- img_width: width of image snippet
-	*/			
+	
 	var $wrapped_image = $("<img/>");
 	$wrapped_image.attr('src', image.img_src);
 	$wrapped_image.css({
@@ -64,21 +67,24 @@ var crop_image = function(image) {
 	return $img_container;
 };
 
+/** 
+*	Creates a image field from the image attributes. 
+*	@param (image) A JSON object which has the following
+*		attributes:
+*		- img_name: the name of the original source image
+*		- img_src: src data for the image snippet
+*		- img_top: top offset within original image
+*		- img_left: left offset within original image
+*		- div_top: top position of the field
+*		- div_left: left position of the field
+*		- orig_height: original height of image snippet
+*		- orig_width: original width of image snippet
+*		- img_height: current/resized height of image snippet
+*		- img_width: current/resized width of image snippet
+*	@param (jzon_zIndex) optional integer value that specifies
+*		the zIndex to set on the image.
+*/
 var image_to_field = function(image, json_zIndex) {
-	/* 	Creates a image field from the image attributes. 
-		NOTE: 'image' must the following attributes:
-			- img_name: the name of the original source image
-			- img_src: src data for the image snippet
-			- img_top: top offset within original image
-			- img_left: left offset within original image
-			- div_top: top position of the field
-			- div_left: left position of the field
-			- orig_height: original height of image snippet
-			- orig_width: original width of image snippet
-			- img_height: current/resized height of image snippet
-			- img_width: current/resized width of image snippet
-	*/
-
 	var $img = $("<img/>");
 	$img.attr('src', image.img_src);	
 	/* 	Original image selection offset and size

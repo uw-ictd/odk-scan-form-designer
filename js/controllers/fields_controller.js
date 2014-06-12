@@ -439,7 +439,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				
 				// get fields which contain images
 				var img_field_list = [];				
-				if ($curr_field.hasClass(".img_div")) {
+				if ($curr_field.hasClass("img_div")) {
 					img_field_list.push($curr_field);
 				} else if ($curr_field.children(".img_div").length != 0) {
 					img_field_list.push($curr_field.children(".img_div"));

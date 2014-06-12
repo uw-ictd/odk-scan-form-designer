@@ -76,17 +76,43 @@ FieldGroup.prototype.copyField = function() {
 	$new_group.children().remove();
 	
 	this.$group_div.children().each(function() {
-		var $curr_copy = $(this);
-		$curr_copy.data("obj").copyField();			
-		
-		// set name of new field
-		var $field_copy = $(".selected_field");
-		$field_copy.data("obj").name += "_copy";
-		
-		// set position of new field
-		$new_group.append($field_copy);
-		$field_copy.css("left", rem($curr_copy.css("left")));
-		$field_copy.css("top", rem($curr_copy.css("top")));
+		if ($(this).hasClass("img_div")) {
+			var $img_div = $(this);
+			var $img = $img_div.children("img");
+			
+			var image = {img_name: $img_div.data("img_name"),
+						img_src: $img.attr('src'),
+						img_height: $img_div.height(),
+						img_width: $img_div.width(),
+						orig_height: $img.data('orig_height'),
+						orig_width: $img.data('orig_width'),
+						img_top: $img.data('top'),
+						img_left: $img.data('left'),
+						div_top: rem(0),
+						div_left: rem(0)};
+			var $new_img_div = image_to_field(image);		
+			
+			// set position of new imaeg
+			$new_group.append($new_img_div);
+			$new_img_div.css("left", rem($(this).css("left")));
+			$new_img_div.css("top", rem($(this).css("top")));
+			
+			// add reference to image
+			var controller = window.ODKScan.__container__.lookup('controller:fields');
+			controller.send("addImageRef", image.img_name);
+		} else {
+			var $curr_copy = $(this);
+			$curr_copy.data("obj").copyField();			
+			
+			// set name of new field
+			var $field_copy = $(".selected_field");
+			$field_copy.data("obj").name += "_copy";
+			
+			// set position of new field
+			$new_group.append($field_copy);
+			$field_copy.css("left", rem($curr_copy.css("left")));
+			$field_copy.css("top", rem($curr_copy.css("top")));
+		}
 	});
 	
 	// disable draggable/resizable features from group fields

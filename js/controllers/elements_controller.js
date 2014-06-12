@@ -17,8 +17,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		return image_list;
 	}.property(),
 	defaultImages: function() {
-		/*  Creates JSON for default images that are loaded into every 
-			new Scan page. 
+		/*  Creates JSON metadata for the default images that are loaded 
+			into every new Scan page. 
 		*/
 		
 		// NOTE: the values div_top and top_left are both set by the function 
@@ -81,8 +81,16 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 											handles: true});				
 			controller.set('imgSelect', ias);									
 			
-			// code snippet from 
-			// http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
+			/* 	Loading snippets images into a Scan doc requires storing the
+				base64 data of the original source image. In order to load
+				the default images into the page we have to extract the base64
+				src of the image that they come from (default_images/form.jpg).
+				This code loads that image and then stores it in the 
+				defaultFormSrc field of the controller.
+				
+				Code borrowed/modified from:
+				http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
+			*/
 			var canvas = document.createElement('canvas'),
 			ctx = canvas.getContext('2d'),
 			img = new Image;
@@ -101,6 +109,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 		});
 	},
 	actions: {
+		/**
+		*	Enables the image importing mode.
+		*/
 		enableImageEdit: function() {
 			$("#prop_sidebar").hide("slow");
 			
@@ -112,6 +123,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			this.set('isImageEditing', true);
 		},
+		/**
+		*	Enables the field editing mode.
+		*/
 		enableFieldEdit: function() {			
 			// remove the loaded image from the loaded_image container
 			$("#loaded_image").attr("src", null);			
@@ -124,9 +138,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#prop_sidebar").show("slow");			
 			this.set('isImageEditing', false);
 		},
+		/**
+		*	Opens the warning dialog when user attempts to 
+		*	change the page style (because all fields are 
+		*	deleted after changing the style).
+		*/
 		openPageStyleDialog: function() {
 			$("#page_style_warning_dialog").dialog("open");
 		},
+		/**
+		*	A helper function which deletes all pages,
+		*	fields, and controller page metadata.
+		*/
 		deleteAllPages: function() {
 			// delete all current pages, fields
 			this.set("currPage", 1);
@@ -136,6 +159,11 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$(".field").remove();
 			Ember.set(this.get('selectedPageTab'), 'isActive', false);
 		},
+		/**
+		*	Sets the page to the style selected by the user
+		*	in the page style dialog. Deletes all fields
+		*	from the current pages, creates all new pages.
+		*/
 		setPageStyle: function() {		
 			// delete all pages, update page style
 			var num_pages = this.get("pages").length;
@@ -155,9 +183,15 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// add default images
 			this.send("addDefaultImages");
 		},
+		/**
+		*	Closes the page style dialog.
+		*/	
 		cancelPageStyleDialog: function() {
 			$("#page_style_dialog").dialog("close");
 		},
+		/**
+		*	Adds default images to the currenty selected page.
+		*/
 		addDefaultImages: function() {			
 			var images = this.get("defaultImages");
 			// calculate the positions for each respective 
@@ -204,6 +238,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			};					
 			reader.readAsDataURL(selectedFile);		
 		},
+		/**
+		*	Opens a file browser to allow the user to select
+		*	an image to upload.
+		*/
 		selectImage: function() {	
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -218,6 +256,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			*/
 			$("#image_select").click();
 		},
+		/**
+		*	Responds to the user selecting an image tab, loads
+		*	the corresponding image of the tab that they have
+		* 	selected.
+		*	@param (image) JSON containing reference to the
+		*		image referenced by the image tab.
+		*/
 		selectImageTab: function(image) {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -237,9 +282,17 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			$("#loaded_image").attr("src", image.data);	
 			$("#loaded_image").data("filename", image.name);	
 		},
+		/**
+		*	Opens up the image tab remove dialog.
+		*/
 		openImageTabDialog: function() {
 			$("#itab_remove_dialog").dialog("open");
 		}, 
+		/** 
+		*	Removes the currently selected image tab, also optionally
+		*	removes all fields in the document that are associated 
+		*	with it.
+		*/
 		removeImageTab: function() {
 			if($("#remove_itab_cb").prop("checked")) {
 				// delete all referenced image snippets
@@ -261,6 +314,13 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			$("#itab_remove_dialog").dialog("close");
 		},
+		/**
+		*	Stores new image into the controller and creates an
+		*	image tab for it, if it does not already store an 
+		*	image with the same name.
+		*	@param (image_name) The filename of the added image.
+		*	@param (img_src) The base64 src of the added image.
+		*/
 		addImage: function(image_name, img_src) {
 			// add image_name to the images field
 			var images = this.get('images');
@@ -280,13 +340,28 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				this.notifyPropertyChange("imageList");
 			}
 		},
+		/**
+		*	Adds a reference to an image that it stored within
+		*	the controller. 
+		*	@param (image_name) The filename of a stored image.
+		*	@param (img_src) The base64 src of the stored image.
+		*/
 		addImageRef: function(image_name, img_src) {
+			// store the image if it is not already stored in the app
 			this.send("addImage", image_name, img_src);
 		
 			// add a new reference to an image
 			var image = this.get('images')[image_name];
 			image.ref_count += 1;
 		},
+		/**
+		*	Removes a reference to an image stored within the 
+		*	controller. If the reference count reaches zero then
+		*	the image will be removed from the stored images, and
+		*	its respective image tab will be removed as well.
+		*	@param (image_name) The filename of the image which
+		*		the deleted image snippet came from.
+		*/
 		removeImageRef: function(image_name) {
 			// remove a reference to an image
 			var image = this.get('images')[image_name];
@@ -299,45 +374,58 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				this.notifyPropertyChange("imageList");
 			}
 		},
+		/**
+		*	Adds the currently selected image region into the currently
+		*	selected page.
+		*/
 		addSelection: function() {
 			var ias = this.get('imgSelect');
 			var reg = ias.getSelection();
-			// check that a region is currently selected
-			if (!(reg.width == 0 && reg.height == 0)) {						
-				// load the image into the dom
-				var img_src = $("#loaded_image").attr('src');
-				var image = {img_src: img_src, 
-									img_height: reg.height, 
-									img_width: reg.width, 
-									top_pos: -reg.y1,
-									left_pos: -reg.x1};					
-				var $img_container = crop_image(image);								
-				
-				// add the selected image region
-				// to the selected page
-				var controller = this;
-				html2canvas($img_container, {   
-					logging:true,
-					onrendered : function(canvas) {
-						var cropped_img_src = canvas.toDataURL("image/jpeg");			
-						var cropped_image = {img_name: $("#loaded_image").data('filename').split(".")[0],
-											img_src: cropped_img_src,
-											img_height: reg.height,
-											img_width: reg.width,
-											orig_height: reg.height,
-											orig_width: reg.width,
-											img_top: -reg.y1,
-											img_left: -reg.x1,
-											div_top: 0,
-											div_left: 0};
-						var $new_img_div = image_to_field(cropped_image);						
-						// update the image references
-						controller.send("addImageRef", $("#loaded_image").data('filename').split(".")[0], $("#loaded_image").attr("src"));
-						$("#processed_images").children().remove();										
-					}
-				});			
+			// check that a region is currently selected,
+			// if not then don't do anything
+			if (reg.width == 0 || reg.height == 0) {	
+				return;
 			}
+			
+			// extract metadata about the selected image region
+			var img_src = $("#loaded_image").attr('src');
+			var image = {img_src: img_src, 
+						img_height: reg.height, 
+						img_width: reg.width, 
+						top_pos: -reg.y1,
+						left_pos: -reg.x1};					
+			var $img_container = crop_image(image);								
+			
+			// add the selected image region
+			// to the selected page
+			var controller = this;
+			html2canvas($img_container, {   
+				logging:true,
+				onrendered : function(canvas) {
+					var cropped_img_src = canvas.toDataURL("image/jpeg");		
+					var img_basename = $("#loaded_image").data('filename').split(".")[0];
+					var cropped_image 
+						= {img_name: img_basename,
+							img_src: cropped_img_src,
+							img_height: reg.height,
+							img_width: reg.width,
+							orig_height: reg.height,
+							orig_width: reg.width,
+							img_top: -reg.y1,
+							img_left: -reg.x1,
+							div_top: 0,
+							div_left: 0};
+					var $new_img_div = image_to_field(cropped_image);						
+					// update the image references
+					controller.send("addImageRef", img_basename, $("#loaded_image").attr("src"));
+					$("#processed_images").children().remove();										
+				}
+			});			
 		},
+		/**
+		*	Deletes the currently selected field, adds it to a buffer
+		*	of deleted fields.
+		*/
 		deleteField: function() {
 			var $curr_field = $(".selected_field");
 			if ($curr_field.length != 0) {				
@@ -346,6 +434,8 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				// that was deleted as well as a list of references
 				// to any images that the field contained.
 				var undo = {$deleted_field: null, img_ref_list: []};
+				undo.$deleted_field = $curr_field;
+				undo.$page = $(".selected_page");
 				
 				// get fields which contain images
 				var img_field_list = [];				
@@ -367,10 +457,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					this.send("removeImageRef", image_name);				
 				}
 
-				var deletedFields = this.get("deletedFields");	
-				undo.$deleted_field = $curr_field;
-				undo.$page = $(".selected_page");
-				
+				var deletedFields = this.get("deletedFields");					
 				deletedFields.push(undo);
 				// remove the field from the current page
 				// but don't delete the event handlers and data
@@ -378,7 +465,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$curr_field.detach();
 				
 				// only store up to 8 fields at a time
-				if (deletedFields.length == 9) {
+				if (deletedFields.length > 8) {
 					var undo = deletedFields.shift();
 					undo.$deleted_field.remove();
 				}
@@ -388,11 +475,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 			}
 		},
+		/**
+		*	Restores the last deleted field.
+		*/
 		undoDeleteField: function() {
 			var deletedFields = this.get("deletedFields");
 			if (deletedFields.length > 0) {
-				// restore the deleted field to its
-				// respective page
 				var undo = deletedFields.pop();	
 				
 				// restore the image reference count
@@ -402,9 +490,16 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				}
 				
 				$(".selected_field").removeClass("selected_field");
+				// restore the deleted field to its respective page
 				undo.$page.append(undo.$deleted_field);			
 			}			
 		},
+		/**
+		*	Triggers the FieldViewController (which EmptyBoxView extends) 
+		*	to open the dialog for creating a new box. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/
 		createBox: function() {
 			this.set('newFieldType', 'empty_box');
 			ODKScan.FieldContainer.popObject();
@@ -412,6 +507,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Triggers the FieldViewController (which CheckboxView extends) 
+		*	to open the dialog for creating new checkboxes. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/
 		createCheckbox: function() {
 			this.set('newFieldType', 'checkbox');
 			ODKScan.FieldContainer.popObject();
@@ -419,6 +520,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.CheckboxContainer.pushObject(ODKScan.CheckboxView);	
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Triggers the FieldViewController (which BubblesView extends) 
+		*	to open the dialog for creating new fill-in bubbles. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/
 		createBubbles: function() {
 			this.set('newFieldType', 'bubble');
 			ODKScan.FieldContainer.popObject();
@@ -426,6 +533,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.BubbleContainer.pushObject(ODKScan.BubblesView);	
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Triggers the FieldViewController (which SegNumView extends) 
+		*	to open the dialog for creating new segmented numbers. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/
 		createNumbers: function() {
 			this.set('newFieldType', 'seg_num');
 			ODKScan.FieldContainer.popObject();
@@ -433,6 +546,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.SegNumContainer.pushObject(ODKScan.SegNumView);
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Triggers the FieldViewController (which TextBoxView extends) 
+		*	to open the dialog for creating new texboxes. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/		
 		createText: function() {
 			this.set('newFieldType', 'text_box');
 			ODKScan.FieldContainer.popObject();
@@ -440,6 +559,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.TextBoxContainer.pushObject(ODKScan.TextBoxView);
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Triggers the FieldViewController (which FormNumView extends) 
+		*	to open the dialog for creating new formatted numbers. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/		
 		createFormattedNumber: function() {
 			this.set('newFieldType', 'form_num');
 			ODKScan.FieldContainer.popObject();
@@ -447,6 +572,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			ODKScan.FormNumContainer.pushObject(ODKScan.FormNumView);
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Updates the currently selected field to use the properties
+		*	that the user has specified in the properties sidebar.
+		*/
 		updateField: function() {
 			if ($(".selected_field").length == 0) {
 				return;
@@ -490,6 +619,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				}
 			}
 		},
+		/**
+		*	Copies the field currently selected field.
+		*/
 		copyField: function() {
 			if ($(".selected_field").length != 0 && !$(".selected_field").hasClass("img_div")) {
 				var selected_field = $(".selected_field").data('obj');
@@ -503,6 +635,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$new_field.click();											
 			}
 		},
+		/**
+		*	Copies the currently selected image.
+		*/
 		copyImage: function() {
 			if ($(".selected_field").hasClass('img_div')) {
 				var $img_div = $(".selected_field");
@@ -524,6 +659,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				this.send("addImageRef", image.img_name);
 			}
 		},
+		/**
+		*	Moves the currently selected field backward.
+		*/
 		sendBackward: function() {
 			var $selected_field = $(".selected_field");		
 
@@ -547,6 +685,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$selected_field.zIndex(selected_zIndex - 1);
 			}
 		},
+		/**
+		*	Moves the currently selected field to the bottom-most
+		*	layer of the page.
+		*/
 		sendToBack: function() {
 			var $selected_field = $(".selected_field");		
 
@@ -568,6 +710,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$selected_field.zIndex(globZIndex.getBottomZ());
 			}
 		},
+		/**
+		*	Moves the currently selected field forward.
+		*/
 		sendForward: function() {
 			var $selected_field = $(".selected_field");		
 			
@@ -591,6 +736,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$selected_field.zIndex(selected_zIndex + 1);
 			}
 		},
+		/**
+		*	Moves the currently selected field to the top-most
+		*	layer of the page.
+		*/
 		sendToFront: function() {
 			var $selected_field = $(".selected_field");		
 
@@ -613,6 +762,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$selected_field.zIndex(globZIndex.getTopZ());
 			}
 		},
+		/**
+		*	Aligns all fields in the current page with the 
+		*	left-most field.
+		*/
 		alignFieldLeft: function() {
 			// get the left most field position
 			var $fields = $(".selected_page .group_field");
@@ -621,6 +774,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// set new left position for all fields
 			$fields.css("left", rem(min_left));
 		},
+		/**
+		*	Aligns all fields in the current page with the 
+		*	horizontal center of the page.
+		*/
 		alignFieldCenter: function() {
 			// compute page's horizontal center point
 			var center_val = parseFloat($(".selected_page").css("width")) / 2;
@@ -631,6 +788,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$(this).css('left', rem(center_val - (curr_width / 2)));
 			});
 		},
+		/**
+		*	Aligns all fields in the current page with the 
+		*	right-most field.
+		*/
 		alignFieldRight: function() {
 			// get the left most field position
 			var $fields = $(".selected_page .group_field");
@@ -642,6 +803,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$(this).css('left', rem(max_right - curr_width));
 			});
 		},
+		/**
+		*	Aligns all fields in the current page with the 
+		*	top-most field.
+		*/
 		alignFieldTop: function() {
 			// get the top most field position
 			var $fields = $(".selected_page .group_field");
@@ -650,6 +815,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// set new top position for all fields
 			$fields.css("top", rem(min_top));
 		},
+		/**
+		*	Aligns all fields in the current page with the 
+		*	vertical center of the page.
+		*/
 		alignFieldMiddle: function() {
 			// compute page's vertical center point
 			var center_val = parseFloat($(".selected_page").css("height")) / 2;
@@ -660,6 +829,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$(this).css('top', rem(center_val - (curr_height / 2)));
 			});
 		},
+		/**
+		*	Aligns all fields in the current page with the 
+		*	bottom-most field.
+		*/
 		alignFieldBottom: function() {
 			// get the bottom most field position
 			var $fields = $(".selected_page .group_field");
@@ -671,15 +844,26 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$(this).css('top', rem(max_bottom - curr_height));
 			});
 		},
+		/**
+		*	Groups together the currently selected fields.
+		*/	
 		groupFields: function() {														
 			var fGroup = new FieldGroup($(".selected_page .group_field"));
 		},
+		/**
+		*	Ungroups the fields within the selected field group.
+		*/
 		ungroupFields: function() {
 			var $field = $(".selected_field");
 			if ($field.hasClass("field_group")) {
 				$field.data("obj").ungroupFields();
 			}
 		},
+		/**
+		*	Opens up the new page dialog if there are no fields
+		*	within the document, otherwise it first prompts
+		*	the user to save their work.
+		*/
 		openNewDocDialog: function() {
 			var $all_pages = $(".scan_page");
 			if ($all_pages.children(".field").length == 0 
@@ -689,6 +873,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				$("#save_check_dialog").dialog("open");
 			}
 		},
+		/**
+		*	Creates a new document with a single page.
+		*/
 		createNewDoc: function() {
 			// delete all current pages, fields
 			this.send("deleteAllPages");
@@ -699,25 +886,46 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			$("#new_doc_dialog").dialog("close");
 		},
+		/**
+		*	Close the new document dialog.
+		*/
 		closeNewDocDialog: function() {
 			$("#new_doc_dialog").dialog("close");
 		},
+		/**	
+		*	Closes the save check dialog and then
+		*	opens up new document dialog.
+		*/
 		saveCheckDialogNoSave: function() {
 			$("#save_check_dialog").dialog("close");
 			$("#new_doc_dialog").dialog("open");
 		},	
+		/**
+		*	Close the save check dialog, saves the document, 
+		*	and then opens up the new page dialog.
+		*/
 		saveCheckDialogSave: function() {
 			$("#save_check_dialog").dialog("close");
+			// the anonymous function runs after the document
+			// has been saved, it opens up the new document dialog
 			this.send("saveDoc", function() {
 				$("#new_doc_dialog").dialog("open");
-				
-				// remove this binded function
-				$("#save_dialog").unbind("dialogclose");
 			});			
 		},
+		/**
+		*	Close the save check dialog.
+		*/
 		saveCheckDialogCancel: function() {
 			$("#save_check_dialog").dialog("close");
 		},
+		/**
+		*	Creates a single new page. 
+		*	page_size is an optional parameter that specifies
+		*	the format of the new page.
+		*
+		*	load_from_zip is a boolean that is used to determine
+		*	if default images should be added to the new page.
+		*/
 		newPage: function(page_size, load_from_zip) {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -760,12 +968,21 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				this.send("addDefaultImages");
 			}
 		},
+		/**
+		*	Opens up the remove page dialog.
+		*/
 		openRemovePageDialog: function() {
 			$("#remove_page_dialog").dialog("open");
 		},
+		/**
+		*	Cancels the remove page dialog.
+		*/
 		cancelPageRemove: function() {
 			$("#remove_page_dialog").dialog("close");
 		},
+		/**
+		*	Removes the currently selected page.
+		*/
 		removePage: function() {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -790,6 +1007,10 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			$("#remove_page_dialog").dialog("close");
 		},
+		/**
+		*	Responds the user selecting a page tab, loads the
+		* 	corresponding page.
+		*/
 		selectPageTab: function(page) {
 			// cancel any currently selected image region
 			var ias = this.get('imgSelect');
@@ -810,14 +1031,29 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			// unselect any selected field
 			$(".selected_field").removeClass("selected_field");
 		},
+		/**
+		*	Opens up the document load dialog.
+		*/
 		openLoadDialog: function() {
 			// reset any previously uploaded file
 			$("#uploaded_zip").val("");
 			$("#load_dialog").dialog("open");
 		},
+		/**
+		*	Cancles the document load dialog.
+		*/
 		cancelLoad: function() {
 			$("#load_dialog").dialog("close");
 		},
+		/**
+		*	Loads images for a particular page into the document from
+		*	a zip file.
+		*	@param (images) A list of JSON objects containing image metadata.
+		*	@param (curr_index) The index within the the list of images.
+		*	@param (curr_directory) String containing the path to the current
+		*		directory in the zip file.
+		*	@param (zip) The zip file containing the document being loaded.
+		*/
 		loadImages: function(images, curr_index, curr_directory, zip) {
 			// loads all image snippets into the current page
 			if (curr_index == images.length) {
@@ -870,6 +1106,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 				});							
 			}
 		},
+		/**
+		*	Loads the next page from the zip file into the document.
+ 		*	@param (curr_directory) String containing the path to the current
+		*		directory in the zip file.
+		*	@param (zip) The zip file containing the document being loaded.
+		*/
 		loadPage: function(curr_directory, zip) {
 			// loads the next page in the zip file
 			if (zip.folder(new RegExp(curr_directory)).length == 0) {
@@ -980,6 +1222,9 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			};								
 			reader.readAsDataURL(selectedFile);					
 		},
+		/**
+		*	Loads the document from a zip file.
+		*/
 		loadZip: function() {
 			// delete all current pages, fields
 			this.send("deleteAllPages");
@@ -1003,11 +1248,12 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			
 			$("#load_dialog").dialog("close");
 		},
-		saveDoc: function(func_callback) {
-			/*	Saves metadata about all pages, fields (including all
-				parameters that were used to make them) and images.
-			*/						
-			
+		/**
+		*	Saves the document to a zip file.
+		*	@param (func_callback) Optional callback executed after the 
+		*	user closes the save dialog. 
+		*/
+		saveDoc: function(func_callback) {			
 			var zip = new JSZip();
 			var pages = this.get('pages');		
 			
@@ -1099,15 +1345,22 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			var scan_doc_zip = "data:application/zip;base64," + zip_contents;				
 			$("#scan_json_link").attr('href', scan_doc_zip);
 
-			// perform action after user exits the save dialog
+			// perform optional callback after user exits the save dialog
 			if (func_callback) {
-				$("#save_dialog").bind("dialogclose", func_callback);
+				$("#save_dialog").bind("dialogclose", function() {
+					func_callback();
+					
+					// remove this binded function
+					$("#save_dialog").unbind("dialogclose");
+				});
 			}
-			
-			console.log(JSON.stringify(savedDoc, null, "\t"));
 			
 			$("#save_dialog").dialog("open");			
 		},
+		/**
+		*	Exports the document to a zip file (in a format that can be
+		*	processed by the ODK Scan Android app).
+		*/
 		exportZIP: function() {
 			$("#export_progress_dialog").dialog("open");
 		
@@ -1117,9 +1370,18 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 			/* Recursively create the file structure. */
 			var zip = new JSZip();
 			
-			this.send('createZipFolder', this.get('pages'), 0, "", zip);			
+			this.send('createExportZipFolder', this.get('pages'), 0, "", zip);			
 		},
-		createZipFolder: function(pages, curr_index, curr_directory, zip) {
+		/**
+		*	Creates a new subdirectory in the export zip file for the 
+		*	current page.
+		*	@param (pages) A list of JSON objects which contain page metadata.
+		*	@param (curr_index) The current index into the pages list.
+ 		*	@param (curr_directory) String containing the path to the current
+		*		directory in the zip file.
+		*	@param (zip) The zip file being exported to.
+		*/
+		createExportZipFolder: function(pages, curr_index, curr_directory, zip) {
 			if (curr_index == pages.length) { 
 				// base case
 				var content = zip.generate();
@@ -1165,7 +1427,7 @@ ODKScan.ElementsController = Ember.ArrayController.extend({
 					// add img and json to zip file
 					zip.file(curr_directory + "form.jpg", img_base64, {base64: true});
 					zip.file(curr_directory + "template.json", json_output);
-					controller.send('createZipFolder', pages, curr_index + 1, curr_directory + "nextPage/", zip);
+					controller.send('createExportZipFolder', pages, curr_index + 1, curr_directory + "nextPage/", zip);
 				}
 			});				
 		}

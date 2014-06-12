@@ -169,8 +169,22 @@
 			</div>
 		{{/if}}
 		
-		<!-- the content below the navbar is loaded depending on the current url of the website -->
-		{{outlet}}	
+		<div id="page_body">
+			<div id="prop_sidebar">
+				<h3 class="prop_sidebar_content">Form Properties</h3>	
+				<br>
+				{{#view ODKScan.FieldContainer}}			
+				{{/view}}
+				<button id="update_prop" class="prop_sidebar_content" {{action 'updateField'}}>Update Field</button>
+			</div>
+			<div id="page_container">
+			</div>
+			<div id="image_area">
+				<img id="loaded_image"></img>
+				<div id="saved_images"></div>
+				<div id="processed_images"></div>
+			</div>
+		</div>	
 		
 		<!-- the dialog menu html is separated and included below to keep the code more modular -->
 		{{partial 'emptyBoxDialog'}}
@@ -189,27 +203,6 @@
 		{{partial 'imageTabRemoveDialog'}}
 		{{partial 'exportInProgressDialog'}}
 		{{partial 'pageStyleWarningDialog'}}
-	</script>
-	
-	<script type="text/x-handlebars" data-template-name="fields/index">
-		<!-- this is the html that loads in the body of the page when 
-		the user navigates to this website -->
-		<div id="page_body">
-			<div id="prop_sidebar">
-				<h3 class="prop_sidebar_content">Form Properties</h3>	
-				<br>
-				{{#view ODKScan.FieldContainer}}			
-				{{/view}}
-				<button id="update_prop" class="prop_sidebar_content" {{action 'updateField'}}>Update Field</button>
-			</div>
-			<div id="page_container">
-			</div>
-			<div id="image_area">
-				<img id="loaded_image"></img>
-				<div id="saved_images"></div>
-				<div id="processed_images"></div>
-			</div>
-		</div>	
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="full-grid-size-view">

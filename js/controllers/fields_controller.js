@@ -1384,7 +1384,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			if (curr_index == pages.length) { 
 				// base case
 				var content = zip.generate();
-				var scanDoc = "data:application/scan;base64," + content;				
+				var scanDoc = "data:application/zip;base64," + content;				
 				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
 				$("#export_progress_dialog").dialog("close");

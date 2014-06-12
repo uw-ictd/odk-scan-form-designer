@@ -90,8 +90,8 @@
 			  <li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown">Edit <b class="caret"></b></a>
 				<ul class="dropdown-menu">
-				  <li><a {{action "enableImageEdit"}}>Image</a></li>
-				  <li><a {{action "enableFieldEdit"}}>Field</a></li>				  
+				  <li><a {{action "enableImageEdit"}}>Images</a></li>
+				  <li><a {{action "enableFieldEdit"}}>Fields</a></li>				  
 				</ul>
 			  </li>
 			  <input id="image_select" {{action 'loadUserImage' on="change"}} type="file" accept="image/*"></input> <!--NOTE: this element is hidden. -->
@@ -111,9 +111,7 @@
 					</ul>
 				</li>	
 			{{/if}}
-			{{#unless isImageEditing}}
-				<li><a {{action 'copySelected'}}>Copy</a></li>
-			{{/unless}}
+			<li><a {{action 'copySelected'}}>Copy</a></li>
 			<li><a {{action 'deleteField'}}>Delete Field</a></li>
 			<li><a {{action 'undoDeleteField'}}>Undo Delete</a></li>
 			<li class="dropdown">

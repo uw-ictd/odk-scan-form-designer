@@ -40,3 +40,7 @@ Bugs:
 	give it a name, however, the actual downloaded filename is always set to
 	"download". This is a due to a known bug in Google Chrome:
 		- https://code.google.com/p/chromium/issues/detail?id=373182
+		
+	- When a field group that contains images is saved, the images contained
+	within it are not saved with the group. They need to be assigned a group ID
+	just as non-image fields are in the saveDoc function in fields_controller.js.

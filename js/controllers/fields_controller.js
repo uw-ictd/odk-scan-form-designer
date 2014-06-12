@@ -1365,6 +1365,10 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		
 			// unselect any selected field (don't want it to be highlighted in the image output)
 			$(".selected_field").removeClass("selected_field");
+			// remove all highlighting
+			$(".unhighlighted_group").removeClass("unhighlighted_group");
+			$(".highlighted_group").removeClass("highlighted_group");
+			$(".group_field").removeClass("group_field");
 			
 			/* Recursively create the file structure. */
 			var zip = new JSZip();
@@ -1388,6 +1392,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				$("#zip_link").attr('href', scanDoc);				
 				$("#export_dialog").dialog("open");
 				$("#export_progress_dialog").dialog("close");
+				
+				// add highlighting back to groups
+				$(".field_group").addClass("unhighlighted_group");
 				return; 
 			} 
 			var scanDoc = {};
@@ -1400,12 +1407,20 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			scanDoc.fields = [];
 			
 			// compute and get the JSON for each field
-			var all_fields = $page_div.children(".field");			
+			var all_fields = $page_div.children(".field");
 			for (var j = 0; j < all_fields.length; j++) {
 				var $curr_field = $(all_fields[j]);				
 				var fieldObj = $curr_field.data("obj");					
 				scanDoc.fields.push(fieldObj.getFieldJSON());
 			}
+			
+			var all_grouped_fields = $page_div.children(".field_group").children(".field");
+			for (var j = 0; j < all_grouped_fields.length; j++) {
+				var $curr_field = $(all_grouped_fields[j]);				
+				var fieldObj = $curr_field.data("obj");					
+				scanDoc.fields.push(fieldObj.getFieldJSON());
+			}
+
 			var json_output = JSON.stringify(scanDoc, null, '\t');
 			
 			var controller = this;

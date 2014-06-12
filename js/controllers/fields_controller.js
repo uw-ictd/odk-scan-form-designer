@@ -1273,8 +1273,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// save metadata about the page
 				savedDoc.doc_info.page_size = $page_div.attr("class");
 				
-				// save metadata about all images
-				$page_div.children(".img_div").each(function() {
+				var save_image = function() {
 					var img_div = {};
 					img_div.height = $(this).height();
 					img_div.width = $(this).width();
@@ -1288,7 +1287,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					img_div.img_name = $(this).data('img_name');			
 					img_div.zIndex = $(this).zIndex();
 					savedDoc.images.push(img_div);
-				});
+				}
+				
+				// save metadata about all images
+				$page_div.children(".img_div").each(save_image);
+				$page_div.children(".field_group").children(".img_div").each(save_image);
 		
 				// create a new JSON object for each field 
 				$page_div.children(".field").each(function() {
@@ -1297,7 +1300,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				});			
 				
 				// store JSON for all grouped fields
-				$page_div.children(".field_group").children().each(function() {
+				$page_div.children(".field_group").children(".field").each(function() {
 					var json = $(this).data("obj").saveJSON();										
 					// store the group id of this field 					
 					json.group_id = $(this).parent().data("id");					

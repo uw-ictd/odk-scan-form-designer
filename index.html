@@ -54,7 +54,7 @@
 		<script src="js/field_classes/field_group_class.js"></script>
 		<script src="js/dialog_menus.js"></script>
 		<script src="js/image_util.js"></script>
-		<script src="js/controllers/elements_controller.js"></script>
+		<script src="js/controllers/fields_controller.js"></script>
 		<script src="js/views/view_containers.js"></script> 
 		<!--NOTE: field_view.js must be loaded before all subsequent views-->
 		<script src="js/views/field_view.js"></script> 
@@ -67,7 +67,7 @@
   </head>
   <body>    
 	<!-- inner body content is wrapped in 'handlebars' -->
-	<script type="text/x-handlebars" data-template-name="elements">
+	<script type="text/x-handlebars" data-template-name="fields">
 		<!-- this is where the application 'main' code resides -->
 		
 		<nav class="navbar navbar-default" role="navigation">
@@ -194,7 +194,7 @@
 		{{partial 'pageStyleWarningDialog'}}
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="elements/index">
+	<script type="text/x-handlebars" data-template-name="fields/index">
 		<!-- this is the html that loads in the body of the page when 
 		the user navigates to this website -->
 		<div id="page_body">

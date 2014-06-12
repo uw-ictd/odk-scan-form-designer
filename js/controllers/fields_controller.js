@@ -1,4 +1,4 @@
-ODKScan.ElementsController = Ember.ArrayController.extend({
+ODKScan.FieldsController = Ember.ArrayController.extend({
 	isImageEditing: false,	// toggles app between field editing and image editing mode
 	imgSelect: null,		// imgAreaSelect object used to crop images
 	currPage: 1,			// current page tab number

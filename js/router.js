@@ -1,4 +1,4 @@
 ODKScan.Router.map(function () {
-	this.resource('elements', {path: "/"}, function() {
+	this.resource('fields', {path: "/"}, function() {
 	});
 });

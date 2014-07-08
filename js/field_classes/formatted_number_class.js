@@ -49,7 +49,8 @@ function FormField(json_init, update_init) {
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;
-		this.field_priority = json_init.field_priority;
+		//this.field_priority = json_init.field_priority; changing here
+		this.verify = json_init.verify;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
@@ -74,7 +75,13 @@ function FormField(json_init, update_init) {
 		// set other field attributes
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
-		this.field_priority = $("#field_priority").val();
+		//this.field_priority = $("#field_priority").val(); changing here
+		//this.verify = $("#verified").val();
+		if ($("#verified").val() == "") {
+          this.verify = "Yes";
+		} else {
+			this.verify = $("#verified").val();
+		}
 	}
 }
 
@@ -108,7 +115,8 @@ FormField.prototype.getProperties = function() {
 	json.delim_type = this.delim_type;
 	json.name = this.name;
 	json.label = this.label;
-	json.field_priority = this.field_priority;
+	//json.field_priority = this.field_priority; changing here
+	json.verify = this.verify;
 	json.zIndex = this.$grid_div.zIndex();
 	
 	return json;
@@ -268,7 +276,8 @@ FormField.prototype.getFieldJSON = function() {
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
-	f_info.priority = this.field_priority;
+	//f_info.priority = this.field_priority; changing here
+	f_info.verify = this.verify;
 	
 	var cf = {};
 	// initialize classifier 

@@ -25,7 +25,25 @@ Ember.RadioButton = Ember.View.extend({
         return this.get("value") == this.get("selection");   
     }.property('selection'),
 });
-
+Ember.RadioButton1 = Ember.View.extend({
+    tagName : "input",
+    type : "radio",
+	name: "fieldOption",
+    attributeBindings : ["name", "type", "value", "checked:checked:"],
+    click : function() {
+    	if (this.$().val() == "1") {
+         // seeting up the value for Json field verify
+           $("#verified").val("Yes");
+    	} else {
+           $("#verified").val("No");
+    	} 
+    	this.set("selection", this.$().val());
+    },
+    checked : function() {
+    	return this.get("value") === this.get("selection");
+    }.property('selection')
+   
+});
 /*
 	These views contain field parameters and are individually 
 	added to field views which support them.

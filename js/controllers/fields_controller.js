@@ -28,34 +28,34 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		var images = {};
 		images.top_left = {img_name: "form",
 							img_src: "default_images/top_left.jpg",
-							img_height: 67,
-							img_width: 197,
-							orig_height: 67,
-							orig_width: 197,
+							img_height: 91,
+							img_width: 91,
+							orig_height: 91,
+							orig_width: 91,
 							img_top: 0,
 							img_left: 0,};
 		images.top_right = {img_name: "form",
 							img_src: "default_images/top_right.jpg",
-							img_height: 56,
-							img_width: 260,
-							orig_height: 56,
-							orig_width: 260,
+							img_height: 70,
+							img_width: 91,
+							orig_height: 70,
+							orig_width: 91,
 							img_top: 0,
 							img_left: -568};						
 		images.bottom_left = {img_name: "form",
 							img_src: "default_images/bottom_left.jpg",
-							img_height: 89,
-							img_width: 92,
-							orig_height: 89,
-							orig_width: 92,
+							img_height: 150,
+							img_width: 150,
+							orig_height: 150,
+							orig_width: 150,
 							img_top: -998,
 							img_left: 0};		
 		images.bottom_right = {img_name: "form",
 							img_src: "default_images/bottom_right.jpg",
 							img_height: 71,
-							img_width: 114,
+							img_width: 200,
 							orig_height: 71,
-							orig_width: 114,
+							orig_width: 200,
 							img_top: -1014,
 							img_left: -718};														
 		return images;
@@ -1412,16 +1412,27 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			// compute and get the JSON for each field
 			var all_fields = $page_div.children(".field");
 			for (var j = 0; j < all_fields.length; j++) {
-				var $curr_field = $(all_fields[j]);				
-				var fieldObj = $curr_field.data("obj");					
-				scanDoc.fields.push(fieldObj.getFieldJSON());
+				var $curr_field = $(all_fields[j]);	
+				var fieldObj = $curr_field.data("obj");
+				console.log(fieldObj);
+				var textBox = Ember.compare(fieldObj.field_type, 'text_box');
+				// If it is a text field, it does not add the JSON data to the 
+				// exported file
+				if(textBox != 0) {
+				  scanDoc.fields.push(fieldObj.getFieldJSON());
+				}
 			}
 			
 			var all_grouped_fields = $page_div.children(".field_group").children(".field");
 			for (var j = 0; j < all_grouped_fields.length; j++) {
-				var $curr_field = $(all_grouped_fields[j]);				
-				var fieldObj = $curr_field.data("obj");					
-				scanDoc.fields.push(fieldObj.getFieldJSON());
+				var $curr_field = $(all_grouped_fields[j]);			
+				  var fieldObj = $curr_field.data("obj");
+				  var textBox = Ember.compare(fieldObj.field_type, 'text_box');
+				// If it is a text field, it does not add the JSON data to the 
+				// exported file	
+				if(textBox != 0) {			
+				  scanDoc.fields.push(fieldObj.getFieldJSON());
+				}
 			}
 
 			var json_output = JSON.stringify(scanDoc, null, '\t');

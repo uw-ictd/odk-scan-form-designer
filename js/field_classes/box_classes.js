@@ -11,7 +11,8 @@ function Box(json_init, update_init) {
 	this.$box = $('<div/>');	
 	this.$box.data("obj", this);
 	this.$box.css('position', 'absolute');
-	this.type = "box"; 
+	this.type = "string";
+	//this.verify = "Yes"
 	
 	if(json_init) {
 		this.$box.css({width: rem(json_init.box_width), 
@@ -23,7 +24,7 @@ function Box(json_init, update_init) {
 		this.border_width = json_init.border_width;	
 		this.name = json_init.name;
 		this.label = json_init.label;
-		this.field_priority = json_init.field_priority;
+		this.verify = json_init.verify; //changing it before it was field_priority
 	} else {	
 		if (update_init) {
 			// invoked from Update Field button
@@ -46,7 +47,14 @@ function Box(json_init, update_init) {
 		// set other field attributes
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
-		this.field_priority = $("#field_priority").val();
+		//this.field_priority = $("#field_priority").val();
+		if ($("#verified").val() == "") {
+          this.verify = "Yes";
+		} else {
+			this.verify = $("#verified").val();
+		}
+		
+		//console.log(verify);
 	}
 }
 
@@ -147,7 +155,8 @@ Box.prototype.getFieldJSON = function() {
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
-	f_info.priority = this.field_priority;
+	//f_info.priority = this.field_priority;
+	f_info.verify = this.verify; //getting the value from here
 	f_info.segments = [];
 
 	var seg = {};
@@ -174,7 +183,8 @@ Box.prototype.getProperties = function() {
 	json.field_type = this.field_type;	
 	json.name = this.name;
 	json.label = this.label;
-	json.field_priority = this.field_priority;
+	//json.field_priority = this.field_priority;
+	json.verify = this.verify;
 	json.zIndex = this.$box.zIndex();
 	
 	return json;

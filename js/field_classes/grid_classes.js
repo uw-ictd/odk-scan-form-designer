@@ -63,7 +63,8 @@ function GridField(json_init, update_init, field_group) {
 		this.border_width = json_init.border_width;	
 		this.name = json_init.name;
 		this.label = json_init.label;
-		this.field_priority = json_init.field_priority;
+		//this.field_priority = json_init.field_priority; making change here
+		this.verify = json_init.verify;
 	} else {
 		if (update_init) {
 			// invoked from Update Field button
@@ -92,7 +93,13 @@ function GridField(json_init, update_init, field_group) {
 		// set other field attributes
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
-		this.field_priority = $("#field_priority").val();
+		//.field_priority = $("#field_priority").val(); changing here
+		//.verify = $("#verified").val();
+		if ($("#verified").val() == "") {
+          this.verify = "Yes";
+		} else {
+			this.verify = $("#verified").val();
+		}
 	}
 }
 
@@ -117,7 +124,8 @@ GridField.prototype.getProperties = function() {
 	json.field_type = this.field_type;
 	json.name = this.name;
 	json.label = this.label;
-	json.field_priority = this.field_priority;
+	//json.field_priority = this.field_priority; changing here
+	json.verify = this.verify;
 	json.zIndex = this.$grid_div.zIndex();
 	
 	return json;
@@ -288,7 +296,8 @@ GridField.prototype.getFieldJSON = function() {
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
-	f_info.priority = this.field_priority;
+	//f_info.priority = this.field_priority; changing here
+	f_info.verify = this.verify;
 	
 	var cf = {};
 	// initialize classifier 

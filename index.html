@@ -247,13 +247,23 @@
 		</div>
 	</script>
 	
-	<script type="text/x-handlebars" data-template-name="priority-view">
+	<!--<script type="text/x-handlebars" data-template-name="priority-view">
 		<label>Field Priority</label>
 		<select id="field_priority">
 			<option value="low">Low</option>
 			<option value="medium" selected="selected">Medium</option>
 			<option value="high">High</option>			
 		</select>
+	</script>-->
+
+	<script type="text/x-handlebars" data-template-name="priority-view">
+		<label for="fieldOption">Verify Field?</label>
+			<label id="verified">
+				{{view Ember.RadioButton1 type="radio" viewName="fieldYesView" name="fieldOption" value="1" selection="1"}} Yes	
+			</label>
+			<label id="verified">
+				{{view Ember.RadioButton1 type="radio" viewName="fieldNoView" name="fieldOption" value="0"}} No
+			</label>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="margin-options-view">

@@ -134,7 +134,8 @@ Box.prototype.constructBox = function() {
 						minWidth: GRID_X,
 						minHeight: GRID_Y});
 	this.addEventHandlers(this.$box);
-	
+
+
 	// unhighlight any selected group
 	$(".highlighted_group").addClass("unhighlighted_group");
 	$(".highlighted_group").removeClass("highlighted_group");

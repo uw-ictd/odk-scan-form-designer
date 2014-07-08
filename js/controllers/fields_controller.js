@@ -1427,6 +1427,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			for (var j = 0; j < all_grouped_fields.length; j++) {
 				var $curr_field = $(all_grouped_fields[j]);			
 				  var fieldObj = $curr_field.data("obj");
+				  console.log(fieldObj);
 				  var textBox = Ember.compare(fieldObj.field_type, 'text_box');
 				// If it is a text field, it does not add the JSON data to the 
 				// exported file	

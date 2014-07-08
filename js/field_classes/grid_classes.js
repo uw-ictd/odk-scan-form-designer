@@ -607,7 +607,7 @@ function SegNumField(json_init, update_init) {
 	this.field_type = 'seg_num';
 	this.grid_class = 'num_div';
 	
-	this.type = 'string';		
+	this.type = 'int'; //has changed, before it was string	
 	this.data_uri = "numbers";
 	this.cf_advanced = {flip_training_data : false, eigenvalues : 13}; // TODO: remove hardcoded value?
 	this.cf_map = {"0":"0", "1":"1", "2":"2", "3":"3", "4":"4", 

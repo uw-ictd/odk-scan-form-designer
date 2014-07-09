@@ -61,7 +61,7 @@ ODKScan.FieldViewController = Ember.View.extend({
 				$("#bubble_dialog").dialog("open");
 			} else if (new_field_type == 'seg_num') {
 				var curr_count = idCounts['seg_num'];
-				$("#field_name").val("simpleNumber" + curr_count);
+				$("#field_name").val("Number" + curr_count); // has changed, before it was simpleNumber
 				Ember.set(idCounts, "seg_num", curr_count + 1);
 				
 				$("#seg_num_dialog").dialog("open");

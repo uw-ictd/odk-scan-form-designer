@@ -268,7 +268,7 @@ GridField.prototype.addEventHandlers = function($grid) {
 				ODKScan.FieldContainer.pushObject(ODKScan.CheckboxView);
 			} else if (obj.field_type == "bubble") {
 				ODKScan.FieldContainer.pushObject(ODKScan.BubblesView);
-			} else if (obj.field_type == "seg_num") {
+			} else if (obj.field_type == "int") {
 				ODKScan.FieldContainer.pushObject(ODKScan.SegNumView);
 			} else {
 				console.log("error - unsupported field type");
@@ -604,7 +604,7 @@ BubbleField.prototype.saveJSON = function() {
 function SegNumField(json_init, update_init) {
 	GridField.call(this, json_init, update_init);
 	// Set all segmented number attributes
-	this.field_type = 'seg_num';
+	this.field_type = 'int';  // has changed, before it was seg_num
 	this.grid_class = 'num_div';
 	
 	this.type = 'int'; //has changed, before it was string	

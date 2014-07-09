@@ -65,7 +65,7 @@ ODKScan.FieldViewController = Ember.View.extend({
 				Ember.set(idCounts, "seg_num", curr_count + 1);
 				
 				$("#seg_num_dialog").dialog("open");
-			} else if (new_field_type == 'empty_box') {
+			} else if (new_field_type == 'string') {  // it was before empty_box
 				var curr_count = idCounts['box'];
 				$("#field_name").val("textBox" + curr_count);
 				Ember.set(idCounts, "box", curr_count + 1);

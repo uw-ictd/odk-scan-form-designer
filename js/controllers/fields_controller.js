@@ -501,7 +501,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*	dialog page and therefore has not loaded yet.
 		*/
 		createBox: function() {
-			this.set('newFieldType', 'empty_box');
+			this.set('newFieldType', 'string');  // before it was empty_box
 			ODKScan.FieldContainer.popObject();
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
 			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
@@ -1161,7 +1161,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					} else if (f_json.field_type == 'seg_num') {
 						var seg_num_field = new SegNumField(f_json);
 						seg_num_field.constructGrid();			
-					} else if (f_json.field_type == 'empty_box') {
+					} else if (f_json.field_type == 'string') {  // before it was empty_box
 						var empty_box = new EmptyBox(f_json);
 						empty_box.constructBox();		
 					} else if (f_json.field_type == 'text_box') {
@@ -1295,16 +1295,25 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		
 				// create a new JSON object for each field 
 				$page_div.children(".field").each(function() {
-					var json = $(this).data("obj").saveJSON();					
-					savedDoc.fields.push(json);				
+					var json = $(this).data("obj").saveJSON();
+					console.log(json.field_type);
+					// opting out the text field
+					var textBox = Ember.compare(json.field_type, 'text_box'); // has changed
+					if (textBox != 0) {
+                       savedDoc.fields.push(json);	
+					}							
 				});			
 				
 				// store JSON for all grouped fields
 				$page_div.children(".field_group").children(".field").each(function() {
 					var json = $(this).data("obj").saveJSON();										
-					// store the group id of this field 					
-					json.group_id = $(this).parent().data("id");					
-					savedDoc.fields.push(json);				
+					// store the group id of this field
+					//opting out the text filed
+					var textBox = Ember.compare(json.field_type, 'text_box');  // has changed
+					if (textBox != 0) {
+                      json.group_id = $(this).parent().data("id");					
+					  savedDoc.fields.push(json);		
+					}						
 				});		
 
 				// add group locations to the JSON output

@@ -109,7 +109,7 @@ Box.prototype.addEventHandlers = function($box) {
 			$(this).addClass("selected_field");
 			if (obj.field_type == 'text_box') {
 				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);
-			} else if (obj.field_type == "empty_box") {
+			} else if (obj.field_type == "string") {  // before it was empty_box
 				ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);
 			} else {
 				console.log("error - unsupported field type");
@@ -258,7 +258,7 @@ Box.prototype.loadBoxProp = function() {
 */
 function EmptyBox(json_init, update_init) {
 	Box.call(this, json_init, update_init); // call super constructor.	
-	this.field_type = 'empty_box';
+	this.field_type = 'string';  // before it was empty_box
 }
 
 // subclass extends superclass

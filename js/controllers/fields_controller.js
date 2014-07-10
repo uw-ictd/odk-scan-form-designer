@@ -1158,7 +1158,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					} else if (f_json.field_type == 'bubble') {
 						var bubb_field = new BubbleField(f_json);
 						bubb_field.constructGrid();			
-					} else if (f_json.field_type == 'seg_num') {
+					} else if (f_json.field_type == 'int') {
 						var seg_num_field = new SegNumField(f_json);
 						seg_num_field.constructGrid();			
 					} else if (f_json.field_type == 'string') {  // before it was empty_box
@@ -1296,7 +1296,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// create a new JSON object for each field 
 				$page_div.children(".field").each(function() {
 					var json = $(this).data("obj").saveJSON();
-					console.log(json.field_type);
 					// opting out the text field
 					var textBox = Ember.compare(json.field_type, 'text_box'); // has changed
 					if (textBox != 0) {

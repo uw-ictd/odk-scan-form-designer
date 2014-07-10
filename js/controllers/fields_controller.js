@@ -14,6 +14,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		for (img in images) {
 			image_list.push(images[img]);
 		}
+		console.log(image_list);
 		return image_list;
 	}.property(),
 	defaultImages: function() {

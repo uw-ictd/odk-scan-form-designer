@@ -97,9 +97,10 @@ a {
 
 /* A div container for the ODK Scan doc. */
 .scan_page {
-	border-style: solid;
+	/*border-style: solid;
 	border-color: black;
-	border-width: 0.1rem;
+	border-width: 0.1rem;*/
+	border: none;
 	background-color: white;
 	float: left;
 	margin-left: 15px;

@@ -25,40 +25,43 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		// NOTE: the values div_top and top_left are both set by the function 
 		// addDefaultImages. These values depend on the size of the page they
 		// are added to.
-		
+
+		// NOTE : If any default image gets changed, then we need to adjust 
+		// the orig_height and orig_width and also img_top and img_left
+		// for each four images.
 		var images = {};
 		images.top_left = {img_name: "form",
 							img_src: "default_images/top_left.jpg",
 							img_height: 91,
 							img_width: 91,
-							orig_height: 91,
-							orig_width: 91,
+							orig_height: 310,
+							orig_width: 310,
 							img_top: 0,
 							img_left: 0,};
 		images.top_right = {img_name: "form",
 							img_src: "default_images/top_right.jpg",
 							img_height: 70,
 							img_width: 91,
-							orig_height: 70,
-							orig_width: 91,
+							orig_height: 231,
+							orig_width: 300,
 							img_top: 0,
-							img_left: -568};						
+							img_left: -2420};	// total width of form image - orig_width					
 		images.bottom_left = {img_name: "form",
 							img_src: "default_images/bottom_left.jpg",
 							img_height: 150,
 							img_width: 150,
-							orig_height: 150,
-							orig_width: 150,
-							img_top: -998,
+							orig_height: 480,
+							orig_width: 480,
+							img_top: -3040,  // total height of form image - orig_height
 							img_left: 0};		
 		images.bottom_right = {img_name: "form",
 							img_src: "default_images/bottom_right.jpg",
 							img_height: 71,
 							img_width: 200,
-							orig_height: 71,
-							orig_width: 200,
-							img_top: -1014,
-							img_left: -718};														
+							orig_height: 250,
+							orig_width: 704,
+							img_top: -3270,  // total height of form image - orig_height
+							img_left: -2016};  // total width of form image - orig_width													
 		return images;
 	}.property(),
 	init: function() {
@@ -1068,21 +1071,24 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				
 				// load the image source
 				var img_data = zip.file("images/" + img_json.img_name);
+				//console.log(img_data);
 				var img_src = "data:image/jpeg;base64," + btoa(img_data.asBinary());
-
+               // console.log(img_src);
 				var image = {img_src: img_src, 
 							img_height: img_json.orig_height, 
 							img_width: img_json.orig_width, 
 							top_pos: img_json.img_top,
 							left_pos: img_json.img_left};
-							
+
+					
 				// check if the current zIndex should be updated
 				if (img_json.zIndex > globZIndex.getTopZ()) {
 					globZIndex.setZ(img_json.zIndex + 1);
 				}
 				
 				// load the image into the dom
-				var $img_container = crop_image(image);		
+				var $img_container = crop_image(image);	
+                 //console.log($img_container);
 				var controller = this;
 				html2canvas($img_container, {   
 					logging:true,
@@ -1098,12 +1104,14 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 									img_left: img_json.img_left,
 									div_top: img_json.div_top,
 									div_left: img_json.div_left};
-						var $new_img_div = image_to_field(cropped_image, img_json.zIndex);
+						 var $new_img_div = image_to_field(cropped_image, img_json.zIndex);
+						 console.log(cropped_image);
 						// store a reference to the image that was loaded
 						controller.send("addImageRef", img_json.img_name, img_src);
 						controller.send("loadImages", images, curr_index + 1, curr_directory, zip);
 					}
-				});							
+					
+				});				
 			}
 		},
 		/**

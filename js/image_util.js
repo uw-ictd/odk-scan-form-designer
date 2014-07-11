@@ -62,7 +62,7 @@ var crop_image = function(image) {
 	/*	NOTE: html2canvas requires the DOM elements be loaded into
 		the canvas in order to work correctly, so the image is loaded
 		into the processed_images div.
-	*/
+	*/	
 	$("#processed_images").append($img_container);
 	return $img_container;
 };

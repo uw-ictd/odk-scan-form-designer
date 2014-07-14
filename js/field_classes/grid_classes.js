@@ -243,7 +243,7 @@ GridField.prototype.addEventHandlers = function($grid) {
 		$(".highlighted_group").removeClass("highlighted_group");
 	
 		// check if user pressed control during the click
-		if (event.ctrlKey) {
+		if (event.shiftKey) {  // has changed before it was ctrlKey
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 		
 			// add this field to the set of group fields

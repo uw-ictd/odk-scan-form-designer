@@ -586,6 +586,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			}
 		
 			if (is_name_valid()) {
+				var field_name = $("#field_name").val();
 				var $orig_field = $(".selected_field");
 				var $field_parent = $orig_field.parent();
 				
@@ -607,7 +608,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					
 					// create a new updated field, delete the old one
 					$(".selected_field").data("obj").updateProperties();
-					$orig_field.remove();	
+					$orig_field.remove();
+					
 					
 					// add the selected field back to the group
 					$grouped_fields = $grouped_fields.add($(".selected_field")[0]);
@@ -627,6 +629,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*	Copies the currently selected image/field.
 		*/
 		copySelected: function() {
+			//var copyNo = 1;
 			// if there is not a selected field then do nothing
 			if ($(".selected_field").length == 0) {
 				return;
@@ -636,9 +639,17 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					var selected_field = $(".selected_field").data('obj');
 					selected_field.copyField();		
 					var $new_field = $(".selected_field");
+					
 					// change the name of the new field so it's not a 
 					// duplicate of the original field's name
-					$new_field.data('obj').name += "_copy";
+					var name = $new_field.data('obj').name;  // get the name of the field
+					var copyNo = parseInt(name.substring(name.length - 1));  // get the number of it
+					if (name.indexOf("_copy") == -1) {  // if it is the first copy
+						$new_field.data('obj').name += "_copy" + copyNo;
+					} else {
+                      copyNo = copyNo + 1;  //if it is not the first time copy
+					  $new_field.data('obj').name = name.substring(0, name.length - 1) + copyNo; // + copy++;
+					} 
 					// load properties of the new field into
 					// the properties sidebar
 					$new_field.click();											

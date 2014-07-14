@@ -443,6 +443,8 @@ function CheckboxField(json_init, update_init) {
 			grid_values.push($(this).val());
 		});
 		this.grid_values = grid_values;
+		// checking whether there is a duplicate value or not
+		is_value_valid(this.grid_values);
 	}
 }
 
@@ -544,6 +546,8 @@ function BubbleField(json_init, update_init) {
 			grid_values.push($(this).val());
 		});
 		this.grid_values = grid_values;
+		// checking whether there is a duplicate value or not
+		is_value_valid(this.grid_values);
 	}
 }
 

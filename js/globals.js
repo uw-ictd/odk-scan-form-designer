@@ -91,7 +91,17 @@ var is_name_valid = function() {
 	
 	return name_unique && field_name.length != 0;
 };
-
+/*
+Prompts user with an alert box if the grid values are not unique.*/
+var is_value_valid = function(grid_values) {
+	for (var i = 0; i < grid_values.length; i++) {
+		for(var j = i + 1; j < grid_values.length; j++) {
+	        if(parseInt(grid_values[i]) == parseInt(grid_values[j])) {
+	          alert("You have one or more duplecate Grid Values.");
+	        }
+        }
+	}
+};
 // converts a numeric value to an rem unit
 var rem = function(value) {
 	return parseFloat(value) / 10 + "rem";

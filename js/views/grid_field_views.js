@@ -3,8 +3,9 @@
 *	which contain grids with values (checkboxes and 
 *	fill-in bubbles).
 */
+var count = 1;  // added to keep truck of the value of total element value
 ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
-	gridElements: [[{colIndex: 1, rowIndex: 1, ele_value: "default_val"}]],
+	gridElements: [[{colIndex: 1, rowIndex: 1, ele_value: 1}]],  // has changed, before it was default_val
 	numCol: 1,
 	numRow: 1,
 	prevNumCol: 1,
@@ -17,11 +18,17 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 		// check if numRow increased of decreased
 		if (this.get('numRow') > this.get('prevNumRow')) {
 			// need to add new rows with default values
+			var newOne = this.get('numRow');  // getting the current number of row
+			var newColumn = this.get('numCol');  // getting the current number of column
+			var total = newColumn * newOne;  // calculating total number of elements
+			count = total - newColumn;  // culculating where to start as the ele_value is supposed to be unique
+			
 			var num_new_rows = this.get('numRow') - this.get('prevNumRow');
 			for (var i = this.get('prevNumRow') + 1; i <= this.get('prevNumRow') + num_new_rows; i++) {
 				var new_row = [];
 				for (var j = 1; j <= this.get('numCol'); j++) {
-					new_row.pushObject({colIndex: j, rowIndex: i, ele_value: "default_val"});
+					count = count + 1;  // update count to start with unique value
+					new_row.pushObject({colIndex: j, rowIndex: i, ele_value: count});
 				}
 				value_grid.pushObject(new_row);
 			}
@@ -36,11 +43,20 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 		// check if numCol increased of decreased
 		if (this.get('numCol') > this.get('prevNumCol')) {
 			// need to add new columns with default values
+			var newOne = this.get('numRow');  // getting the current number of row
+			var newColumn = this.get('numCol');  // getting the current number of column
+			 // if the count is less than total number of elements
+			 // then it should start with current number of row * current number of column
+			if(count < newOne * this.get('prevNumCol')) {
+			   count = newOne * this.get('numCol');
+			}
+
 			var num_new_col = this.get('numCol') - this.get('prevNumCol');
 			for (var i = 1; i <= this.get('numRow'); i++) {
 				var curr_row = value_grid[i - 1];
 				for (var j = this.get('prevNumCol') + 1; j <= this.get('prevNumCol') + num_new_col; j++) {
-					curr_row.pushObject({colIndex: j, rowIndex: i, ele_value: "default_val"});
+					count = count + 1;  // update count to start with unique vlaue
+					curr_row.pushObject({colIndex: j, rowIndex: i, ele_value: count});  // has changed, before it was "default_val"
 				}
 			}
 		} else if (this.get('numCol') < this.get('prevNumCol')) {
@@ -74,7 +90,6 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 			this.set('numCol', parseInt(curr_field.num_cols));
 			this.set('prevNumRow', this.get('numRow'));
 			this.set('prevNumCol', this.get('numCol'));
-			
 			var new_grid = [];
 			var arr_index = 0;
 			
@@ -93,8 +108,8 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 			this.set('numRow', 1);
 			this.set('numCol', 1);
 			this.set('prevNumRow', 1);
-			this.set('prevNumCol', 1);				
-			this.set('gridElements', [[{colIndex: 1, rowIndex: 1, ele_value: "default_val"}]]);						
+			this.set('prevNumCol', 1);	
+			this.set('gridElements', [[{colIndex: 1, rowIndex: 1, ele_value: 1}]]);  // has changed, it was default_val				
 		}
 	},
 	focusOut: function() {

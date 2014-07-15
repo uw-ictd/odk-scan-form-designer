@@ -26,7 +26,7 @@ function FieldGroup($grouped_fields, top_pos, left_pos) {
 	
 	this.addEventHandlers(this.$group_div);					
 	this.adjustGroupSize();						
-
+    console.log(left_pos);
 	// check if position parameters were passed in
 	if (top_pos != null && left_pos != null) {
 		this.$group_div.css("top", rem(top_pos));
@@ -106,7 +106,36 @@ FieldGroup.prototype.copyField = function() {
 			
 			// set name of new field
 			var $field_copy = $(".selected_field");
-			$field_copy.data("obj").name += "_copy";
+			//$field_copy.data("obj").name += "_copy";
+
+			var name = $field_copy.data('obj').name;  // get the name of the field
+			var copyNo;
+			var index;
+			if(name != undefined) {
+				var re = new RegExp("^.+?\\d$");
+				if(re.test(name)) {
+					if(name.match("_copy[0-9]+") != null){
+						var copyNumbers = name.match("_copy[0-9]+");
+						var copy = copyNumbers[0].match("[0-9]+");
+						copyNo = parseInt(copy[0]);
+						index = name.indexOf(copyNumbers[0]) + 5;
+					} else{
+					  var numbers = name.match("[0-9]+");
+					  index = name.indexOf(numbers[0]);
+					  copyNo = parseInt(numbers[0]);
+					}
+				} else {
+				  copyNo = 1;
+				}
+				
+				if (name.indexOf("_copy") == -1) {  // if it is the first copy
+				  $field_copy.data('obj').name += "_copy" + copyNo;
+				} else {
+	              copyNo = copyNo + 1;  //if it is not the first time copy
+				  $field_copy.data('obj').name = name.substring(0, index) + copyNo; // + copy++;
+				}
+			}
+
 			
 			// set position of new field
 			$new_group.append($field_copy);
@@ -131,6 +160,7 @@ FieldGroup.prototype.copyField = function() {
 	$(".selected_field").removeClass("selected_field");	
 	$new_group.addClass("selected_field");
 	$new_group.css({left: rem(0), top: rem(0)});
+	//$new_group.css({left: rem($curr_copy.css("left")), top: rem($curr_copy.css("top"))});
 }
 
 /**
@@ -201,10 +231,13 @@ FieldGroup.prototype.getFields = function() {
 FieldGroup.prototype.adjustGroupSize = function() {
 	// get position bounds of the selected fields
 	var min_top = FieldGroup.minTop(this.$grouped_fields);
+	//console.log("min_top: "+min_top);
 	var min_left = FieldGroup.minLeft(this.$grouped_fields);
+	//console.log("min_left: "+min_left);
 	var max_bottom = FieldGroup.maxBottom(this.$grouped_fields);
+	//console.log("max_bottom: "+max_bottom);
 	var max_right = FieldGroup.maxRight(this.$grouped_fields);
-	
+	//console.log("max_right: "+max_right);
 	this.$group_div.css("width", rem(max_right - min_left));
 	this.$group_div.css("height", rem(max_bottom - min_top));
 	
@@ -212,9 +245,16 @@ FieldGroup.prototype.adjustGroupSize = function() {
 	// container at the top-left of the page
 	this.$grouped_fields.each(function() {
 		var curr_top = parseInt($(this).css("top"));
+		//console.log("curr_top: "+curr_top);
 		var curr_left = parseInt($(this).css("left"));
+		//console.log("curr_left: "+curr_left);
 		$(this).css("top", rem(curr_top - min_top));
 		$(this).css("left", rem(curr_left - min_left));
+
+        //$(this).css("top", rem(max_bottom - 100));
+		//$(this).css("left", rem(curr_left));
+		//console.log("modified_top: "+ $(this).css("top"));
+		//console.log("modified_left: "+$(this).css("left"));
 	});
 	
 	this.$group_div.css({top: rem(min_top), left: rem(min_left)});

@@ -25,6 +25,9 @@ function Box(json_init, update_init) {
 		this.name = json_init.name;
 		this.label = json_init.label;
 		this.verify = json_init.verify; //changing it before it was field_priority
+		console.log("actual left "+this.$box.position().left);
+		console.log("actual top "+this.$box.position().top);
+
 	} else {	
 		if (update_init) {
 			// invoked from Update Field button
@@ -161,8 +164,10 @@ Box.prototype.getFieldJSON = function() {
 	f_info.segments = [];
 
 	var seg = {};
+	console.log("left: "+this.$box.position().left);
 	seg.segment_x = this.$box.position().left;
 	seg.segment_y = this.$box.position().top;
+	console.log("top: "+this.$box.position().top);
 	seg.segment_width = this.$box.outerWidth();
 	seg.segment_height = this.$box.outerHeight();
 	
@@ -177,7 +182,9 @@ Box.prototype.getFieldJSON = function() {
 Box.prototype.getProperties = function() {
 	var json = {};
 	json.left = this.$box.css('left');
+	console.log("left: "+this.$box.css('left'));
 	json.top = this.$box.css('top');
+	console.log("top: "+this.$box.css('top'));
 	json.box_width = this.$box.css('width');
 	json.box_height = this.$box.css('height');
 	json.border_width = this.border_width;	

@@ -643,13 +643,33 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					// change the name of the new field so it's not a 
 					// duplicate of the original field's name
 					var name = $new_field.data('obj').name;  // get the name of the field
-					var copyNo = parseInt(name.substring(name.length - 1));  // get the number of it
-					if (name.indexOf("_copy") == -1) {  // if it is the first copy
-						$new_field.data('obj').name += "_copy" + copyNo;
-					} else {
-                      copyNo = copyNo + 1;  //if it is not the first time copy
-					  $new_field.data('obj').name = name.substring(0, name.length - 1) + copyNo; // + copy++;
-					} 
+					var copyNo;
+					var index;
+					if(name != undefined) {
+						var re = new RegExp("^.+?\\d$");
+						if(re.test(name)) {
+							if(name.match("_copy[0-9]+") != null){
+								var copyNumbers = name.match("_copy[0-9]+");
+								var copy = copyNumbers[0].match("[0-9]+");
+								copyNo = parseInt(copy[0]);
+								index = name.indexOf(copyNumbers[0]) + 5;
+							} else{
+							  var numbers = name.match("[0-9]+");
+							  index = name.indexOf(numbers[0]);
+							  copyNo = parseInt(numbers[0]);
+							}
+						} else {
+						  copyNo = 1;
+						}
+						
+						if (name.indexOf("_copy") == -1) {  // if it is the first copy
+						  $new_field.data('obj').name += "_copy" + copyNo;
+						} else {
+			              copyNo = copyNo + 1;  //if it is not the first time copy
+						  $new_field.data('obj').name = name.substring(0, index) + copyNo; // + copy++;
+						}
+					}
+
 					// load properties of the new field into
 					// the properties sidebar
 					$new_field.click();											
@@ -1116,7 +1136,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 									div_top: img_json.div_top,
 									div_left: img_json.div_left};
 						 var $new_img_div = image_to_field(cropped_image, img_json.zIndex);
-						 console.log(cropped_image);
+						 //console.log(cropped_image);
 						// store a reference to the image that was loaded
 						controller.send("addImageRef", img_json.img_name, img_src);
 						controller.send("loadImages", images, curr_index + 1, curr_directory, zip);
@@ -1442,7 +1462,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			for (var j = 0; j < all_fields.length; j++) {
 				var $curr_field = $(all_fields[j]);	
 				var fieldObj = $curr_field.data("obj");
-				console.log(fieldObj);
+				//console.log(fieldObj);
 				var textBox = Ember.compare(fieldObj.field_type, 'text_box');
 				// If it is a text field, it does not add the JSON data to the 
 				// exported file
@@ -1455,7 +1475,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			for (var j = 0; j < all_grouped_fields.length; j++) {
 				var $curr_field = $(all_grouped_fields[j]);			
 				  var fieldObj = $curr_field.data("obj");
-				  console.log(fieldObj);
+				  //console.log(fieldObj);
 				  var textBox = Ember.compare(fieldObj.field_type, 'text_box');
 				// If it is a text field, it does not add the JSON data to the 
 				// exported file	

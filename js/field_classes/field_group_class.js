@@ -126,6 +126,9 @@ FieldGroup.prototype.copyField = function() {
 					  var numbers = name.match("[0-9]+");
 					  index = name.indexOf(numbers[0]);
 					  copyNo = parseInt(numbers[0]);
+					  if(copyNo > 1) {  // if it is not the first field
+					    copyNo = 1;
+					  }
 					}
 				} else { // if the user inputs any name without number
 				  copyNo = 1;

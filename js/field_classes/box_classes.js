@@ -114,7 +114,9 @@ Box.prototype.addEventHandlers = function($box) {
 				ODKScan.FieldContainer.pushObject(ODKScan.TextBoxView);
 			} else if (obj.field_type == "string") {  // before it was empty_box
 				ODKScan.FieldContainer.pushObject(ODKScan.EmptyBoxView);
-			} else {
+			} else if (obj.field_type == "qr_code") {
+                 ODKScan.FieldContainer.pushObject(ODKScan.QrCodeView);
+			}else {
 				console.log("error - unsupported field type");
 			}		
 		}
@@ -164,10 +166,10 @@ Box.prototype.getFieldJSON = function() {
 	f_info.segments = [];
 
 	var seg = {};
-	console.log("left: "+this.$box.position().left);
-	seg.segment_x = this.$box.position().left;
-	seg.segment_y = this.$box.position().top;
-	console.log("top: "+this.$box.position().top);
+	// very left of the entire page - scan page
+	seg.segment_x = ($('.field.box').offset().left) - ($('.scan_page').offset().left);
+	seg.segment_y = ($('.field.box').offset().top) - ($('.scan_page').offset().top);
+	
 	seg.segment_width = this.$box.outerWidth();
 	seg.segment_height = this.$box.outerHeight();
 	
@@ -296,6 +298,42 @@ EmptyBox.prototype.saveJSON = function() {
 	return this.getProperties();
 }
 
+//==============================================================================================================
+function QrCode(json_init, update_init) {
+	Box.call(this, json_init, update_init); // call super constructor.	
+	this.field_type = 'qr_code';// before it was empty_box
+	this.type = "qrcode";										
+}
+
+// subclass extends superclass
+QrCode.prototype = Object.create(Box.prototype);
+QrCode.prototype.constructor = QrCode;
+
+/* 	Loads the properties of the empty box into 
+	the properties toolbar.
+*/
+QrCode.prototype.loadProperties = function() {
+	// load properties that are common to all Box fields
+	this.loadBoxProp();
+}
+
+/*	Creates a new empty box field with the updated
+	properties listed in the properties sidebar.
+*/
+QrCode.prototype.updateProperties = function() {
+	var qr_code = new QrCode(null, this.getProperties());
+	qr_code.constructBox();	
+}
+
+/*	Returns JSON containing DOM properties
+	of this empty box, formatted for saving 
+	the document.
+*/
+QrCode.prototype.saveJSON = function() {
+	return this.getProperties();
+}
+
+//==================================================================================================================
 /*	Represents a text box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field

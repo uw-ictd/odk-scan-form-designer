@@ -102,6 +102,7 @@
 					<a class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 						<li><a {{action 'createBox'}}>Text Box</a></li>
+						<li><a {{action 'createCode'}}>QR Code</a></li>
 						<li><a {{action 'createText'}}>Text</a></li>
 						<li><a {{action 'createCheckbox'}}>Checkboxes</a></li>
 						<li><a {{action 'createBubbles'}}>Fill-in bubbles</a></li>
@@ -188,6 +189,7 @@
 		
 		<!-- the dialog menu html is separated and included below to keep the code more modular -->
 		{{partial 'emptyBoxDialog'}}
+		{{partial 'qrCodeDialog'}}
 		{{partial 'textBoxDialog'}}
 		{{partial 'cbDialog'}}
 		{{partial 'bubbleDialog'}}
@@ -306,6 +308,13 @@
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="empty-box-view">
+		{{view AttributeOptions}}
+		<hr class="horz_divider">
+		{{view BorderOptions viewName='bdOptions'}}
+		{{view PriorityOptions}}
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="qr-code-view">
 		{{view AttributeOptions}}
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
@@ -442,6 +451,12 @@
 			{{/view}}
 		</div>
 	</script>
+	<script type="text/x-handlebars" data-template-name="_qrCodeDialog">
+		<div id="qrCode_dialog" title="Create qr Code field">		
+			{{#view ODKScan.QrCodeContainer}}		
+			{{/view}}	
+		</div>
+	</script>
 	
 	<script type="text/x-handlebars" data-template-name="_textBoxDialog">
 		<div id="text_dialog" title="Create text field">		
@@ -449,6 +464,7 @@
 			{{/view}}	
 		</div>
 	</script>	
+		
 	
 	<script type="text/x-handlebars" data-template-name="_cbDialog">
 		<div id="checkbox_dialog" title="Create checkboxes">

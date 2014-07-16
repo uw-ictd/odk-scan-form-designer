@@ -10,6 +10,9 @@
 ODKScan.EmptyBoxView = ODKScan.FieldViewController.create({
 	templateName: 'empty-box-view'
 });
+ODKScan.QrCodeView = ODKScan.FieldViewController.create({
+	templateName: 'qr-code-view'
+});
 
 ODKScan.TextBoxView = ODKScan.FieldViewController.create({
 	templateName: 'textbox-view'

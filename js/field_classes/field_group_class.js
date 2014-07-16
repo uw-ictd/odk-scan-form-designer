@@ -25,13 +25,13 @@ function FieldGroup($grouped_fields, top_pos, left_pos) {
 								grid: [GRID_X, GRID_Y]});
 	
 	this.addEventHandlers(this.$group_div);					
-	this.adjustGroupSize();						
+	this.adjustGroupSize();  // just commented it 					
     console.log(left_pos);
 	// check if position parameters were passed in
 	if (top_pos != null && left_pos != null) {
 		this.$group_div.css("top", rem(top_pos));
 		this.$group_div.css("left", rem(left_pos));
-	}	
+	}
 }
 
 /**
@@ -109,29 +109,32 @@ FieldGroup.prototype.copyField = function() {
 			//$field_copy.data("obj").name += "_copy";
 
 			var name = $field_copy.data('obj').name;  // get the name of the field
-			var copyNo;
-			var index;
-			if(name != undefined) {
+			var copyNo; // tracking number of copy
+			var index; // index to append the tracking number of copy
+			if(name != undefined) { // if the name contains number
 				var re = new RegExp("^.+?\\d$");
 				if(re.test(name)) {
-					if(name.match("_copy[0-9]+") != null){
+					if(name.match("_copy[0-9]+") != null) {  // if is a copy of copied one
+						// getting the substring that matches the regex
 						var copyNumbers = name.match("_copy[0-9]+");
+						// getting the substring of actual copy number
 						var copy = copyNumbers[0].match("[0-9]+");
-						copyNo = parseInt(copy[0]);
+						copyNo = parseInt(copy[0]);  // parse the number to int
+						// getting the index to appending the number of copy
 						index = name.indexOf(copyNumbers[0]) + 5;
-					} else{
+					} else {   // if it is the first copy
 					  var numbers = name.match("[0-9]+");
 					  index = name.indexOf(numbers[0]);
 					  copyNo = parseInt(numbers[0]);
 					}
-				} else {
+				} else { // if the user inputs any name without number
 				  copyNo = 1;
 				}
 				
 				if (name.indexOf("_copy") == -1) {  // if it is the first copy
-				  $field_copy.data('obj').name += "_copy" + copyNo;
+				  $field_copy.data('obj').name += "_copy" + copyNo; // appending _copy to the name
 				} else {
-	              copyNo = copyNo + 1;  //if it is not the first time copy
+	              copyNo = copyNo + 1;  // incrementing the copy number
 				  $field_copy.data('obj').name = name.substring(0, index) + copyNo; // + copy++;
 				}
 			}
@@ -160,7 +163,6 @@ FieldGroup.prototype.copyField = function() {
 	$(".selected_field").removeClass("selected_field");	
 	$new_group.addClass("selected_field");
 	$new_group.css({left: rem(0), top: rem(0)});
-	//$new_group.css({left: rem($curr_copy.css("left")), top: rem($curr_copy.css("top"))});
 }
 
 /**
@@ -229,35 +231,45 @@ FieldGroup.prototype.getFields = function() {
 *	Sets the group container to the appropriate size.
 */
 FieldGroup.prototype.adjustGroupSize = function() {
-	// get position bounds of the selected fields
+	//get position bounds of the selected fields
 	var min_top = FieldGroup.minTop(this.$grouped_fields);
-	//console.log("min_top: "+min_top);
+	console.log("min_top: "+min_top);
+	
 	var min_left = FieldGroup.minLeft(this.$grouped_fields);
-	//console.log("min_left: "+min_left);
+	console.log("min_left: "+min_left);
+
 	var max_bottom = FieldGroup.maxBottom(this.$grouped_fields);
-	//console.log("max_bottom: "+max_bottom);
+	console.log("max_bottom: "+max_bottom);
+
 	var max_right = FieldGroup.maxRight(this.$grouped_fields);
-	//console.log("max_right: "+max_right);
+	console.log("max_right: "+max_right);
+
+	
 	this.$group_div.css("width", rem(max_right - min_left));
 	this.$group_div.css("height", rem(max_bottom - min_top));
+	//this.$group_div.css("position", "relative");  // i have addded, I have commented
 	
 	// re-position all fields to align with the group
 	// container at the top-left of the page
 	this.$grouped_fields.each(function() {
 		var curr_top = parseInt($(this).css("top"));
-		//console.log("curr_top: "+curr_top);
+		console.log("curr_top: "+curr_top);
 		var curr_left = parseInt($(this).css("left"));
-		//console.log("curr_left: "+curr_left);
-		$(this).css("top", rem(curr_top - min_top));
-		$(this).css("left", rem(curr_left - min_left));
+		console.log("curr_left: "+curr_left);
 
-        //$(this).css("top", rem(max_bottom - 100));
-		//$(this).css("left", rem(curr_left));
-		//console.log("modified_top: "+ $(this).css("top"));
-		//console.log("modified_left: "+$(this).css("left"));
+		$(this).css("top", rem(curr_top - min_top));  // before, I have commented
+		$(this).css("left", rem(curr_left - min_left));  // before, I have commented
+
+        //$(this).css("top", rem(curr_top));  // I have added
+		//$(this).css("left", rem(curr_left)); // i have added
+		//$(this).css("position", "absolute"); //i have added
+
+		console.log("modified_top: "+ $(this).css("top"));
+		console.log("modified_left: "+$(this).css("left"));
 	});
 	
 	this.$group_div.css({top: rem(min_top), left: rem(min_left)});
+
 };
 
 /**

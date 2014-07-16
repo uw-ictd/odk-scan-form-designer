@@ -207,7 +207,30 @@ $(document).ready(function() {
 				$("#text_dialog").dialog("close");
 			}
 		}
-	});			
+	});	
+	//======================================================================================
+	$("#qrCode_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		buttons: {
+			"Ok": function() {
+				if (is_name_valid()) {		
+					var qr_code = new QrCode();
+					qr_code.constructBox();
+					
+					ODKScan.QrCodeContainer.popObject();
+					ODKScan.FieldContainer.popObject();
+					ODKScan.FieldContainer.pushObject(ODKScan.QrCodeView);					
+					$("#qrCode_dialog").dialog("close");
+				}
+			},
+			"Cancel": function() {
+				ODKScan.QrCodeContainer.popObject();
+				$("#qrCode_dialog").dialog("close");
+			}
+		}
+	});	
+	//======================================================================================		
 	
 	$("#form_num_dialog").dialog({
 		autoOpen: false,

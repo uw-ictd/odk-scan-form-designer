@@ -383,7 +383,7 @@ input[type=text], input[type=number] {
 	border-radius: 1.3rem;
 }
 
-.num_div {
+.num_div ,.form_num_div{
 	display: inline-block;
 	border-style: solid;
 	border-color: black;

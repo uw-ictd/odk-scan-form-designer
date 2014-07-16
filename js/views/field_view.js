@@ -14,7 +14,7 @@ ODKScan.FieldViewController = Ember.View.extend({
 	// contains global counts for each field type
 	// NOTE: add new field types here
 	idCounts: {checkbox: 1, bubble: 1, seg_num: 1,
-				box: 1, text: 1, form_num: 1},
+				box: 1, code: 1, text: 1, form_num: 1},
 	didInsertElement: function() {	
 		/* 	If there is currently a selected field then the user 
 			clicked on a field in the current page, load its 
@@ -71,7 +71,13 @@ ODKScan.FieldViewController = Ember.View.extend({
 				Ember.set(idCounts, "box", curr_count + 1);
 				
 				$("#box_dialog").dialog("open");
-			} else if (new_field_type == 'text_box') {
+			} else if(new_field_type == 'qr_code') {   // added for qr code
+               var curr_count = idCounts['code'];
+			   $("#field_name").val("qrCode" + curr_count);
+			   Ember.set(idCounts, "code", curr_count + 1);
+
+			   $("#qrCode_dialog").dialog("open");
+			}else if (new_field_type == 'text_box') {
 				var curr_count = this.get("idCounts")['text'];
 				$("#field_name").val("text" + curr_count);
 				Ember.set(idCounts, "text", curr_count + 1);

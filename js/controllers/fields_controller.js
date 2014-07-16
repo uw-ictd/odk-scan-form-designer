@@ -510,7 +510,17 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
 			ODKScan.EmptyBoxContainer.pushObject(ODKScan.EmptyBoxView);
 			$(".selected_field").removeClass("selected_field");
+			
 		},
+		//==============================================================================
+		createCode: function() {
+			this.set('newFieldType', 'qr_code');  // before it was empty_box
+			ODKScan.FieldContainer.popObject();
+			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);		
+			ODKScan.QrCodeContainer.pushObject(ODKScan.QrCodeView);
+			$(".selected_field").removeClass("selected_field");
+		},
+		//===============================================================================
 		/**
 		*	Triggers the FieldViewController (which CheckboxView extends) 
 		*	to open the dialog for creating new checkboxes. The dialog is not 
@@ -643,29 +653,32 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					// change the name of the new field so it's not a 
 					// duplicate of the original field's name
 					var name = $new_field.data('obj').name;  // get the name of the field
-					var copyNo;
-					var index;
+					var copyNo;  // tracking number of copy
+					var index;  // index to append the tracking number of copy
 					if(name != undefined) {
 						var re = new RegExp("^.+?\\d$");
-						if(re.test(name)) {
-							if(name.match("_copy[0-9]+") != null){
+						if(re.test(name)) {  // if the name contains number
+							if(name.match("_copy[0-9]+") != null){  // if is a copy of copied one
+								// getting the substring that matches the regex
 								var copyNumbers = name.match("_copy[0-9]+");
+								// getting the substring of actual copy number
 								var copy = copyNumbers[0].match("[0-9]+");
-								copyNo = parseInt(copy[0]);
+								copyNo = parseInt(copy[0]);  // parse the number to int
+								// getting the index to appending the number of copy
 								index = name.indexOf(copyNumbers[0]) + 5;
-							} else{
+							} else {  // if it is the first copy
 							  var numbers = name.match("[0-9]+");
 							  index = name.indexOf(numbers[0]);
 							  copyNo = parseInt(numbers[0]);
 							}
-						} else {
+						} else {  // if the user inputs any name without number
 						  copyNo = 1;
 						}
 						
 						if (name.indexOf("_copy") == -1) {  // if it is the first copy
-						  $new_field.data('obj').name += "_copy" + copyNo;
+						  $new_field.data('obj').name += "_copy" + copyNo;  // appending _copy to the name
 						} else {
-			              copyNo = copyNo + 1;  //if it is not the first time copy
+			              copyNo = copyNo + 1;  // incrementing the copy number
 						  $new_field.data('obj').name = name.substring(0, index) + copyNo; // + copy++;
 						}
 					}
@@ -1204,7 +1217,10 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					} else if (f_json.field_type == 'string') {  // before it was empty_box
 						var empty_box = new EmptyBox(f_json);
 						empty_box.constructBox();		
-					} else if (f_json.field_type == 'text_box') {
+					} else if(f_json.field_type == 'qr_code') { 
+						var qr_code = new QrCode(f_json);
+						qr_code.constructBox();	
+					}else if (f_json.field_type == 'text_box') {
 						var text_box = new TextBox(f_json);
 						text_box.constructBox();	
 					} else if (f_json.field_type == 'form_num') {

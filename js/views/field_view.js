@@ -77,7 +77,7 @@ ODKScan.FieldViewController = Ember.View.extend({
 			   Ember.set(idCounts, "code", curr_count + 1);
 
 			   $("#qrCode_dialog").dialog("open");
-			}else if (new_field_type == 'text_box') {
+			} else if (new_field_type == 'text_box') {
 				var curr_count = this.get("idCounts")['text'];
 				$("#field_name").val("text" + curr_count);
 				Ember.set(idCounts, "text", curr_count + 1);

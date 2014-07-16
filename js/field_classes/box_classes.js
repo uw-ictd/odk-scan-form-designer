@@ -184,9 +184,9 @@ Box.prototype.getFieldJSON = function() {
 Box.prototype.getProperties = function() {
 	var json = {};
 	json.left = this.$box.css('left');
-	console.log("left: "+this.$box.css('left'));
+	//console.log("left: "+this.$box.css('left'));
 	json.top = this.$box.css('top');
-	console.log("top: "+this.$box.css('top'));
+	//console.log("top: "+this.$box.css('top'));
 	json.box_width = this.$box.css('width');
 	json.box_height = this.$box.css('height');
 	json.border_width = this.border_width;	

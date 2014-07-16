@@ -669,7 +669,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 							} else {  // if it is the first copy
 							  var numbers = name.match("[0-9]+");
 							  index = name.indexOf(numbers[0]);
-							  copyNo = parseInt(numbers[0]);
+							  copyNo = parseInt(numbers[0]); // parsing the number
 							  if(copyNo > 1) {  // if it is not the first field
 							  	copyNo = 1;
 							  }

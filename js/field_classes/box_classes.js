@@ -298,7 +298,10 @@ EmptyBox.prototype.saveJSON = function() {
 	return this.getProperties();
 }
 
-//==============================================================================================================
+/*	Represents a qr code box field.
+	json_init: JSON 	// initialization values that come from a JSON file
+	update_init: JSON 	// initialization values that come from updating the field
+*/
 function QrCode(json_init, update_init) {
 	Box.call(this, json_init, update_init); // call super constructor.	
 	this.field_type = 'qr_code';// before it was empty_box
@@ -309,7 +312,7 @@ function QrCode(json_init, update_init) {
 QrCode.prototype = Object.create(Box.prototype);
 QrCode.prototype.constructor = QrCode;
 
-/* 	Loads the properties of the empty box into 
+/* 	Loads the properties of the qr code box into 
 	the properties toolbar.
 */
 QrCode.prototype.loadProperties = function() {
@@ -317,7 +320,7 @@ QrCode.prototype.loadProperties = function() {
 	this.loadBoxProp();
 }
 
-/*	Creates a new empty box field with the updated
+/*	Creates a new qr code box field with the updated
 	properties listed in the properties sidebar.
 */
 QrCode.prototype.updateProperties = function() {
@@ -326,14 +329,12 @@ QrCode.prototype.updateProperties = function() {
 }
 
 /*	Returns JSON containing DOM properties
-	of this empty box, formatted for saving 
+	of this qr code box, formatted for saving 
 	the document.
 */
 QrCode.prototype.saveJSON = function() {
 	return this.getProperties();
 }
-
-//==================================================================================================================
 /*	Represents a text box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field

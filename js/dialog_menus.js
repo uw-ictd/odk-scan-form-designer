@@ -208,7 +208,7 @@ $(document).ready(function() {
 			}
 		}
 	});	
-	//======================================================================================
+
 	$("#qrCode_dialog").dialog({
 		autoOpen: false,
 		modal: true,
@@ -229,8 +229,7 @@ $(document).ready(function() {
 				$("#qrCode_dialog").dialog("close");
 			}
 		}
-	});	
-	//======================================================================================		
+	});			
 	
 	$("#form_num_dialog").dialog({
 		autoOpen: false,

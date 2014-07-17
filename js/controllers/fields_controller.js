@@ -512,7 +512,12 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			$(".selected_field").removeClass("selected_field");
 			
 		},
-		//==============================================================================
+		/**
+		*	Triggers the FieldViewController (which QrCodeView extends) 
+		*	to open the dialog for creating new qr code boxes. The dialog is not 
+		*	opened directly here because its content is being added to 
+		*	dialog page and therefore has not loaded yet.
+		*/	
 		createCode: function() {
 			this.set('newFieldType', 'qr_code');  // before it was empty_box
 			ODKScan.FieldContainer.popObject();
@@ -520,7 +525,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			ODKScan.QrCodeContainer.pushObject(ODKScan.QrCodeView);
 			$(".selected_field").removeClass("selected_field");
 		},
-		//===============================================================================
 		/**
 		*	Triggers the FieldViewController (which CheckboxView extends) 
 		*	to open the dialog for creating new checkboxes. The dialog is not 
@@ -1355,11 +1359,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// create a new JSON object for each field 
 				$page_div.children(".field").each(function() {
 					var json = $(this).data("obj").saveJSON();
-					// opting out the text field
-					var textBox = Ember.compare(json.field_type, 'text_box'); // has changed
-					if (textBox != 0) {
-                       savedDoc.fields.push(json);	
-					}							
+                    savedDoc.fields.push(json);					
 				});			
 				
 				// store JSON for all grouped fields

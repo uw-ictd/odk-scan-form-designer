@@ -322,19 +322,11 @@ GridField.prototype.getFieldJSON = function() {
 	f_info.segments = [];
 
 	var seg = {};
-	//this.$grid_div.position().left;
-	//this.$grid_div.position().top;
+	
 	//added, very left from entire page - scan page
-	if(this.field_type == "bubble") {
-		seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
-	    seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
-	} else if (this.field_type == "int") {
-		seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
-		seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
-	} else {
-		seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
-		seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
-	}
+	seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
+	seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
+	
 	seg.segment_width = this.$grid_div.outerWidth();
 	seg.segment_height = this.$grid_div.outerHeight();
 	seg.align_segment = false;

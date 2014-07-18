@@ -367,7 +367,7 @@ function FormNumField(json_init, update_init) {
 	this.field_type = 'form_num';
 	
 	// set the grid class
-	this.grid_class = 'form_num_div';
+	this.grid_class = 'num_div';
 	
 	// TODO: find out what these values should actually be
 	this.type = 'string';		

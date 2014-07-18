@@ -168,18 +168,9 @@ Box.prototype.getFieldJSON = function() {
 
 	var seg = {};
 	// very left of the entire page - scan page
-	if (this.type == 'qrcode') {
-        seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
-        seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
-
-	} else if(this.type == 'string'){
-	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
-        seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
-
-	}
-
-	console.log(seg.segment_x);
-    console.log(seg.segment_y);
+	
+    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
+    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
 
 	seg.segment_width = this.$box.outerWidth();
 	seg.segment_height = this.$box.outerHeight();

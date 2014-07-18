@@ -150,6 +150,7 @@ Box.prototype.constructBox = function() {
 	$(".selected_field").removeClass("selected_field");
 	this.$box.addClass("selected_field");
 	$(".selected_page").append(this.$box);
+	
 };
 
 /*	Returns JSON containing DOM properties
@@ -167,9 +168,19 @@ Box.prototype.getFieldJSON = function() {
 
 	var seg = {};
 	// very left of the entire page - scan page
-	seg.segment_x = ($('.field.box').offset().left) - ($('.scan_page').offset().left);
-	seg.segment_y = ($('.field.box').offset().top) - ($('.scan_page').offset().top);
-	
+	if (this.type == 'qrcode') {
+        seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
+        seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
+
+	} else if(this.type == 'string'){
+	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
+        seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
+
+	}
+
+	console.log(seg.segment_x);
+    console.log(seg.segment_y);
+
 	seg.segment_width = this.$box.outerWidth();
 	seg.segment_height = this.$box.outerHeight();
 	
@@ -297,15 +308,12 @@ EmptyBox.prototype.updateProperties = function() {
 EmptyBox.prototype.saveJSON = function() {
 	return this.getProperties();
 }
-
-/*	Represents a qr code box field.
-	json_init: JSON 	// initialization values that come from a JSON file
-	update_init: JSON 	// initialization values that come from updating the field
-*/
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function QrCode(json_init, update_init) {
-	Box.call(this, json_init, update_init); // call super constructor.	
+	Box.call(this, json_init, update_init); // call super constructor.
+	this.type = 'qrcode';
 	this.field_type = 'qr_code';// before it was empty_box
-	this.type = "qrcode";										
+	this.grid_class = 'test'					
 }
 
 // subclass extends superclass
@@ -313,28 +321,29 @@ QrCode.prototype = Object.create(Box.prototype);
 QrCode.prototype.constructor = QrCode;
 
 /* 	Loads the properties of the qr code box into 
-	the properties toolbar.
-*/
+	the properties toolbar.*/
+
 QrCode.prototype.loadProperties = function() {
 	// load properties that are common to all Box fields
 	this.loadBoxProp();
 }
 
-/*	Creates a new qr code box field with the updated
-	properties listed in the properties sidebar.
-*/
+/*Creates a new qr code box field with the updated
+properties listed in the properties sidebar.*/
+
 QrCode.prototype.updateProperties = function() {
 	var qr_code = new QrCode(null, this.getProperties());
 	qr_code.constructBox();	
 }
 
-/*	Returns JSON containing DOM properties
+/*Returns JSON containing DOM properties
 	of this qr code box, formatted for saving 
-	the document.
-*/
+	the document.*/
 QrCode.prototype.saveJSON = function() {
 	return this.getProperties();
 }
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*	Represents a text box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field

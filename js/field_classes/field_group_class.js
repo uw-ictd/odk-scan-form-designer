@@ -236,16 +236,10 @@ FieldGroup.prototype.getFields = function() {
 FieldGroup.prototype.adjustGroupSize = function() {
 	//get position bounds of the selected fields
 	var min_top = FieldGroup.minTop(this.$grouped_fields);
-	console.log("min_top: "+min_top);
-	
 	var min_left = FieldGroup.minLeft(this.$grouped_fields);
-	console.log("min_left: "+min_left);
-
 	var max_bottom = FieldGroup.maxBottom(this.$grouped_fields);
-	console.log("max_bottom: "+max_bottom);
-
 	var max_right = FieldGroup.maxRight(this.$grouped_fields);
-	console.log("max_right: "+max_right);
+
 
 	
 	this.$group_div.css("width", rem(max_right - min_left));
@@ -256,19 +250,9 @@ FieldGroup.prototype.adjustGroupSize = function() {
 	// container at the top-left of the page
 	this.$grouped_fields.each(function() {
 		var curr_top = parseInt($(this).css("top"));
-		console.log("curr_top: "+curr_top);
 		var curr_left = parseInt($(this).css("left"));
-		console.log("curr_left: "+curr_left);
-
 		$(this).css("top", rem(curr_top - min_top));  // before, I have commented
 		$(this).css("left", rem(curr_left - min_left));  // before, I have commented
-
-        //$(this).css("top", rem(curr_top));  // I have added
-		//$(this).css("left", rem(curr_left)); // i have added
-		//$(this).css("position", "absolute"); //i have added
-
-		console.log("modified_top: "+ $(this).css("top"));
-		console.log("modified_left: "+$(this).css("left"));
 	});
 	
 	this.$group_div.css({top: rem(min_top), left: rem(min_left)});

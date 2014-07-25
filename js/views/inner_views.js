@@ -34,13 +34,17 @@ Ember.RadioButton1 = Ember.View.extend({
     	if (this.$().val() == "1") {
          // seeting up the value for Json field verify
            $("#verified").val("Yes");
+           ok = true;
+           
     	} else {
            $("#verified").val("No");
-    	} 
+           ok = false;
+    	}
     	this.set("selection", this.$().val());
-    },
+    	
+    }.observes('selection'),
     checked : function() {
-    	return this.get("value") === this.get("selection");
+    	return this.get("value") == this.get("selection");
     }.property('selection')
    
 });

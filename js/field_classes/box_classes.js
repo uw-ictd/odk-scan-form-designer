@@ -304,7 +304,7 @@ function QrCode(json_init, update_init) {
 	Box.call(this, json_init, update_init); // call super constructor.
 	this.type = 'qrcode';
 	this.field_type = 'qr_code';// before it was empty_box
-	this.grid_class = 'test'					
+	//this.grid_class = 'test'					
 }
 
 // subclass extends superclass

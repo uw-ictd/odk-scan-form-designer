@@ -259,9 +259,9 @@
 	</script>-->
 
 	<script type="text/x-handlebars" data-template-name="priority-view">
-		<label for="fieldOption">Verify Field?</label>
+		<label for="name">Verify Field?</label>
 			<label id="verified">
-				{{view Ember.RadioButton1 type="radio" viewName="fieldYesView" name="fieldOption" value="1" selection="1"}} Yes	
+				{{view Ember.RadioButton1 type="radio" viewName="fieldYesView" name="fieldOption" value="1"}} Yes	
 			</label>
 			<label id="verified">
 				{{view Ember.RadioButton1 type="radio" viewName="fieldNoView" name="fieldOption" value="0"}} No
@@ -301,8 +301,8 @@
 		<hr class="horz_divider">
 		{{yield}}
 		<hr class="horz_divider">		
-		{{view BorderOptions viewName='bdOptions'}}	
-		{{view PriorityOptions}}
+		{{view BorderOptions viewName='bdOptions'}}
+		{{view PriorityOptions viewName='verOptions'}}
 		<hr class="horz_divider">
 		{{view MarginOptions}}
 	</script>
@@ -311,14 +311,14 @@
 		{{view AttributeOptions}}
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
-		{{view PriorityOptions}}
+		{{view PriorityOptions viewName='verOptions'}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="qr-code-view">
 		{{view AttributeOptions}}
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
-		{{view PriorityOptions}}
+		{{view PriorityOptions viewName='verOptions'}}
 	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
@@ -334,7 +334,7 @@
 		<input type="text" id="text_input" class="ui-widget-content ui-corner-all long_text_input">		
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
-		{{view PriorityOptions}}
+		{{view PriorityOptions viewName='verOptions'}}
 	</script>
 	
 	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
@@ -419,7 +419,7 @@
 		</select><br>
 		
 		{{view BorderOptions viewName="bdOptions"}}
-		{{view PriorityOptions}}
+		{{view PriorityOptions viewName='verOptions'}}
 		<hr class="horz_divider">
 		
 		<label for="name">Number of groups</label>

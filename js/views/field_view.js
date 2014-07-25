@@ -10,6 +10,7 @@
 *	event bubbles up to this parent view, so that all fields implement
 *	this same behavior when responding to the events listed above.
 */
+
 ODKScan.FieldViewController = Ember.View.extend({
 	// contains global counts for each field type
 	// NOTE: add new field types here
@@ -23,11 +24,12 @@ ODKScan.FieldViewController = Ember.View.extend({
 			its respective dialog menu, assign it a new 
 			unique field name.
 		*/
+		
 		if ($(".selected_field").length != 0) {
 			// loading view into the properties sidebar
-			var field_obj = $(".selected_field").data("obj");			
+		    var field_obj = $(".selected_field").data("obj");			
 			field_obj.loadProperties();
-			
+			console.log(field_obj);
 			// check if the selected field has a border, display the border
 			// input box if it does
 			if (field_obj.border_width > 0) {
@@ -36,10 +38,19 @@ ODKScan.FieldViewController = Ember.View.extend({
 			} else {
 				this.get('bdOptions').get('borderNoView').set('selection', 0);
 			}
+			
+			if ($('.selected_field').data("obj").verify == "Yes") {
+				this.get('verOptions').get('fieldYesView').set('selection', 1);
+				
+			} else {
+				this.get('verOptions').get('fieldNoView').set('selection', 0);
+			}
+            	
 		} else {
 			// loading view into a dialog menu, default border option set to 'Yes'
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
-			
+			this.get('verOptions').get('fieldYesView').set('selection', 1);
+
 			// the html for the dialog menu has finished loading, now the
 			// dialog menu can be opened (if a dialog menu opens up before
 			// the html has finished opening then the dialog menu can pop

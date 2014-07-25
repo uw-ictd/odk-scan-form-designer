@@ -25,8 +25,8 @@ function Box(json_init, update_init) {
 		this.name = json_init.name;
 		this.label = json_init.label;
 		this.verify = json_init.verify; //changing it before it was field_priority
-		console.log("actual left "+this.$box.position().left);
-		console.log("actual top "+this.$box.position().top);
+		//console.log("actual left "+this.$box.position().left);
+		//console.log("actual top "+this.$box.position().top);
 
 	} else {	
 		if (update_init) {
@@ -97,7 +97,7 @@ Box.prototype.addEventHandlers = function($box) {
 		
 			// add this field to the set of group fields
 			$(this).addClass("group_field");	
-
+            
 			// if a single field was already selected then add
 			// it to the group of selected fields
 			$(".selected_field").addClass("group_field");
@@ -168,9 +168,19 @@ Box.prototype.getFieldJSON = function() {
 
 	var seg = {};
 	// very left of the entire page - scan page
-	
-    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
-    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
+	// this works for single field
+    //seg.segment_x = (this.$box.position().left) - ($('.scan_page').offset().left);
+    //seg.segment_y = (this.$box.position().top) - ($('.scan_page').offset().top);
+
+    if(this.$box.parent().hasClass("field_group")) {
+    // this works for group field
+	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
+	    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
+   } else {
+   	    console.log("I am here");
+   	    seg.segment_x = (this.$box.position().left);
+        seg.segment_y = (this.$box.position().top);
+   }
 
 	seg.segment_width = this.$box.outerWidth();
 	seg.segment_height = this.$box.outerHeight();

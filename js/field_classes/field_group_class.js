@@ -26,7 +26,7 @@ function FieldGroup($grouped_fields, top_pos, left_pos) {
 	
 	this.addEventHandlers(this.$group_div);					
 	this.adjustGroupSize();  // just commented it 					
-    console.log(left_pos);
+   
 	// check if position parameters were passed in
 	if (top_pos != null && left_pos != null) {
 		this.$group_div.css("top", rem(top_pos));

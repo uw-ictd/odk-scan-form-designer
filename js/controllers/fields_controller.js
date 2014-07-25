@@ -1359,31 +1359,27 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// create a new JSON object for each field 
 				$page_div.children(".field").each(function() {
 					var json = $(this).data("obj").saveJSON();
-                    savedDoc.fields.push(json);					
+                    savedDoc.fields.push(json);				
 				});			
 				
 				// store JSON for all grouped fields
+				
 				$page_div.children(".field_group").children(".field").each(function() {
-					var json = $(this).data("obj").saveJSON();										
-					// store the group id of this field
-					//opting out the text filed
-					var textBox = Ember.compare(json.field_type, 'text_box');  // has changed
-					if (textBox != 0) {
-                      json.group_id = $(this).parent().data("id");					
-					  savedDoc.fields.push(json);		
-					}						
-				});		
+					  var json = $(this).data("obj").saveJSON();					
+                      json.group_id = $(this).parent().data("id");
+					  savedDoc.fields.push(json);					
+				});	
 
 				// add group locations to the JSON output
 				savedDoc.group_positions = {}
 				$(".field_group").each(function() {
 					var top_pos = $(this).css("top");
 					var left_pos = $(this).css("left");
-					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, 
-																	left: left_pos}
+					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};
 				});
 				
-				var json_output = JSON.stringify(savedDoc, null, '\t');												
+				var json_output = JSON.stringify(savedDoc, null, '\t');		
+				console.log(json_output);							
 				zip.file(curr_directory + "page.json", json_output);				
 				curr_directory += "nextPage/";
 			}		

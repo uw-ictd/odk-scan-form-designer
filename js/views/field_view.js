@@ -29,7 +29,7 @@ ODKScan.FieldViewController = Ember.View.extend({
 			// loading view into the properties sidebar
 		    var field_obj = $(".selected_field").data("obj");			
 			field_obj.loadProperties();
-			console.log(field_obj);
+			//console.log(field_obj);
 			// check if the selected field has a border, display the border
 			// input box if it does
 			if (field_obj.border_width > 0) {

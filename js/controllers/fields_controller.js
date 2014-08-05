@@ -1099,6 +1099,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		cancelLoad: function() {
 			$("#load_dialog").dialog("close");
 		},
+		/**
+		*	Cancles the document export dialog.
+		*/
 		cancelExport: function() {
 			$("#export_dialog").dialog("close");
 		},
@@ -1440,16 +1443,20 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			$(".unhighlighted_group").removeClass("unhighlighted_group");
 			$(".highlighted_group").removeClass("highlighted_group");
 			$(".group_field").removeClass("group_field");
-			
+		}, 
 
-		},
-
+		/**
+		*	Instantiate and zip file and send it to the createExportZipFolder function 
+		*   to prepare all the documents to be in it and then export that zip file
+		*   in a format that can be processed by the ODK Scan Android App.
+		*/
 		exportZIP: function(){
-			// Recursively create the file structure. 
+			//instantiates a zip file
 			var zip = new JSZip();
-
-			this.send('createExportZipFolder', this.get('pages'), 0, "", zip); 
-
+            // calling createExportZipFolder to make all the documents such
+            // such as template.json, user_given_name_main.xlsx and the image of
+            // the form
+			this.send('createExportZipFolder', this.get('pages'), 0, "", zip);
 		},
 		/**
 		*	Creates a new subdirectory in the export zip file for the 
@@ -1462,12 +1469,15 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*   @param (fields) array for recursivily storing JSON fields for XLSX output
 		*/
 		createExportZipFolder: function(pages, curr_index, curr_directory, zip, fields) {
+			// defining the fields argument
 			fields = fields || [];
 			if (curr_index == pages.length) { 
 				// base case
-
-				//make XLSX 
+				// Callint createXLSX to make xlsx file 
 				var xlFile = this._actions.createXLSX(fields);
+				// get the user given name.
+				// if user does not provide with any name, append "default" to 
+				// the name as default
 				var name = $('#zip_name').val() || "download";
 				zip.file(name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 
@@ -1479,12 +1489,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// trigger the file to be downloaded
 				document.getElementById("zip_link").click();
 				$("#export_dialog").dialog("close");	
-
-				//$("#export_dialog").dialog("open");
-				
-				//$("#export_progress_dialog").dialog("close");
-				
-				// add highlighting back to groups
 				$(".field_group").addClass("unhighlighted_group");
                  
 				return; 
@@ -1516,7 +1520,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			for (var j = 0; j < all_grouped_fields.length; j++) {
 				var $curr_field = $(all_grouped_fields[j]);			
 				  var fieldObj = $curr_field.data("obj");
-				  //console.log(fieldObj);
 				  var textBox = Ember.compare(fieldObj.field_type, 'text_box');
 				// If it is a text field, it does not add the JSON data to the 
 				// exported file	
@@ -1529,9 +1532,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			
 			//add scan fileds to fields array
 			fields = fields.concat(scanDoc.fields);
-
-			//console.log(json_output);
-			
 			var controller = this;
 			// scale up the html element sizes
 			$("html").css("font-size", "200%");
@@ -1554,22 +1554,31 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				}
 			});				
 		},
+
+		/**
+		*	Creates a xlsx filewhich is going to be in the export zip file for the 
+		*	current page.
+		*	@param (fields) Array of JSON objects which contain page metadata.
+		*/
 		createXLSX: function(fields) {
 			// for servey sheet
-            var test = new Array();
-            test[0] = new Array();
-            test[0][0] = "type";
-            test[0][1] = "name";
-           
-            // for choice sheet
-            test[0][2] = "display.text";
-            var grids = new Array();
-            grids[0] = new Array();
-            grids[0][0] = "choice_list_name";
-            grids[0][1] = "data_value";
-            grids[0][2] = "display.text";
+			// filling out the initial values
+            var survey = new Array();
+            survey[0] = new Array();
+            survey[0][0] = "type";
+            survey[0][1] = "name";
+            survey[0][2] = "display.text";
+
+            // for the choice sheet
+            // filling out the initial values
+            var choices = new Array();
+            choices[0] = new Array();
+            choices[0][0] = "choice_list_name";
+            choices[0][1] = "data_value";
+            choices[0][2] = "display.text";
 
             // for setting sheet
+            // filling out the initial values
             var setting = new Array();
             setting[0] = new Array();
             setting[0][0] = "setting_name";
@@ -1582,110 +1591,96 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             setting[1][0] = "form_id";
             setting[2][0] = "form_version";
             setting[3][0] = "survey";
-
+            
+            // getting the curren date to add it to the value of form version
+            // in the format of yyyymd
             var date = new Date();
             var year = date.getFullYear();
             var month = date.getMonth() + 1;
             var day = date.getDate();
-            //console.log(year);
-            //console.log(month);
-            //console.log(day);
+            // formated the date in yyyymd format
             var formatted = year+""+""+month+""+day;
             var form_name = $('#zip_name').val() || 'download';
-           setting[1][1] = "scan_"+form_name;
-           setting[1][2] = "";
-           setting[2][1] = formatted;
-           setting[2][2] = "";
-           setting[3][1] = "";
-           setting[3][2] = setting[1][1];
+	        setting[1][1] = "scan_"+form_name;
+	        setting[1][2] = "";
+	        setting[2][1] = formatted;
+	        setting[2][2] = "";
+	        setting[3][1] = "";
+	        setting[3][2] = setting[1][1];
 
-            var tally = false;
+            var is_not_tally = false;
            // var obj = JSON.parse(json);
             //console.log(obj);
              if(fields){
                 var length = fields.length;
                 // making two dimensional array for servey sheet
                 for(var i = 1; i <= length; i++){
-                     test[i] = new Array();
+                     survey[i] = new Array();
                 }
-                console.log("test length: "+test.length);
+                console.log("test length: "+survey.length);
                 var cur_length = fields.length;
-                var prev_test_length = test.length;
+                var prev_survey_length = survey.length;
                 var j = 0;
                 for(var i = 0; i < cur_length; i++){
-                   
-                    if(row_increase) {
-                      // if there is a tally type then the row will be increased
-                      j = j+2;
-                      console.log("j is 4 and length is "+ j+" "+test.length+" "+prev_test_length);
-                    } else {
                       j = j + 1;
-                    }
-                    var row_increase = false;
+                    // if the type is qrcode, changed it to string
                     if(fields[i].type == "qrcode") {
-                      test[j][0] = "string";
-                    } else if(fields[i].type == "select1") {
-                      test[j][0] = "select_one";
-                    } else if(fields[i].type == "select_many"){
-                      test[j][0] = "select_multiple";
-                    } else if(fields[i].type == "tally") {
-                      test[j][0] = "integer";
-                      test[0][3] = "calculation";
-                      test[test.length] = new Array();
-                      test[j+1][0] = "assign";
-                      test[j+1][1] = fields[i].name;
-                      test[j+1][2] = "";
-                      test[j+1][3] = fields[i].grid_values[0];
-                      row_increase = true;
-                      
-                    }else if(fields[i].type == "int") {
-                    	test[j][0] = "integer";
-                    }else {
-                       test[j][0] = fields[i].type;
+                      survey[j][0] = "string";
+                    } else if(fields[i].type == "select1") {  // if it is select1, changed it to select_one
+                      survey[j][0] = "select_one";
+                    } else if(fields[i].type == "select_many"){  // if it is select_many, changed it to select_many
+                      survey[j][0] = "select_multiple";
+                    } else if(fields[i].type == "tally") {  // if it is tally, changed it to integer
+                      survey[j][0] = "integer";
+                    }else if(fields[i].type == "int") {  // if it is int, changed it to integer
+                    	survey[j][0] = "integer";
+                    }else {  // else it is going to be the same type as it is
+                       survey[j][0] = fields[i].type;
                     }
+                    // if the type is select1 or select_many, we need to have choice sheet
+                    // preparing choice sheet
                     if(fields[i].type == "select1" || fields[i].type == "select_many") {
-                      tally = true;
+                      is_not_tally = true;
                       var size = fields[i].grid_values.length;
                       var count = 1;
-                      var index = 0;
+                      var index = 0;  // for the index of the fields[i].grid_values[index]
+                      // for the index of the choices[temp] = new array
+                      // as we may have multiple fields with type select_many and choice_list in
+                      // choice sheet has to have them one after another
                       var temp = 1;
-
-                      if(grids.length == 1) {
+                      // adding values_list column in the survey sheet
+                      survey[0][3] = "values_list";
+                      // inserting the value_list for the current row
+                      survey[j][3] = fields[i].name + "_grid_values";
+                      // if it is first time preparing choice sheet
+                      if(choices.length == 1) {
                         count = 1;
-                      } else {
-                        count = grids.length;
+                      } else {  // otherwise we need to insert value of choice_list after previous choice_list value
+                        count = choices.length;
                         temp = count;
                       }
                       // making two dimensional array for choice sheet
                       for(var m = 1; m <= fields[i].grid_values.length; m++) {
-                        grids[temp] = new Array();
-                        temp++
+                        choices[temp] = new Array();
+                        temp++  // updating temp to have the length of the choices array
                       }
                       
-                      // filling the out the choice sheet array
+                      // filling the out the choice sheet array with the expected value
                       for(var k = 0; k < fields[i].grid_values.length; k++){
-                        grids[count][0] = fields[i].name + "_grid_values";
-                        grids[count][1] = fields[i].grid_values[index];
-                        grids[count][2] = fields[i].grid_values[index];
-                        count++;
-                        index++;
+                        choices[count][0] = fields[i].name + "_grid_values";
+                        choices[count][1] = fields[i].grid_values[index];
+                        choices[count][2] = fields[i].grid_values[index];
+                        count++;  // updating the count for the row of the choices array
+                        index++;  // updating the index vlaue
                       }
                     }
-                    
-                    test[j][1] = fields[i].name;
-                    test[j][2] = fields[i].label;
-                    if (row_increase && test[j][3] == undefined) {
-                       test[j][3] = "";
-                       if (j != 1 && test[1][3] == undefined) {
-                         for(var n = 1; n < j; n++) {
-                         	test[n][3] = "";
-                         }
-                       }
-                    }
+                    // filling out the rest of the survey sheet array with the expected value
+                    survey[j][1] = fields[i].name;
+                    survey[j][2] = fields[i].label;
                 }        
                
 
-               // reading two dimensional array and return a file containing the contents of the array
+               // reading two dimensional array and return an array containing the contents of the array
                var readTable = function(tableid, name) {
 		            var w = [];
 		            w.name = name;
@@ -1703,14 +1698,21 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                		activeWorksheet: 0
                };
 
-               file.worksheets.push(readTable(test, "survey"));
-               if(tally) {
-               	file.worksheets.push(readTable(grids, "choices"));
+               // making a worksheet with the content of survey array
+               file.worksheets.push(readTable(survey, "survey"));
+               // if the type is not tally we will have choice sheet
+               if(is_not_tally) {
+               	// making a worksheet with the content of the choices array
+               	file.worksheets.push(readTable(choices, "choices"));
                }
+               // making a worksheet with the content of the setting array
                file.worksheets.push(readTable(setting, "settings"));
                console.log(file);
+               // making xlsx file with the above worksheets
                var xlFile = xlsx(file);
-               console.log("test length should be 3: "+test.length);
+
+               //console.log("test length should be 3: "+survey.length);
+               // returning the xlsx file.
                return xlFile;
             }// end if fields
 

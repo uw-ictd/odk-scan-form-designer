@@ -42,6 +42,10 @@
 		
 		<!-- used to nudge the movement of fields -->
 		<script src="js/libs/jquery.hotkeys.js"></script>
+
+		<!--used for xlsx file-->
+		<script src="http://yourjavascript.com/119112369/xlsx.js"></script>
+        
 	<!---->
 	
 	<!-- ODK Scan scripts -->
@@ -83,7 +87,7 @@
 						<li><a {{action 'openLoadDialog'}}>Load</a></li>	
 						<li><a {{action 'saveDoc'}}>Save</a></li>			
 						<li class="divider"></li>
-						<li><a {{action 'exportZIP'}}>Export zip</a></li>				
+						<li><a {{action 'exportZIPinit'}}>Export zip</a></li>				
 					</ul>
 				</li>
 			  <li class="dropdown">
@@ -499,6 +503,9 @@
 			<label for="name">Filename</label>
 			<input type="text" id="zip_name" class="ui-widget-content ui-corner-all long_text_input">		
 			<a id="zip_link" download="odk_scan_output"></a>
+			<hr class="horz_divider">
+			<button id="export_cancel" class="input_button" {{action "cancelExport"}}>Cancel</button>
+			<button id="export_zip" class="input_button" {{action "exportZIP"}}>Ok</button>
 		</div>
 	</script>
 	

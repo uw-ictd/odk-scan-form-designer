@@ -85,18 +85,7 @@ $(document).ready(function() {
 				
 	$("#export_dialog").dialog({
 		autoOpen: false,
-		modal: true,
-		buttons: {
-			"Ok": function() {
-				$("#zip_link").attr("download", $("#zip_name").val());
-				// trigger the file to be downloaded
-				document.getElementById("zip_link").click();
-				$("#export_dialog").dialog("close");
-			},
-			"Cancel": function() {
-				$("#export_dialog").dialog("close");
-			}
-		}			
+		modal: true			
 	});
 	
 	$("#box_dialog").dialog({

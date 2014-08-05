@@ -1,5 +1,5 @@
 // Constants 
-
+var CLASSIFIER = 20;
 var CHECKBOX_SMALL = 10;
 var CHECKBOX_MEDIUM = 16;
 var CHECKBOX_LARGE = 25;
@@ -301,8 +301,8 @@ GridField.prototype.getFieldJSON = function() {
 	
 	var cf = {};
 	// initialize classifier 
-	cf.classifier_height = this.element_height;
-	cf.classifier_width = this.element_width;						
+	cf.classifier_height = CLASSIFIER; //this.element_height;
+	cf.classifier_width = CLASSIFIER;//this.element_width;						
 	cf.training_data_uri = this.data_uri;
 	cf.classification_map = this.cf_map;
 	cf.default_classification = true;

@@ -40,19 +40,19 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 							img_left: 0,};
 		images.top_right = {img_name: "form",
 							img_src: "default_images/top_right.jpg",
+							img_height: 91,
+							img_width: 91,
+							orig_height: 310,
+							orig_width: 310,
+							img_top: 0,
+							img_left: -2410};	// total width of orig_width - form_image width				
+		images.bottom_left = {img_name: "form",
+							img_src: "default_images/bottom_left.jpg",
 							img_height: 70,
 							img_width: 91,
 							orig_height: 231,
 							orig_width: 300,
-							img_top: 0,
-							img_left: -2420};	// total width of orig_width - form_image					
-		images.bottom_left = {img_name: "form",
-							img_src: "default_images/bottom_left.jpg",
-							img_height: 150,
-							img_width: 150,
-							orig_height: 480,
-							orig_width: 480,
-							img_top: -3040,  // total height of orig_height-form_image height
+							img_top: -3289,  // total height of orig_height-form_image height
 							img_left: 0};		
 		images.bottom_right = {img_name: "form",
 							img_src: "default_images/bottom_right.jpg",
@@ -60,8 +60,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 							img_width: 200,
 							orig_height: 250,
 							orig_width: 704,
-							img_top: -3270,  // total height of form image - orig_height
-							img_left: -2016};  // total width of form image - orig_width													
+							img_top: -3270,  // total height of orig_height - form_image height
+							img_left: -2016};  // total width of orig_width - form_image width													
 		return images;
 	}.property(),
 	init: function() {

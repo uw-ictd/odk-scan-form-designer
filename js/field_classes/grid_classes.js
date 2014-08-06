@@ -328,7 +328,6 @@ GridField.prototype.getFieldJSON = function() {
 	seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);*/
 	if(this.$grid_div.parent().hasClass("field_group")) {
     // this works for group field
-        console.log("I am here");
 	    seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
 	    seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
     } else {

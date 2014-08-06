@@ -1682,15 +1682,17 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
                // reading two dimensional array and return an array containing the contents of the array
                var readTable = function(tableid, name) {
-		            var w = [];
-		            w.name = name;
+		            var sheet = [];
+		            sheet.name = name;
 		            for(var i = 0; i < tableid.length; i++) {
-		            	var r = w.push([]) - 1;
+		            	// getting the index of the current row
+		            	var r = sheet.push([]) - 1;
+		            	// inserting the content of each row of tableid[i]
 		           		for(var j = 0; j < tableid[i].length; j++){
-		            		w[r].push(tableid[i][j])
+		            		sheet[r].push(tableid[i][j])
 		       			}
 		       		}	
-		            return w;
+		            return sheet;
 				}
 
 				var file = {

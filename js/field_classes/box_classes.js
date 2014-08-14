@@ -182,7 +182,7 @@ Box.prototype.getFieldJSON = function() {
 	   
 	    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
    } else if(this.$box.parent().hasClass("field_group") && $(".letter_landscape").hasClass("selected_page")) {
-        seg.segment_x = (this.$box.offset().left) - ($('.img_div').offset().left);
+        seg.segment_x = (this.$box.offset().left) - 310;//($('.img_div').offset().left);
 	   
 	    seg.segment_y = (this.$box.offset().top) - ($('.img_div').offset().top);
    } else {

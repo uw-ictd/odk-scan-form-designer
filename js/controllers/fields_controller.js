@@ -1815,6 +1815,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                 		}
                 	}
                 	survey[j][0] = "begin screen";
+                	if(survey[j+1] = undefined) {
+                		survey[j+1] = new Array();
+                	}
                     survey[j + 1][0] = "";
                 	survey[j + 1][1] = "read_only_image";
                 	survey[j + 1][2] = fields[i].name + "_image0";
@@ -1881,6 +1884,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     survey[j][3] = fields[i].label || fields[i].name;
                     if (survey[j + 1] == undefined) {
                     	survey[j + 1] = new Array();
+                    }
+                    if (survey[j+1] = undefined) {
+                    	survey[j+1] = new Array();
                     }
                     survey[j+1][0] = "end screen";
                     j = j+2;

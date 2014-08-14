@@ -44,8 +44,13 @@
 		<script src="js/libs/jquery.hotkeys.js"></script>
 
 		<!--used for xlsx file-->
-		<script src="http://yourjavascript.com/119112369/xlsx.js"></script> 
+		<script src="http://yourjavascript.com/119112369/xlsx.js"></script>
+		
 	<!---->
+	    <script type="text/javascript" src="js/libs/js-xlsx/xlsx.js"></script>
+	    <script type="text/javascript" src="XRegExp-All-3.0.0-pre-2013-08-27.js"></script>
+		<script type="text/javascript" src="underscore.js"></script>
+		<script type="text/javascript" src="XLSXConverter.js"></script>
 	
 	<!-- ODK Scan scripts -->
 		<script src="js/globals.js"></script>
@@ -208,6 +213,8 @@
 		{{partial 'imageTabRemoveDialog'}}
 		{{partial 'exportInProgressDialog'}}
 		{{partial 'pageStyleWarningDialog'}}
+		{{partial 'subformDialog'}}	
+        {{partial 'subNameDialog'}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="full-grid-size-view">
@@ -517,6 +524,27 @@
 			<button id="load_zip" class="input_button" {{action "loadZip"}}>Ok</button>
 		</div>
 	</script>
+	<!-- Adding a dialog for subform-->
+	<script type="text/x-handlebars" data-template-name="_subformDialog">
+		<div id="subform_dialog" title="SubForm">		
+			<p>Do you want to make a subform?</p>	
+			<hr class="horz_divider">
+			<button class="subOk_button" {{action "makeSubform"}}>Yes</button>
+			<button class="subCancel_button" {{action "cancelSubform"}}>No</button>
+			
+		</div>
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="_subNameDialog">
+		<div id="subname_dialog" title="SubForm Name">		
+			<label for="name">Form_name</label>
+			<input type="text" id="sub_form_name" class="ui-widget-content ui-corner-all long_text_input">
+			<button id="subname_cancel" class="input_button" {{action "saveSubFormName"}}> Save Name</button>	
+			
+				
+		</div>
+	</script>
+		<!-- Adding a dialog for subform-->
 	
 	<script type="text/x-handlebars" data-template-name="_saveDialog">
 		<div id="save_dialog" title="Save Scan Form">		

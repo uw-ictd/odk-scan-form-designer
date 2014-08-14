@@ -109,38 +109,8 @@ FieldGroup.prototype.copyField = function() {
 			//$field_copy.data("obj").name += "_copy";
 
 			var name = $field_copy.data('obj').name;  // get the name of the field
-			var copyNo; // tracking number of copy
-			var index; // index to append the tracking number of copy
-			if(name != undefined) { // if the name contains number
-				var re = new RegExp("^.+?\\d$");
-				if(re.test(name)) {
-					if(name.match("_copy[0-9]+") != null) {  // if is a copy of copied one
-						// getting the substring that matches the regex
-						var copyNumbers = name.match("_copy[0-9]+");
-						// getting the substring of actual copy number
-						var copy = copyNumbers[0].match("[0-9]+");
-						copyNo = parseInt(copy[0]);  // parse the number to int
-						// getting the index to appending the number of copy
-						index = name.indexOf(copyNumbers[0]) + 5;
-					} else {   // if it is the first copy
-					  var numbers = name.match("[0-9]+");
-					  index = name.indexOf(numbers[0]);
-					  copyNo = parseInt(numbers[0]);
-					  if(copyNo > 1) {  // if it is not the first field
-					    copyNo = 1;
-					  }
-					}
-				} else { // if the user inputs any name without number
-				  copyNo = 1;
-				}
-				
-				if (name.indexOf("_copy") == -1) {  // if it is the first copy
-				  $field_copy.data('obj').name += "_copy" + copyNo; // appending _copy to the name
-				} else {
-	              copyNo = copyNo + 1;  // incrementing the copy number
-				  $field_copy.data('obj').name = name.substring(0, index) + copyNo; // + copy++;
-				}
-			}
+			
+			$field_copy.data('obj').name = ODKScan.runGlobal('getCopyName')(name);
 
 			
 			// set position of new field

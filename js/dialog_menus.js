@@ -1,4 +1,5 @@
-/* Dialog menu initializations are provided below */
+	/* Dialog menu initializations are provided below */
+
 $(document).ready(function() {			
 	// NOTE: buttons are implemented in the elements controller in 
 	// order to allow communication between the controller and dialog menu
@@ -83,9 +84,19 @@ $(document).ready(function() {
 		}			
 	});
 				
-	$("#export_dialog").dialog({
+	
+	  $("#export_dialog").dialog({
+		autoOpen: false,
+		modal: true
+	});
+	// just added for subform
+	$("#subform_dialog").dialog({
 		autoOpen: false,
 		modal: true			
+	});
+	$("#subname_dialog").dialog({
+		autoOpen: false,
+		modal: true		
 	});
 	
 	$("#box_dialog").dialog({

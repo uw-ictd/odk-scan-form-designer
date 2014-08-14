@@ -14,8 +14,8 @@
 ODKScan.FieldViewController = Ember.View.extend({
 	// contains global counts for each field type
 	// NOTE: add new field types here
-	idCounts: {checkbox: 1, bubble: 1, seg_num: 1,
-				box: 1, code: 1, text: 1, form_num: 1},
+	//idCounts: {checkbox: 1, bubble: 1, seg_num: 1,
+				//box: 1, code: 1, text: 1, form_num: 1},
 	didInsertElement: function() {	
 		/* 	If there is currently a selected field then the user 
 			clicked on a field in the current page, load its 
@@ -59,46 +59,32 @@ ODKScan.FieldViewController = Ember.View.extend({
 			var idCounts = this.get("idCounts");
 			
 			if (new_field_type == 'checkbox') {
-				var curr_count = idCounts['checkbox'];
-				$("#field_name").val("checkboxes" + curr_count);				
-				Ember.set(idCounts, "checkbox", curr_count + 1);
-				
+			    var name = ODKScan.runGlobal('getCopyName')("checkboxes");
+				$("#field_name").val(name);				
 				$("#checkbox_dialog").dialog("open");
 			} else if (new_field_type == 'bubble') {
-				var curr_count = idCounts['bubble'];
-				$("#field_name").val("bubbles" + curr_count);
-				Ember.set(idCounts, "bubble", curr_count + 1);
-				
+				var name = ODKScan.runGlobal('getCopyName')("bubbles");
+				$("#field_name").val(name);
 				$("#bubble_dialog").dialog("open");
 			} else if (new_field_type == 'seg_num') {
-				var curr_count = idCounts['seg_num'];
-				$("#field_name").val("Number" + curr_count); // has changed, before it was simpleNumber
-				Ember.set(idCounts, "seg_num", curr_count + 1);
-				
+				var name = ODKScan.runGlobal('getCopyName')("Number");
+				$("#field_name").val(name); // has changed, before it was simpleNumber
 				$("#seg_num_dialog").dialog("open");
 			} else if (new_field_type == 'string') {  // it was before empty_box
-				var curr_count = idCounts['box'];
-				$("#field_name").val("textBox" + curr_count);
-				Ember.set(idCounts, "box", curr_count + 1);
-				
+				var name = ODKScan.runGlobal('getCopyName')("textBox");
+				$("#field_name").val(name);
 				$("#box_dialog").dialog("open");
 			} else if(new_field_type == 'qr_code') {   // added for qr code
-               var curr_count = idCounts['code'];
-			   $("#field_name").val("qrCode" + curr_count);
-			   Ember.set(idCounts, "code", curr_count + 1);
-
+              var name = ODKScan.runGlobal('getCopyName')("qrCode");
+			   $("#field_name").val(name);
 			   $("#qrCode_dialog").dialog("open");
 			} else if (new_field_type == 'text_box') {
-				var curr_count = this.get("idCounts")['text'];
-				$("#field_name").val("text" + curr_count);
-				Ember.set(idCounts, "text", curr_count + 1);
-				
+				var name = ODKScan.runGlobal('getCopyName')("text");
+				$("#field_name").val(name);
 				$("#text_dialog").dialog("open");
 			} else if (new_field_type == 'form_num') {
-				var curr_count = idCounts['form_num'];
-				$("#field_name").val("formattedNumber" + curr_count);
-				Ember.set(idCounts, "form_num", curr_count + 1);
-				
+				var name = ODKScan.runGlobal('getCopyName')("formattedNumber");
+				$("#field_name").val(name);
 				$("#form_num_dialog").dialog("open");
 			} else {
 				console.log("error no dialog menu to open, unsupported field type");

@@ -3,6 +3,8 @@ var SMALL_TEXT_SIZE = 9;
 var MEDIUM_TEXT_SIZE = 11;
 var LARGE_TEXT_SIZE = 14;
 
+ var sub_forms = {};
+   var groups = [];
 /*	Represents a generic box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
@@ -166,6 +168,7 @@ Box.prototype.getFieldJSON = function() {
 	f_info.verify = this.verify; //getting the value from here
 	f_info.segments = [];
 
+
 	var seg = {};
 	// very left of the entire page - scan page
 	// this works for single field
@@ -188,6 +191,25 @@ Box.prototype.getFieldJSON = function() {
 	f_info.segments.push(seg);
 	return f_info;
 };
+//==============================================================================================================
+Box.prototype.getSubFieldJSON = function() {
+  
+  if (this.$box.parent().hasClass("field_group")) {
+  	if(sub_forms.name != undefined && this.name == sub_forms.name) {
+  		groups.concat(this.name);
+  		console.log("groups "+ groups);
+  		sub_forms.group1 = groups;
+  		return sub_forms;
+  	} else {
+  	  sub_forms.name = $("#sub_form_name").val();
+      groups.push(this.name);
+      sub_forms.group1 = groups;
+      return sub_forms;
+    }
+  }
+    
+};
+//==============================================================================================================
 
 /*	Returns JSON containing DOM properties
 	of this generic box, formatted for saving 
@@ -223,7 +245,6 @@ Box.prototype.copyField = function() {
 	// workaround to this issue, the resizable attribute
 	// of $box is destroyed before the clone and then
 	// added back to $box.
-	
 	if (this.$box.hasClass("ui-resizable")) {
 		this.$box.resizable('destroy');
 	}

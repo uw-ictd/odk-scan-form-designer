@@ -5,3 +5,7 @@ ODKScan.Router.map(function () {
 	this.resource('fields', {path: "/"}, function() {
 	});
 });
+
+ODKScan.runGlobal = function(fname){
+	return this.__container__.lookup('controller:fields')._actions[fname];	
+}

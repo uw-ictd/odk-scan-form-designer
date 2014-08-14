@@ -1,3 +1,4 @@
+var count = 1;
 ODKScan.FieldsController = Ember.ArrayController.extend({
 	isImageEditing: false,	// toggles app between field editing and image editing mode
 	imgSelect: null,		// imgAreaSelect object used to crop images
@@ -653,43 +654,12 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					var selected_field = $(".selected_field").data('obj');
 					selected_field.copyField();		
 					var $new_field = $(".selected_field");
-					
-					// change the name of the new field so it's not a 
-					// duplicate of the original field's name
-					var name = $new_field.data('obj').name;  // get the name of the field
-					var copyNo;  // tracking number of copy
-					var index;  // index to append the tracking number of copy
-					if(name != undefined) {
-						var re = new RegExp("^.+?\\d$");
-						if(re.test(name)) {  // if the name contains number
-							if(name.match("_copy[0-9]+") != null){  // if is a copy of copied one
-								// getting the substring that matches the regex
-								var copyNumbers = name.match("_copy[0-9]+");
-								// getting the substring of actual copy number
-								var copy = copyNumbers[0].match("[0-9]+");
-								copyNo = parseInt(copy[0]);  // parse the number to int
-								// getting the index to appending the number of copy
-								index = name.indexOf(copyNumbers[0]) + 5;
-							} else {  // if it is the first copy
-							  var numbers = name.match("[0-9]+");
-							  index = name.indexOf(numbers[0]);
-							  copyNo = parseInt(numbers[0]); // parsing the number
-							  if(copyNo > 1) {  // if it is not the first field
-							  	copyNo = 1;
-							  }
-							}
-						} else {  // if the user inputs any name without number
-						  copyNo = 1;
-						}
-						
-						if (name.indexOf("_copy") == -1) {  // if it is the first copy
-						  $new_field.data('obj').name += "_copy" + copyNo;  // appending _copy to the name
-						} else {
-			              copyNo = copyNo + 1;  // incrementing the copy number
-						  $new_field.data('obj').name = name.substring(0, index) + copyNo; // + copy++;
-						}
+					if($new_field.hasClass('field_group')){
+						$new_field.removeClass('original'); //Remove the original class from new field.
+					}else{
+						var name = $new_field.data('obj').name;  // get the name of the field
+						$new_field.data('obj').name = this._actions.getCopyName(name);
 					}
-
 					// load properties of the new field into
 					// the properties sidebar
 					$new_field.click();											
@@ -713,6 +683,87 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				this.send("addImageRef", image.img_name);
 			}
 		},
+		/*
+		params: 
+		name: name to find the similar name list
+		return:
+		returns a list of name that is similar as given name
+		*/
+
+		filterFields:function(name){
+          var all_fields = $(".field");
+          var all_names = [];
+          for (var j = 0; j < all_fields.length; j++) {
+				var $curr_field = $(all_fields[j]);	
+				var fieldObj = $curr_field.data("obj");
+                all_names.push(fieldObj.name);
+		  }
+		  var name_list = [];
+		  
+		  var numbers = name.match("[0-9]+");
+		  var index;
+		  var sub_name;
+		  if (numbers != null) {
+          	console.log(numbers);
+		    index = name.indexOf(numbers[0]);
+		    sub_name = name.substring(0, index);
+		  } else {
+		  	sub_name = name;
+		  }
+		  
+		  for (var j = 0; j < all_names.length; j++) {
+		  	var number = all_names[j].match("[0-9]+");
+		  	var ind;
+		  	var sub_match_name;
+		  	if (number != null) {
+            	ind = all_names[j].indexOf(number[0]);
+            	sub_match_name = all_names[j].substring(0, ind);
+		  	} else {
+		  		sub_match_name = all_names[j];
+		  	}		  
+		  	
+			if(sub_name == sub_match_name) {
+				name_list.push(all_names[j]);
+				console.log("names "+j+" "+all_names[j]);
+			}
+		  }
+		  return name_list;
+        },
+        /*
+        returns a name with a number at the end which 
+        params: a name to format
+        */
+        getCopyName: function(name){
+          	var lists = ODKScan.runGlobal('filterFields')(name);
+			var max = 0;
+			var numbering;
+			var indexing;
+			var copyNos; // parsing the number
+			for (var i = 0; i < lists.length; i++) {
+	           numbering = lists[i].match("[0-9]+");
+	           if (numbering != null) {
+			   	  indexing = lists[i].indexOf(numbering[0]);
+			   	  copyNos = parseInt(numbering[0]); // parsing the number
+			   	  console.log("copyNO "+copyNos);
+			   } else {
+			   	copyNos = 0;
+			   }
+			   if (copyNos > max) {
+			   	  max = copyNos;
+			   }
+			}
+			max = max +1;
+			
+			if (name.match("[0-9]+") == null) {
+				return name.substring(0, name.length) +""+max;
+			} else {
+		       var numbers = name.match("[0-9]+");
+			   var index = name.indexOf(numbers[0]);
+			   return name.substring(0, index) +""+max;
+			}
+			
+        },
+
 		/**
 		*	Moves the currently selected field backward.
 		*/
@@ -902,6 +953,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*	Groups together the currently selected fields.
 		*/	
 		groupFields: function() {														
+			$("#subform_dialog").dialog("open");
 			var fGroup = new FieldGroup($(".selected_page .group_field"));
 		},
 		/**
@@ -912,6 +964,32 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			if ($field.hasClass("field_group")) {
 				$field.data("obj").ungroupFields();
 			}
+		},
+		/**
+		*	Cancles the cancel the subform dialog.
+		*/
+		cancelSubform: function() {
+			$("#subform_dialog").dialog("close");
+
+		},
+		/**
+		*	opens a new dialog to get the subform name
+		*/
+		makeSubform: function() {
+			$("#subname_dialog").dialog("open");
+			$("#subform_dialog").dialog("close");
+			console.log("Subform Name: ",$("#sub_form_name").val());
+		},
+		/**
+		*	Cancles the sub form name dialog.
+		*/
+		
+		saveSubFormName: function() {
+			$("#subname_dialog").dialog("close");
+			var group = $('.selected_page .field_group').last();
+			group.data('name',$("#sub_form_name").val());
+			group.addClass('original');
+
 		},
 		/**
 		*	Opens up the new page dialog if there are no fields
@@ -1099,7 +1177,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		cancelLoad: function() {
 			$("#load_dialog").dialog("close");
 		},
-		/**
+    	/**
 		*	Cancles the document export dialog.
 		*/
 		cancelExport: function() {
@@ -1466,20 +1544,20 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
  		*	@param (curr_directory) String containing the path to the current
 		*		directory in the zip file.
 		*	@param (zip) The zip file being exported to.
-		*   @param (fields) array for recursivily storing JSON fields for XLSX output
+		*   @param (xlsx_fields) array for recursivily storing JSON fields for XLSX output
 		*/
-		createExportZipFolder: function(pages, curr_index, curr_directory, zip, fields) {
-			// defining the fields argument
-			fields = fields || [];
+		createExportZipFolder: function(pages, curr_index, curr_directory, zip, xlsx_fields) {
+			// base case
+			// Callint createXLSX to make xlsx file 
 			if (curr_index == pages.length) { 
-				// base case
-				// Callint createXLSX to make xlsx file 
-				var xlFile = this._actions.createXLSX(fields);
-				// get the user given name.
-				// if user does not provide with any name, append "default" to 
-				// the name as default
+				
+				var xlFile = this._actions.createXLSX(xlsx_fields);
+				var jsonDef = this._actions.createFormDefJSON(xlsx_fields);
+				// get the user given name. if user does not provide with any name, append "default" to 
 				var name = $('#zip_name').val() || "download";
-				zip.file(name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
+				zip.file("scan_" + name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
+				
+				zip.file("scan_" + name + "_formDef.json",jsonDef);
 
 				var content = zip.generate();
 				var scanDoc = "data:application/zip;base64," + content;	
@@ -1493,8 +1571,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                  
 				return; 
 			} 
+
+			// defining the fields argument
+			xlsx_fields = xlsx_fields || [];
 			var scanDoc = {};
-				
+			
 			// make page visible, set Scan doc properties
 			this.send('selectPageTab', pages[curr_index]);
 			var $page_div = Ember.get(pages[curr_index], 'pageDiv');	
@@ -1502,36 +1583,88 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			scanDoc.width = $page_div.width();
 			scanDoc.fields = [];
 			
+			var mapFieldJson = function(that,list){
+				var data = $(that).data('obj');
+				if(data.field_type != 'text_box'){
+					list.push(data.getFieldJSON());
+				}
+			}
+
+			/*
 			// compute and get the JSON for each field
-			var all_fields = $page_div.children(".field");
+			var all_fields = $page_div.find(".field");
 			for (var j = 0; j < all_fields.length; j++) {
 				var $curr_field = $(all_fields[j]);	
 				var fieldObj = $curr_field.data("obj");
 				//console.log(fieldObj);
-				var textBox = Ember.compare(fieldObj.field_type, 'text_box');
+			
 				// If it is a text field, it does not add the JSON data to the 
 				// exported file
-				if(textBox != 0) {
+				if(fieldObj.field_type != 'text_box') {
 				  scanDoc.fields.push(fieldObj.getFieldJSON());
 				}
-			}
+			}*/
+
+			$page_div.find('.field').map(function(){mapFieldJson(this,scanDoc.fields)});
+			$page_div.children('.field').map(function(){mapFieldJson(this,xlsx_fields)});
+
+			var groups = $page_div.children('.field_group');
+			var subform_name = $("#sub_form_name").val() || 'subform';
+			if(subform_name && groups.length>0){ // if there is a subform
+
+				var sub_form = {
+					name:subform_name,
+					groups:[],
+					fields:{}
+				}
+
+				var original = $page_div.find('.field_group.original');
+				var original_fields = []; // store the order of original names
+				var controller = this;
+				// set sub_form.fields to orginial fields
+				original.find('.field').each(function(i,field){
+					var data = $(field).data('obj');
+					console.log('Original Data:',data);
+					sub_form.fields[data.name] = controller._actions.toODKType(data.type);
+					original_fields.push(data);
+				});
+
+				groups.each(function(g,group){
+					var group_map = {};
+					$(group).children('.field').each(function(i,field){
+						var data = $(field).data('obj');
+						group_map[original_fields[i].name] = data.name;
+					});
+					sub_form.groups.push(group_map);
+				});
+
+				scanDoc.sub_forms = [sub_form];
+
+				//add sub_form xlsx
+				var xlFile = this._actions.createXLSX(original_fields);
+				//var jsonDef = this._actions.createFormDefJSON(original_fields);
+				/*var nameFile = sub_form.name + ".xlsx";
+				var read_xlsx = XLSX.readFile(nameFile);
+				var jsonObj = JSON.parse(read_xlsx);
+				var processedWorkbook = XLSXConverter.processJSONWorkbook(jsonObj);
+				var result = JSON.stringify(processedWorkbook, 2, 2);*/
+				//var data = new Uint8Array(xlFile);
+				//var arr = new Array();
+                //for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                //var bstr = arr.join("");
+
+                //Call XLSX 
+               //var workbook = XLSX.read(xlFile, {type:"binary"});
+                //var jsonDef = this._actions.createFormDefJSON(original_fields);
+				zip.file("scan_" + sub_form.name + ".xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
+				var jsonDef = this._actions.createFormDefJSON(original_fields);
+				zip.file("scan_" + sub_form.name + "_formDef.json", jsonDef);  // added xlFile to the zip
+				//===============================================================================================
+
 			
-			var all_grouped_fields = $page_div.children(".field_group").children(".field");
-			for (var j = 0; j < all_grouped_fields.length; j++) {
-				var $curr_field = $(all_grouped_fields[j]);			
-				  var fieldObj = $curr_field.data("obj");
-				  var textBox = Ember.compare(fieldObj.field_type, 'text_box');
-				// If it is a text field, it does not add the JSON data to the 
-				// exported file	
-				if(textBox != 0) {			
-				  scanDoc.fields.push(fieldObj.getFieldJSON());
-				}
-			}
+			}// end sub forms	
 
 			var json_output = JSON.stringify(scanDoc, null, '\t');
-			
-			//add scan fileds to fields array
-			fields = fields.concat(scanDoc.fields);
 			var controller = this;
 			// scale up the html element sizes
 			$("html").css("font-size", "200%");
@@ -1550,9 +1683,46 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					// add img and json to zip file
 					zip.file(curr_directory + "form.jpg", img_base64, {base64: true});
 					zip.file(curr_directory + "template.json", json_output);
-					controller.send('createExportZipFolder', pages, curr_index + 1, curr_directory + "nextPage/", zip,fields);
+					controller.send('createExportZipFolder', pages, curr_index + 1, curr_directory + "nextPage/", zip,xlsx_fields);
 				}
 			});				
+		},
+
+		createFormDefJSON: function(fields) {
+
+			var removeEmptyStrings = function (rObjArr){
+			    var outArr = [];
+			    _.each(rObjArr, function(row){
+			        var outRow = Object.create(row.__proto__);
+			        _.each(row, function(value, key){
+			            if(_.isString(value) && value.trim() === "") {
+			                return;
+			            }else if (!_.isString(value) && isNaN(value)) {
+			                return;
+			            } else if ((_.isString(value)) && (value === "NaN")) {
+			            	return;
+			            }
+			            outRow[key] = value;
+			        });
+			        if(_.keys(outRow).length > 0) {
+			            outArr.push(outRow);
+			        }
+			    });
+			    return outArr;
+			}
+
+			var xlFile = ODKScan.runGlobal('createXLSX')(fields);
+			var workbook = XLSX.read(xlFile.base64,{type:'base64'});
+			var result = {};
+			    _.each(workbook.SheetNames, function(sheetName) {
+			        var rObjArr = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+			        rObjArr = removeEmptyStrings(rObjArr);
+			        if(rObjArr.length > 0){
+			            result[sheetName] =  rObjArr;
+			        }
+			    });
+			var processedWorkbook = XLSXConverter.processJSONWorkbook(result);
+			return JSON.stringify(processedWorkbook, 2, 2);
 		},
 
 		/**
@@ -1563,12 +1733,14 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		createXLSX: function(fields) {
 			// for servey sheet
 			// filling out the initial values
-            var survey = new Array();
+           var survey = new Array();
             survey[0] = new Array();
-            survey[0][0] = "type";
-            survey[0][1] = "name";
-            survey[0][2] = "display.text";
+            survey[0][0] = "clause";
+            survey[0][1] = "type";
+            survey[0][2] = "name";
+            survey[0][3] = "display.text";
 
+             //var survey = [[['']]];
             // for the choice sheet
             // filling out the initial values
             var choices = new Array();
@@ -1600,8 +1772,13 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             var day = date.getDate();
             // formated the date in yyyymd format
             var formatted = year+""+""+month+""+day;
-            var form_name = $('#zip_name').val() || 'download';
-	        setting[1][1] = "scan_"+form_name;
+            var form_name = $("#sub_form_name").val() || 'subform';
+            if (fields.length == 0) {
+            	var name = $('#zip_name').val() || "download";
+            	setting[1][1] = "scan_"+ name;
+            } else {
+	            setting[1][1] = "scan_"+form_name;
+	        }
 	        setting[1][2] = "";
 	        setting[2][1] = formatted;
 	        setting[2][2] = "";
@@ -1611,31 +1788,56 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             var is_not_tally = false;
            // var obj = JSON.parse(json);
             //console.log(obj);
-             if(fields){
+            if(fields){
+             	//console.log("subform name "+ fields[0]);
                 var length = fields.length;
+                if (length == 0) {
+                	survey[1] = new Array();
+	            	survey[1][0] = "";
+	            	survey[1][1] = "note";
+	            	survey[1][2] = "";
+	            	survey[1][3] = "i am empty";
+                }
+                console.log("FIELDS length "+length);
                 // making two dimensional array for servey sheet
-                for(var i = 1; i <= length; i++){
+                for(var i = 1; i <= length * 3; i++){
                      survey[i] = new Array();
                 }
                 console.log("test length: "+survey.length);
                 var cur_length = fields.length;
                 var prev_survey_length = survey.length;
-                var j = 0;
+                var j = 1;
                 for(var i = 0; i < cur_length; i++){
-                      j = j + 1;
+                	if(survey[j] == undefined) {
+                		survey[j] = new Array();
+                		if (survey[j + 1] == undefined) {
+                			survey[j + 1] = new Array();
+                		}
+                	}
+                	survey[j][0] = "begin screen";
+                    survey[j + 1][0] = "";
+                	survey[j + 1][1] = "read_only_image";
+                	survey[j + 1][2] = fields[i].name + "_image0";
+                    
+                    j = j + 2;
                     // if the type is qrcode, changed it to string
+                    if(survey[j] == undefined) {
+                    	survey[j] = new Array();
+                    }
+                   survey[j][0] = "";
+
                     if(fields[i].type == "qrcode") {
-                      survey[j][0] = "string";
+                      survey[j][1] = "string";
                     } else if(fields[i].type == "select1") {  // if it is select1, changed it to select_one
-                      survey[j][0] = "select_one";
+                      survey[j][1] = "select_one";
                     } else if(fields[i].type == "select_many"){  // if it is select_many, changed it to select_many
-                      survey[j][0] = "select_multiple";
+                      survey[j][1] = "select_multiple";
                     } else if(fields[i].type == "tally") {  // if it is tally, changed it to integer
-                      survey[j][0] = "integer";
+                      survey[j][1] = "integer";
                     }else if(fields[i].type == "int") {  // if it is int, changed it to integer
-                    	survey[j][0] = "integer";
+                    	survey[j][1] = "integer";
                     }else {  // else it is going to be the same type as it is
-                       survey[j][0] = fields[i].type;
+                       survey[j][1] = fields[i].type;
                     }
                     // if the type is select1 or select_many, we need to have choice sheet
                     // preparing choice sheet
@@ -1649,9 +1851,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                       // choice sheet has to have them one after another
                       var temp = 1;
                       // adding values_list column in the survey sheet
-                      survey[0][3] = "values_list";
+                      survey[0][4] = "values_list";
                       // inserting the value_list for the current row
-                      survey[j][3] = fields[i].name + "_grid_values";
+                      survey[j][4] = fields[i].name + "_grid_values";
                       // if it is first time preparing choice sheet
                       if(choices.length == 1) {
                         count = 1;
@@ -1675,9 +1877,14 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                       }
                     }
                     // filling out the rest of the survey sheet array with the expected value
-                    survey[j][1] = fields[i].name;
-                    survey[j][2] = fields[i].label;
-                }        
+                    survey[j][2] = fields[i].name;
+                    survey[j][3] = fields[i].label || fields[i].name;
+                    if (survey[j + 1] == undefined) {
+                    	survey[j + 1] = new Array();
+                    }
+                    survey[j+1][0] = "end screen";
+                    j = j+2;
+                }      
                
 
                // reading two dimensional array and return an array containing the contents of the array
@@ -1720,5 +1927,22 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
         }, //end createXLSX
       
+        toODKType:function(type){
+        	if(type == "qrcode") {
+			  return "string";
+			} else if(type == "select1") {  // if it is select1, changed it to select_one
+			  return "select_one";
+			} else if(type == "select_many"){  // if it is select_many, changed it to select_many
+			  return "select_multiple";
+			} else if(type == "tally") {  // if it is tally, changed it to integer
+			  return "integer";
+			}else if(type == "int") {  // if it is int, changed it to integer
+				return "integer";
+			}else {  // else it is going to be the same type as it is
+			   return type;
+			}
+        },
+        
+
 	}// end actions
 });

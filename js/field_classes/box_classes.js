@@ -160,6 +160,7 @@ Box.prototype.constructBox = function() {
 	the document.
 */
 Box.prototype.getFieldJSON = function() {
+		
 	var f_info = {};
 	f_info.type = this.type;
 	f_info.name = this.name;
@@ -175,12 +176,16 @@ Box.prototype.getFieldJSON = function() {
     //seg.segment_x = (this.$box.position().left) - ($('.scan_page').offset().left);
     //seg.segment_y = (this.$box.position().top) - ($('.scan_page').offset().top);
 
-    if(this.$box.parent().hasClass("field_group")) {
+    if(this.$box.parent().hasClass("field_group") && $(".letter_portrait").hasClass("selected_page")) {
     // this works for group field
 	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
+	   
 	    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
+   } else if(this.$box.parent().hasClass("field_group") && $(".letter_landscape").hasClass("selected_page")) {
+        seg.segment_x = (this.$box.offset().left) - ($('.img_div').offset().left);
+	   
+	    seg.segment_y = (this.$box.offset().top) - ($('.img_div').offset().top);
    } else {
-   	    console.log("I am here");
    	    seg.segment_x = (this.$box.position().left);
         seg.segment_y = (this.$box.position().top);
    }

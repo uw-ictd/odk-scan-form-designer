@@ -1609,7 +1609,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			$page_div.children('.field').map(function(){mapFieldJson(this,xlsx_fields)});
 
 			var groups = $page_div.children('.field_group');
-			var subform_name = $("#sub_form_name").val() || 'subform';
+			var subform_name = $("#sub_form_name").val();
 			if(subform_name && groups.length>0){ // if there is a subform
 
 				var sub_form = {
@@ -1740,7 +1740,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             survey[0][2] = "name";
             survey[0][3] = "display.text";
 
-             //var survey = [[['']]];
             // for the choice sheet
             // filling out the initial values
             var choices = new Array();
@@ -1756,10 +1755,10 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             setting[0][0] = "setting_name";
             setting[0][1] = "value";
             setting[0][2] = "display.title";
-            setting[1] = new Array();
-            setting[2] = new Array();
-            setting[3] = new Array();
+            // intiallinzing row 1 to 3 for setting sheet
 
+            
+            setting = ODKScan.runGlobal('intializeArray')(setting, 3);
             setting[1][0] = "form_id";
             setting[2][0] = "form_version";
             setting[3][0] = "survey";
@@ -1772,22 +1771,23 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             var day = date.getDate();
             // formated the date in yyyymd format
             var formatted = year+""+""+month+""+day;
-            var form_name = $("#sub_form_name").val() || 'subform';
+
+            var form_name;
             if (fields.length == 0) {
-            	var name = $('#zip_name').val() || "download";
-            	setting[1][1] = "scan_"+ name;
+            	form_name = $('#zip_name').val() || "download";
             } else {
-	            setting[1][1] = "scan_"+form_name;
-	        }
+                form_name = $("#sub_form_name").val() || 'subform';
+            }
+
+	        setting[1][1] = "scan_"+form_name;
 	        setting[1][2] = "";
 	        setting[2][1] = formatted;
 	        setting[2][2] = "";
 	        setting[3][1] = "";
 	        setting[3][2] = setting[1][1];
-
+            // because for tally sheet we do not want choice sheet
             var is_not_tally = false;
-           // var obj = JSON.parse(json);
-            //console.log(obj);
+           
             if(fields){
              	//console.log("subform name "+ fields[0]);
                 var length = fields.length;
@@ -1796,52 +1796,28 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 	            	survey[1][0] = "";
 	            	survey[1][1] = "note";
 	            	survey[1][2] = "";
-	            	survey[1][3] = "i am empty";
+	            	survey[1][3] = "I am empty";
                 }
-                console.log("FIELDS length "+length);
+                
                 // making two dimensional array for servey sheet
-                for(var i = 1; i <= length * 3; i++){
-                     survey[i] = new Array();
-                }
+               
+                survey = ODKScan.runGlobal('intializeArray')(survey, length + length * 3);
                 console.log("test length: "+survey.length);
                 var cur_length = fields.length;
                 var prev_survey_length = survey.length;
                 var j = 1;
                 for(var i = 0; i < cur_length; i++){
-                	if(survey[j] == undefined) {
-                		survey[j] = new Array();
-                		if (survey[j + 1] == undefined) {
-                			survey[j + 1] = new Array();
-                		}
-                	}
                 	survey[j][0] = "begin screen";
-                	if(survey[j+1] == undefined) {
-                		survey[j+1] = new Array();
-                	}
+                	
                     survey[j + 1][0] = "";
                 	survey[j + 1][1] = "read_only_image";
                 	survey[j + 1][2] = fields[i].name + "_image0";
                     
                     j = j + 2;
-                    // if the type is qrcode, changed it to string
-                    if(survey[j] == undefined) {
-                    	survey[j] = new Array();
-                    }
+                    
                    survey[j][0] = "";
-
-                    if(fields[i].type == "qrcode") {
-                      survey[j][1] = "string";
-                    } else if(fields[i].type == "select1") {  // if it is select1, changed it to select_one
-                      survey[j][1] = "select_one";
-                    } else if(fields[i].type == "select_many"){  // if it is select_many, changed it to select_many
-                      survey[j][1] = "select_multiple";
-                    } else if(fields[i].type == "tally") {  // if it is tally, changed it to integer
-                      survey[j][1] = "integer";
-                    }else if(fields[i].type == "int") {  // if it is int, changed it to integer
-                    	survey[j][1] = "integer";
-                    }else {  // else it is going to be the same type as it is
-                       survey[j][1] = fields[i].type;
-                    }
+                   survey[j][1] = ODKScan.runGlobal('toODKType')(fields[i].type);
+                   
                     // if the type is select1 or select_many, we need to have choice sheet
                     // preparing choice sheet
                     if(fields[i].type == "select1" || fields[i].type == "select_many") {
@@ -1882,12 +1858,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     // filling out the rest of the survey sheet array with the expected value
                     survey[j][2] = fields[i].name;
                     survey[j][3] = fields[i].label || fields[i].name;
-                    if (survey[j + 1] == undefined) {
-                    	survey[j + 1] = new Array();
-                    }
-                    if (survey[j+1] == undefined) {
-                    	survey[j+1] = new Array();
-                    }
                     survey[j+1][0] = "end screen";
                     j = j+2;
                 }      
@@ -1932,21 +1902,34 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             }// end if fields
 
         }, //end createXLSX
-      
+      /**
+		*	@param (type) type of a specicfic filed
+		*   returns a required field type for xlsx file 
+		*/
         toODKType:function(type){
         	if(type == "qrcode") {
 			  return "string";
-			} else if(type == "select1") {  // if it is select1, changed it to select_one
+			} else if(type == "select1") {  // if it is select1, changing it to select_one
 			  return "select_one";
-			} else if(type == "select_many"){  // if it is select_many, changed it to select_many
+			} else if(type == "select_many"){  // if it is select_many, changing it to select_many
 			  return "select_multiple";
-			} else if(type == "tally") {  // if it is tally, changed it to integer
+			} else if(type == "tally") {  // if it is tally, changing it to integer
 			  return "integer";
-			}else if(type == "int") {  // if it is int, changed it to integer
+			}else if(type == "int") {  // if it is int, changing it to integer
 				return "integer";
 			}else {  // else it is going to be the same type as it is
 			   return type;
 			}
+        },
+        /**
+		*	@param (type) type of a specicfic filed
+		*   returns a required field type for xlsx file 
+		*/
+        intializeArray:function(array, length){
+        	for (var i = 1; i <= length; i++) {
+        		array[i] = new Array();
+        	}
+			return array;
         },
         
 

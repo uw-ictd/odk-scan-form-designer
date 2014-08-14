@@ -300,10 +300,13 @@ FormField.prototype.getFieldJSON = function() {
 
 	var seg = {};
 	// from very left of the page - scan page
-	if(this.$grid_div.parent().hasClass("field_group")) {
+	if(this.$grid_div.parent().hasClass("field_group") && $(".letter_portrait").hasClass("selected_page")) {
     // this works for group field
 	    seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
 	    seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
+    }else if (this.$grid_div.parent().hasClass("field_group") && $(".letter_landscape").hasClass("selected_page")){
+        seg.segment_x = (this.$grid_div.offset().left) - ($('.img_div').offset().left);
+	    seg.segment_y = (this.$grid_div.offset().top) - ($('.img_div').offset().top);
     } else {
    	    seg.segment_x = (this.$grid_div.position().left);
         seg.segment_y = (this.$grid_div.position().top);

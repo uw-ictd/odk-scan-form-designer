@@ -1815,7 +1815,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                 		}
                 	}
                 	survey[j][0] = "begin screen";
-                	if(survey[j+1] = undefined) {
+                	if(survey[j+1] == undefined) {
                 		survey[j+1] = new Array();
                 	}
                     survey[j + 1][0] = "";
@@ -1885,7 +1885,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     if (survey[j + 1] == undefined) {
                     	survey[j + 1] = new Array();
                     }
-                    if (survey[j+1] = undefined) {
+                    if (survey[j+1] == undefined) {
                     	survey[j+1] = new Array();
                     }
                     survey[j+1][0] = "end screen";

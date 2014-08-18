@@ -1460,11 +1460,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				$(".field_group").each(function() {
 					var top_pos = $(this).css("top");
 					var left_pos = $(this).css("left");
+					console.log("$(this).data(\"id\")" + $(this).data("id"));
 					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};
 				});
 				
-				var json_output = JSON.stringify(savedDoc, null, '\t');		
-				console.log(json_output);							
+				var json_output = JSON.stringify(savedDoc, null, '\t');						
 				zip.file(curr_directory + "page.json", json_output);				
 				curr_directory += "nextPage/";
 			}		
@@ -1591,21 +1591,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				}
 			}
 
-			/*
-			// compute and get the JSON for each field
-			var all_fields = $page_div.find(".field");
-			for (var j = 0; j < all_fields.length; j++) {
-				var $curr_field = $(all_fields[j]);	
-				var fieldObj = $curr_field.data("obj");
-				//console.log(fieldObj);
-			
-				// If it is a text field, it does not add the JSON data to the 
-				// exported file
-				if(fieldObj.field_type != 'text_box') {
-				  scanDoc.fields.push(fieldObj.getFieldJSON());
-				}
-			}*/
-
 			$page_div.find('.field').map(function(){mapFieldJson(this,scanDoc.fields)});
 			$page_div.children('.field').map(function(){mapFieldJson(this,xlsx_fields)});
 
@@ -1630,7 +1615,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					sub_form.fields[data.name] = controller._actions.toODKType(data.type);
 					original_fields.push(data);
 				});
-
+                // proparing group field of the subform  for json
 				groups.each(function(g,group){
 					var group_map = {};
 					$(group).children('.field').each(function(i,field){
@@ -1644,26 +1629,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 				//add sub_form xlsx
 				var xlFile = this._actions.createXLSX(original_fields);
-				//var jsonDef = this._actions.createFormDefJSON(original_fields);
-				/*var nameFile = sub_form.name + ".xlsx";
-				var read_xlsx = XLSX.readFile(nameFile);
-				var jsonObj = JSON.parse(read_xlsx);
-				var processedWorkbook = XLSXConverter.processJSONWorkbook(jsonObj);
-				var result = JSON.stringify(processedWorkbook, 2, 2);*/
-				//var data = new Uint8Array(xlFile);
-				//var arr = new Array();
-                //for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-                //var bstr = arr.join("");
-
-                //Call XLSX 
-               //var workbook = XLSX.read(xlFile, {type:"binary"});
-                //var jsonDef = this._actions.createFormDefJSON(original_fields);
 				zip.file("scan_" + sub_form.name + ".xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 				var jsonDef = this._actions.createFormDefJSON(original_fields);
 				zip.file("scan_" + sub_form.name + "_formDef.json", jsonDef);  // added xlFile to the zip
-				//===============================================================================================
-
-			
 			}// end sub forms	
 
 			var json_output = JSON.stringify(scanDoc, null, '\t');
@@ -1689,9 +1657,15 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				}
 			});				
 		},
+		 /**
+		*	@param (fields) array containing all the properites for the json
+		*   creates xlsx file with this this fields
+		*   reads this xlsx file and makes formdef.json
+		*   returns a json formatted stirng containing all the required properties of a
+		*   field required for json file
+		*/
 
 		createFormDefJSON: function(fields) {
-
 			var removeEmptyStrings = function (rObjArr){
 			    var outArr = [];
 			    _.each(rObjArr, function(row){
@@ -1712,7 +1686,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			    });
 			    return outArr;
 			}
-
 			var xlFile = ODKScan.runGlobal('createXLSX')(fields);
 			var workbook = XLSX.read(xlFile.base64,{type:'base64'});
 			var result = {};
@@ -1924,7 +1897,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			}
         },
         /**
-		*	@param (type) type of a specicfic filed
+		*	@param (array) to initialize
+		*   @param (length) up to this length to initialize
 		*   returns a required field type for xlsx file 
 		*/
         intializeArray:function(array, length){

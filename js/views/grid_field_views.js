@@ -3,7 +3,7 @@
 *	which contain grids with values (checkboxes and 
 *	fill-in bubbles).
 */
-var count = 1;  // added to keep truck of the value of total element value
+//var count = 1;  // added to keep truck of the value of total element value
 ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 	gridElements: [[{colIndex: 1, rowIndex: 1, ele_value: 1}]],  // has changed, before it was default_val
 	numCol: 1,
@@ -13,7 +13,9 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 	layoutName: "grid-field-layout",
 	updateGridValueView: function() {
 		// User has chosen to add/remove columns/rows to a field. 
+		var count = 0;
 		var value_grid = this.get('gridElements');
+		console.log("value_grid" + value_grid);
 		
 		// check if numRow increased of decreased
 		if (this.get('numRow') > this.get('prevNumRow')) {
@@ -21,7 +23,7 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 			var newOne = this.get('numRow');  // getting the current number of row
 			var newColumn = this.get('numCol');  // getting the current number of column
 			var total = newColumn * newOne;  // calculating total number of elements
-			count = total - newColumn;  // culculating where to start as the ele_value is supposed to be unique
+			count = total - newColumn + 1;  // culculating where to start as the ele_value is supposed to be unique
 			
 			var num_new_rows = this.get('numRow') - this.get('prevNumRow');
 			for (var i = this.get('prevNumRow') + 1; i <= this.get('prevNumRow') + num_new_rows; i++) {
@@ -48,7 +50,7 @@ ODKScan.GridFieldWithValues = ODKScan.FieldViewController.extend({
 			 // if the count is less than total number of elements
 			 // then it should start with current number of row * current number of column
 			if(count < newOne * this.get('prevNumCol')) {
-			   count = newOne * this.get('numCol');
+			   count = (newOne * this.get('numCol')) - 1;
 			}
 
 			var num_new_col = this.get('numCol') - this.get('prevNumCol');

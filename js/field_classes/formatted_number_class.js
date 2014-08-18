@@ -523,7 +523,7 @@ FormNumField.prototype.makeGridElement = function(num_digits, group_num) {
 FormNumField.prototype.makeGridDelim = function(num_digits) {
 	var $delim_div = $("<div/>");
 	$delim_div.addClass(this.ele_class);
-	var delim_width = this.element_width / 2;
+	var delim_width = this.element_width * .8; //was * .5
 	var delim_height = this.element_height;
 	
 	$delim_div.css({border: 'none',
@@ -573,7 +573,7 @@ FormNumField.prototype.makeGridDelim = function(num_digits) {
 			horiz_trans = (delim_width / 2) - (slash_length / 2);
 		}
 		var vert_trans = (delim_height / 2) - slash_width;
-		var rot_angle = Math.atan2(delim_height, delim_width) * 180 / Math.PI;
+		var rot_angle = Math.atan2(delim_height, delim_width * .75) * 180 / Math.PI;
 		
 		$delim.css({borderWidth: rem(1),
 					borderStyle: "solid",

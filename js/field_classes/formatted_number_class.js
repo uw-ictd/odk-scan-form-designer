@@ -116,6 +116,7 @@ FormField.prototype.getProperties = function() {
 	json.name = this.name;
 	json.label = this.label;
 	//json.field_priority = this.field_priority; changing here
+	//this.num_group = this.num_group;
 	json.verify = this.verify;
 	json.zIndex = this.$grid_div.zIndex();
 	
@@ -229,7 +230,7 @@ FormField.prototype.addEventHandlers = function($grid) {
 		$(".highlighted_group").addClass("unhighlighted_group");
 		$(".highlighted_group").removeClass("highlighted_group");
 	
-		// check if user pressed control during the click
+		// check if user pressed shift during the click
 		if (event.shiftKey) {  //has changed, before it was ctrlKey
 			ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);
 		
@@ -272,11 +273,16 @@ FormField.prototype.addEventHandlers = function($grid) {
 	the document.
 */
 FormField.prototype.getFieldJSON = function() {
+	console.log(this);
 	var f_info = {};
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
+	f_info.delimiter = this.delimiter;
 	//f_info.priority = this.field_priority; changing here
+	f_info.delim_type = this.delim_type;
+	f_info.num_group = this.group_sizes.length;
+	f_info.element_each_group = this.group_sizes;
 	f_info.verify = this.verify;
 	
 	var cf = {};
@@ -408,7 +414,7 @@ function FormNumField(json_init, update_init) {
 		this.num_dx = parseInt($("#form_num_dx").val());
 		
 		// the horizontal spacing between the edges of groups
-		this.group_dx = parseInt($("#form_num_group_dx").val());
+		this.group_dx = parseInt($("#form_num_group_dx").val()) + 8;
 		
 		/*	Each index corresponds to each group (index = 0 --> group 1, index = 1 --> group 1, etc.).
 			The value at each index corresponds to the number of segmented numbers in that group.

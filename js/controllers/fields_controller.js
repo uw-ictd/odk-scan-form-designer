@@ -987,7 +987,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		saveSubFormName: function() {
 			$("#subname_dialog").dialog("close");
 			var group = $('.selected_page .field_group').last();
-			group.data('name',$("#sub_form_name").val());
+			var sub_form = $("#sub_form_name").val() || "subform"
+			group.data('name', sub_form);
 			group.addClass('original');
 
 		},
@@ -1557,7 +1558,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				var name = $('#zip_name').val() || "download";
 				zip.file("scan_" + name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 				
-				zip.file("scan_" + name + "_formDef.json",jsonDef);
+				zip.file("scan_" + name + "_main_formDef.json",jsonDef);
 
 				var content = zip.generate();
 				var scanDoc = "data:application/zip;base64," + content;	
@@ -1610,8 +1611,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 			var groups = $page_div.children('.field_group');
 			var subform_name = $("#sub_form_name").val();
-			if(subform_name && groups.length>0){ // if there is a subform
-
+			//if(subform_name && groups.length>0){ // if there is a subform
+		    
+             if(subform_name && groups.length>0){ // if there is a subform
 				var sub_form = {
 					name:subform_name,
 					groups:[],

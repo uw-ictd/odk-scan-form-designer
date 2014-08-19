@@ -3,8 +3,7 @@ var SMALL_TEXT_SIZE = 9;
 var MEDIUM_TEXT_SIZE = 11;
 var LARGE_TEXT_SIZE = 14;
 
- var sub_forms = {};
-   var groups = [];
+ 
 /*	Represents a generic box field.
 	json_init: JSON 	// initialization values that come from a JSON file
 	update_init: JSON 	// initialization values that come from updating the field
@@ -196,7 +195,6 @@ Box.prototype.getFieldJSON = function() {
 	f_info.segments.push(seg);
 	return f_info;
 };
-//==============================================================================================================
 Box.prototype.getSubFieldJSON = function() {
   
   if (this.$box.parent().hasClass("field_group")) {
@@ -214,7 +212,7 @@ Box.prototype.getSubFieldJSON = function() {
   }
     
 };
-//==============================================================================================================
+
 
 /*	Returns JSON containing DOM properties
 	of this generic box, formatted for saving 
@@ -378,13 +376,17 @@ QrCode.prototype.saveJSON = function() {
 function TextBox(json_init, update_init) {
 	Box.call(this, json_init, update_init); // call super constructor.	
 	this.field_type = 'text_box';
-	
+
 	// add textbox specific properties to this.$box
 	this.$box.css({wordWrap: 'break-word'});											
 	var $text = $("<p/>");
 	
-	var font_size_choice = (json_init) ? json_init.font_size 
+	//var font_size_choice = (json_init) ? json_init.font_size 
+						//: $("#text_size").val();
+
+	this.font_size = (json_init) ? json_init.font_size 
 						: $("#text_size").val();
+    var font_size_choice = this.font_size;
 	// set the font size
 	var font_size_value;
 	if (font_size_choice == "small") {
@@ -423,7 +425,9 @@ TextBox.prototype.loadProperties = function() {
 	
 	// set text size
 	$("#text_size").prop('selectedIndex', (this.font_size == "small") ? 0 :
-						(this.font_size == "medium") ? 1 : 2);		
+						(this.font_size == "medium") ? 1 : 2);
+	//console.log("loadProperties " + $("#text_size").val());	
+
 }
 
 /*	Creates a new text box field with the updated

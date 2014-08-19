@@ -1308,13 +1308,16 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 						seg_num_field.constructGrid();			
 					} else if (f_json.field_type == 'string') {  // before it was empty_box
 						var empty_box = new EmptyBox(f_json);
-						empty_box.constructBox();		
+						empty_box.constructBox();
+
 					} else if(f_json.field_type == 'qr_code') { 
 						var qr_code = new QrCode(f_json);
 						qr_code.constructBox();	
 					}else if (f_json.field_type == 'text_box') {
 						var text_box = new TextBox(f_json);
-						text_box.constructBox();	
+						text_box.constructBox();
+						//text_box.
+						//console.log("font size "+f_json.font_size);	
 					} else if (f_json.field_type == 'form_num') {
 						var form_num_field = new FormNumField(f_json);
 						form_num_field.constructGrid();		
@@ -1456,12 +1459,18 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				});	
 
 				// add group locations to the JSON output
+				var count = 0;
 				savedDoc.group_positions = {}
 				$(".field_group").each(function() {
 					var top_pos = $(this).css("top");
 					var left_pos = $(this).css("left");
 					console.log("$(this).data(\"id\")" + $(this).data("id"));
-					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};
+					if ($(this).data("id") == undefined) {
+						count++;
+						savedDoc.group_positions[count] = {top: top_pos, left: left_pos};
+					} else {
+					  savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};
+					}
 				});
 				
 				var json_output = JSON.stringify(savedDoc, null, '\t');						
@@ -1583,14 +1592,15 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			scanDoc.height = $page_div.height();
 			scanDoc.width = $page_div.width();
 			scanDoc.fields = [];
-			
+			console.log();
 			var mapFieldJson = function(that,list){
 				var data = $(that).data('obj');
+				console.log("I am here data " + data.field_type);
 				if(data.field_type != 'text_box'){
 					list.push(data.getFieldJSON());
 				}
 			}
-
+            console.log("scanDoc.fields " + scanDoc.fields);
 			$page_div.find('.field').map(function(){mapFieldJson(this,scanDoc.fields)});
 			$page_div.children('.field').map(function(){mapFieldJson(this,xlsx_fields)});
 
@@ -1612,15 +1622,19 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				original.find('.field').each(function(i,field){
 					var data = $(field).data('obj');
 					console.log('Original Data:',data);
-					sub_form.fields[data.name] = controller._actions.toODKType(data.type);
-					original_fields.push(data);
+					if (data.field_type != 'text_box') {
+						sub_form.fields[data.name] = controller._actions.toODKType(data.type);
+						original_fields.push(data);
+					}
 				});
                 // proparing group field of the subform  for json
 				groups.each(function(g,group){
 					var group_map = {};
 					$(group).children('.field').each(function(i,field){
 						var data = $(field).data('obj');
-						group_map[original_fields[i].name] = data.name;
+						if (data.field_type != "text_box") {
+							group_map[original_fields[i].name] = data.name;
+						}
 					});
 					sub_form.groups.push(group_map);
 				});
@@ -1715,6 +1729,15 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             survey[0][2] = "name";
             survey[0][3] = "display.text";
 
+            // for model sheet
+			// filling out the initial values
+			var model = new Array();
+			model[0] = new Array();
+			model[1] = new Array();
+            model[0][0] = "type";
+            model[0][1] = "name";
+            model[1][0] = "string";
+            model[1][1] = "scan_output_directory";
             // for the choice sheet
             // filling out the initial values
             var choices = new Array();
@@ -1865,6 +1888,10 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                	// making a worksheet with the content of the choices array
                	file.worksheets.push(readTable(choices, "choices"));
                }
+
+               // making a worksheet with the content of the model array
+               file.worksheets.push(readTable(model, "model"));
+
                // making a worksheet with the content of the setting array
                file.worksheets.push(readTable(setting, "settings"));
                console.log(file);

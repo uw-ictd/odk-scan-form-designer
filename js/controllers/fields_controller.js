@@ -1621,11 +1621,14 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// set sub_form.fields to orginial fields
 				original.find('.field').each(function(i,field){
 					var data = $(field).data('obj');
+					console.log("========================")
+					console.log(" data.field_type "+data.field_type);
 					console.log('Original Data:',data);
-					if (data.field_type != 'text_box') {
+					//if (data.field_type != 'text_box' || ) {
+						console.log("sub_form name "+sub_form.fields[data.name]);
 						sub_form.fields[data.name] = controller._actions.toODKType(data.type);
 						original_fields.push(data);
-					}
+					//}
 				});
                 // proparing group field of the subform  for json
 				groups.each(function(g,group){
@@ -1633,6 +1636,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					$(group).children('.field').each(function(i,field){
 						var data = $(field).data('obj');
 						if (data.field_type != "text_box") {
+							//console.log()
 							group_map[original_fields[i].name] = data.name;
 						}
 					});

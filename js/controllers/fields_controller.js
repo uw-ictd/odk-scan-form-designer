@@ -978,7 +978,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		makeSubform: function() {
 			$("#subname_dialog").dialog("open");
 			$("#subform_dialog").dialog("close");
-			console.log("Subform Name: ",$("#sub_form_name").val());
 		},
 		/**
 		*	Cancles the sub form name dialog.
@@ -1286,6 +1285,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 				// maps groups to sets of fields that they contain
 				var field_groups = {};
+				//var field_groups = [];// I have added
 
 				// add all of the fields to the page
 				var fields = page_json.fields;
@@ -1326,6 +1326,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					}	
 
 					// check if field should be added to a group
+					console.log("group id "+f_json.group_id);
 					if (f_json.group_id != null) {
 						// check if a new field list should be created
 						if (field_groups[f_json.group_id] == null) {
@@ -1600,7 +1601,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					list.push(data.getFieldJSON());
 				}
 			}
-            console.log("scanDoc.fields " + scanDoc.fields);
+            
 			$page_div.find('.field').map(function(){mapFieldJson(this,scanDoc.fields)});
 			$page_div.children('.field').map(function(){mapFieldJson(this,xlsx_fields)});
 
@@ -1621,22 +1622,21 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// set sub_form.fields to orginial fields
 				original.find('.field').each(function(i,field){
 					var data = $(field).data('obj');
-					console.log("========================")
-					console.log(" data.field_type "+data.field_type);
-					console.log('Original Data:',data);
-					//if (data.field_type != 'text_box' || ) {
+					if (data.field_type != 'text_box') {
 						console.log("sub_form name "+sub_form.fields[data.name]);
 						sub_form.fields[data.name] = controller._actions.toODKType(data.type);
 						original_fields.push(data);
-					//}
-				});
+
+					}
+									});
                 // proparing group field of the subform  for json
 				groups.each(function(g,group){
 					var group_map = {};
 					$(group).children('.field').each(function(i,field){
 						var data = $(field).data('obj');
-						if (data.field_type != "text_box") {
-							//console.log()
+						// checking original_fields[i] != undefined because at this index we did not push 
+						// anything as we dont want to output test on the json
+						if (data.field_type != "text_box" && original_fields[i] != undefined) {
 							group_map[original_fields[i].name] = data.name;
 						}
 					});

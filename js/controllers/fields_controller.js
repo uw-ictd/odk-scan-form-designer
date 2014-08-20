@@ -1775,7 +1775,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             var formatted = year+""+""+month+""+day;
 
             var form_name;
-            if (fields.length == 0) {
+            
+            if (fields.length == 0 || $("#sub_form_name").val() == "") {
             	form_name = $('#zip_name').val() || "download";
             } else {
                 form_name = $("#sub_form_name").val() || 'subform';
@@ -1859,7 +1860,21 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     }
                     // filling out the rest of the survey sheet array with the expected value
                     survey[j][2] = fields[i].name;
-                    survey[j][3] = fields[i].label || fields[i].name;
+                    //====================================================================
+                    // TODO: we need to fix this on survey, survey gives us strange error when it 
+                    // is int
+                    var temp;
+                    if(fields[i].type == "int") {
+	                    var intField = parseInt(fields[i].label);
+	                    var floatField = parseFloat(fields[i].label);
+	                    if (!isNaN(intField) && !isNaN(floatField)) {
+	                    	console.log("Am I here??????");
+	                    	temp = "\"" + fields[i].label + "\"";
+	                    }
+	                    survey[j][3] = temp || fields[i].name;
+	                }else {
+	                	survey[j][3] = fields[i].label || fields[i].name;
+	                }
                     survey[j+1][0] = "end screen";
                     j = j+2;
                 }      

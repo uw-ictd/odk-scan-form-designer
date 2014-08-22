@@ -180,9 +180,9 @@ Box.prototype.getFieldJSON = function() {
 	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
 	   
 	    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
-   } else if(this.$box.parent().hasClass("field_group") && $(".letter_landscape").hasClass("selected_page")) {
+   } else if(this.$box.parent().hasClass("field_group") && 
+   	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0) {
         seg.segment_x = (this.$box.offset().left) - 310;//($('.img_div').offset().left);
-	   
 	    seg.segment_y = (this.$box.offset().top) - ($('.img_div').offset().top);
    } else {
    	    seg.segment_x = (this.$box.position().left);
@@ -195,6 +195,8 @@ Box.prototype.getFieldJSON = function() {
 	f_info.segments.push(seg);
 	return f_info;
 };
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// NEED TO DELTE
 Box.prototype.getSubFieldJSON = function() {
   
   if (this.$box.parent().hasClass("field_group")) {
@@ -212,7 +214,7 @@ Box.prototype.getSubFieldJSON = function() {
   }
     
 };
-
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 /*	Returns JSON containing DOM properties
 	of this generic box, formatted for saving 

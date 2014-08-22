@@ -310,7 +310,8 @@ FormField.prototype.getFieldJSON = function() {
     // this works for group field
 	    seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
 	    seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
-    }else if (this.$grid_div.parent().hasClass("field_group") && $(".letter_landscape").hasClass("selected_page")){
+    }else if (this.$grid_div.parent().hasClass("field_group") && 
+    	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0){
         seg.segment_x = (this.$grid_div.offset().left) - 310;//($('.img_div').offset().left);
 	    seg.segment_y = (this.$grid_div.offset().top) - ($('.img_div').offset().top);
     } else {

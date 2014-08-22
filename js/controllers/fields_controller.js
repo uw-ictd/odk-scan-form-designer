@@ -704,7 +704,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		  var index;
 		  var sub_name;
 		  if (numbers != null) {
-          	console.log(numbers);
+          	//console.log(numbers);
 		    index = name.indexOf(numbers[0]);
 		    sub_name = name.substring(0, index);
 		  } else {
@@ -1327,14 +1327,16 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 					// check if field should be added to a group
 					console.log("group id "+f_json.group_id);
-					if (f_json.group_id != null) {
+					//=======================================================================================
+					if (f_json.group_id != null) {  // just commente out
 						// check if a new field list should be created
 						if (field_groups[f_json.group_id] == null) {
 							field_groups[f_json.group_id] = [];
 						}
 						
 						field_groups[f_json.group_id].push($(".selected_field")[0]);
-					}					
+					}	
+					//======================================================================================				
 				}
 
 				// create all of the groups
@@ -1454,7 +1456,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				// store JSON for all grouped fields
 				
 				$page_div.children(".field_group").children(".field").each(function() {
-					  var json = $(this).data("obj").saveJSON();					
+					  var json = $(this).data("obj").saveJSON();
+					  console.log($(this).parent());					
                       json.group_id = $(this).parent().data("id");
 					  savedDoc.fields.push(json);					
 				});	
@@ -1465,13 +1468,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				$(".field_group").each(function() {
 					var top_pos = $(this).css("top");
 					var left_pos = $(this).css("left");
-					console.log("$(this).data(\"id\")" + $(this).data("id"));
-					if ($(this).data("id") == undefined) {
-						count++;
-						savedDoc.group_positions[count] = {top: top_pos, left: left_pos};
-					} else {
-					  savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};
-					}
+					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};  // just added parent()
 				});
 				
 				var json_output = JSON.stringify(savedDoc, null, '\t');						
@@ -1863,11 +1860,13 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     //====================================================================
                     // TODO: we need to fix this on survey, survey gives us strange error when it 
                     // is int
-                    var temp;
+                    // if the user gives label as number in the xlsx we put in "given_number" format
+                    // otherwise it will be as it is
+                    var temp = fields[i].label;
                     if(fields[i].type == "int") {
-	                    var intField = parseInt(fields[i].label);
-	                    var floatField = parseFloat(fields[i].label);
-	                    if (!isNaN(intField) && !isNaN(floatField)) {
+                    	var reg = new RegExp("[A-z]+");
+	                    
+	                    if (!reg.test(fields[i].label) ){
 	                    	console.log("Am I here??????");
 	                    	temp = "\"" + fields[i].label + "\"";
 	                    }

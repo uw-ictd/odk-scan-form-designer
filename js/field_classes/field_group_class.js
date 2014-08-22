@@ -17,6 +17,7 @@ function FieldGroup($grouped_fields, top_pos, left_pos) {
 	
 	// use the global counter to assign this group
 	// a unique name
+	console.log(this.$group_div.data("id"))
 	this.$group_div.data("id", FIELD_GROUP_COUNTER);
 	FIELD_GROUP_COUNTER += 1;
 	
@@ -66,6 +67,10 @@ FieldGroup.prototype.addEventHandlers = function($group_div) {
 FieldGroup.prototype.copyField = function() {
 	var $new_group = this.$group_div.clone();
 	$(".selected_page").append($new_group);
+    // just added the id defined piece of code
+	$new_group.data("id", FIELD_GROUP_COUNTER);
+	FIELD_GROUP_COUNTER += 1;
+
 
 	$new_group.draggable({containment: "parent", 
 						grid: [GRID_X, GRID_Y]});					

@@ -1294,7 +1294,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 					// check if the current zIndex should be updated
 					if (f_json.zIndex > globZIndex.getTopZ()) {
-						globZIndex.setZ(f_json.zIndex + 1);
+						globZIndex.setZ((f_json.zIndex + 1));
 					}			
 										
 					if (f_json.field_type == 'checkbox') {
@@ -1315,9 +1315,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 						qr_code.constructBox();	
 					}else if (f_json.field_type == 'text_box') {
 						var text_box = new TextBox(f_json);
-						text_box.constructBox();
-						//text_box.
-						//console.log("font size "+f_json.font_size);	
+						text_box.constructBox();	
 					} else if (f_json.field_type == 'form_num') {
 						var form_num_field = new FormNumField(f_json);
 						form_num_field.constructGrid();		
@@ -1326,7 +1324,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					}	
 
 					// check if field should be added to a group
-					console.log("group id "+f_json.group_id);
 					//=======================================================================================
 					if (f_json.group_id != null) {  // just commente out
 						// check if a new field list should be created
@@ -1439,7 +1436,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					img_div.orig_height = $(this).children("img").data('orig_height');
 					img_div.orig_width = $(this).children("img").data('orig_width');
 					img_div.img_name = $(this).data('img_name');			
-					img_div.zIndex = $(this).zIndex();
+					img_div.zIndex = $(this).zIndex(); // just added negative sign
 					savedDoc.images.push(img_div);
 				}
 				
@@ -1468,7 +1465,16 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				$(".field_group").each(function() {
 					var top_pos = $(this).css("top");
 					var left_pos = $(this).css("left");
-					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};  // just added parent()
+					savedDoc.group_positions[$(this).data("id")] = {top: top_pos, left: left_pos};
+					//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+					// TODO: NEED TO LOOK AT THIS LATER
+					// Trying to add the zIndex for big box in the json
+
+					//just added the zindex information
+					//var zindex = $(".field_group").zIndex();
+					//console.log("zindex is in controller ", zindex);
+                    //savedDoc.group_positions["zIndex"]= {zIndex: zindex};
+                    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 				});
 				
 				var json_output = JSON.stringify(savedDoc, null, '\t');						

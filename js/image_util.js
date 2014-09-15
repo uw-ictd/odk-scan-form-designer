@@ -146,7 +146,7 @@ var image_to_field = function(image, json_zIndex) {
 		ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);	
 		
 		// check if user pressed control during the click
-		if (event.ctrlKey) {
+		if (event.shiftKey) {  // changed to shiftKey from CLTRLKEY
 				ODKScan.FieldContainer.pushObject(ODKScan.DefaultPropView);			
 				// add this field to the set of group fields
 				$(this).addClass("group_field");	

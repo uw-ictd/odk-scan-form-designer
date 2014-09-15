@@ -14,10 +14,20 @@ function FieldGroup($grouped_fields, top_pos, left_pos) {
 	this.$group_div.addClass("field_group");	
 	this.$group_div.addClass("highlighted_group");
 	this.$group_div.append(this.$grouped_fields);
+	// just added the zindex
+	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // TODO: NEED TO LOOK AT HERE LATER
+    // there is no zIndex for bog box of the group
+
+
+	//this.$group_div.zIndex = $('.img_div').zIndex();//(this.$grouped_fields).zIndex() + 10;
+    //this.$group_div.zIndex = $(this.$grouped_fields).zIndex() + 1;
+	//console.log("zindex is for big box ", this.$group_div.zIndex);
+	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	
 	// use the global counter to assign this group
-	// a unique name
-	console.log(this.$group_div.data("id"))
+	// a unique name and also increasing the group id
+	
 	this.$group_div.data("id", FIELD_GROUP_COUNTER);
 	FIELD_GROUP_COUNTER += 1;
 	

@@ -177,13 +177,28 @@ Box.prototype.getFieldJSON = function() {
 
     if(this.$box.parent().hasClass("field_group") && $(".letter_portrait").hasClass("selected_page")) {
     // this works for group field
+    	
 	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
 	   
 	    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
    } else if(this.$box.parent().hasClass("field_group") && 
-   	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0) {
+   	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0 && $('.img_div').offset().left != 15) {
+   		console.log("I am here for the group");
+
         seg.segment_x = (this.$box.offset().left) - 310;//($('.img_div').offset().left);
 	    seg.segment_y = (this.$box.offset().top) - ($('.img_div').offset().top);
+   } else if(this.$box.parent().hasClass("field_group") && 
+   	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0 && $('.img_div').offset().left == 15) {
+   		console.log("I am here for correcting thing");
+   		seg.segment_x = (this.$box.offset().left);
+	    seg.segment_y = (this.$box.offset().top);
+
+   } else if(!($(".letter_landscape").hasClass("selected_page")) && $("#prop_sidebar").offset().left != 0
+   	&& $('.img_div').offset().left == 15) {
+   		console.log("I am here not to mess thing up");
+   		seg.segment_x = (this.$box.position().left);
+        seg.segment_y = (this.$box.position().top);
+
    } else {
    	    seg.segment_x = (this.$box.position().left);
         seg.segment_y = (this.$box.position().top);
@@ -202,7 +217,7 @@ Box.prototype.getSubFieldJSON = function() {
   if (this.$box.parent().hasClass("field_group")) {
   	if(sub_forms.name != undefined && this.name == sub_forms.name) {
   		groups.concat(this.name);
-  		console.log("groups "+ groups);
+  		//console.log("groups "+ groups);
   		sub_forms.group1 = groups;
   		return sub_forms;
   	} else {

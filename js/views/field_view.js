@@ -45,6 +45,8 @@ ODKScan.FieldViewController = Ember.View.extend({
 			} else {
 				this.get('verOptions').get('fieldNoView').set('selection', 0);
 			}
+
+			// need to add priprity
             	
 		} else {
 			// loading view into a dialog menu, default border option set to 'Yes'

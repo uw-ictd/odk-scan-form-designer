@@ -23,9 +23,12 @@ function Box(json_init, update_init) {
 					borderWidth: rem(json_init.border_width),
 					zIndex: json_init.zIndex});
 		this.border_width = json_init.border_width;	
+		this.order = json_init.order;
 		this.name = json_init.name;
 		this.label = json_init.label;
-		this.verify = json_init.verify; //changing it before it was field_priority
+		this.verify = json_init.verify;
+		
+		//changing it before it was field_priority
 		//console.log("actual left "+this.$box.position().left);
 		//console.log("actual top "+this.$box.position().top);
 
@@ -51,6 +54,8 @@ function Box(json_init, update_init) {
 		// set other field attributes
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
+		this.order = $("#order").val();
+		console.log("order: " + $("#order").val());
 		//this.field_priority = $("#field_priority").val();
 		if ($("#verified").val() == "") {
           this.verify = "Yes";
@@ -161,6 +166,7 @@ Box.prototype.constructBox = function() {
 Box.prototype.getFieldJSON = function() {
 		
 	var f_info = {};
+	f_info.order = this.order;
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
@@ -237,6 +243,7 @@ Box.prototype.getSubFieldJSON = function() {
 */
 Box.prototype.getProperties = function() {
 	var json = {};
+	json.order = order;
 	json.left = this.$box.css('left');
 	//console.log("left: "+this.$box.css('left'));
 	json.top = this.$box.css('top');
@@ -304,6 +311,7 @@ Box.prototype.loadBoxProp = function() {
 	// set field attributes
 	$("#field_name").val(this.name);
 	$("#field_label").val(this.label);
+	$("#order").val(this.order);
 	
 	if (this.field_priority == "low") {
 		$("#field_priority").prop('selectedIndex', 0);

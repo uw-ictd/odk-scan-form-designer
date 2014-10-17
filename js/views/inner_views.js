@@ -79,3 +79,6 @@ AttributeOptions = Ember.View.extend({
 PriorityOptions = Ember.View.extend({
 	templateName: 'priority-view'
 });
+OrderOptions = Ember.View.extend({
+    templateName: 'priority-order-view'
+});

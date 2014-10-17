@@ -1338,6 +1338,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 				// create all of the groups
 				for (var id in field_groups) {
+					console.log("I am here");
+					console.log("id is ", id);
+					console.log("my name",f_json.sub_forms[0]);
 					if (field_groups.hasOwnProperty(id)) {
 						var position = page_json.group_positions[id];
 						var field_group = new FieldGroup($(field_groups[id]), 
@@ -1476,6 +1479,48 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     //savedDoc.group_positions["zIndex"]= {zIndex: zindex};
                     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 				});
+
+				//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				var groups = $page_div.children('.field_group');
+			    var subform_name = $("#sub_form_name").val();
+				if(subform_name && groups.length>0){ // if there is a subform
+				var sub_form = {
+					name:subform_name,
+					groups:[],
+					fields:{}
+				}
+
+				var original = $page_div.find('.field_group.original');
+				var original_fields = []; // store the order of original names
+				var controller = this;
+				// set sub_form.fields to orginial fields
+				original.find('.field').each(function(i,field){
+					var data = $(field).data('obj');
+					if (data.field_type != 'text_box') {
+						sub_form.fields[data.name] = controller._actions.toODKType(data.type);
+					}
+					original_fields.push(data);
+				});
+				
+                // preparing group field of the subform  for json
+				groups.each(function(g,group){
+					var group_map = {};
+					$(group).children('.field').each(function(i,field){
+						var data = $(field).data('obj');
+						// checking data.field_type !=  text_box because at this index we did not push 
+						// anything as we dont want to output text on the json
+						if (data.field_type != "text_box") {
+							group_map[original_fields[i].name] = data.name;
+						}
+					});
+					sub_form.groups.push(group_map);
+				});
+
+				savedDoc.sub_forms = [sub_form];
+				}
+				//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+
 				
 				var json_output = JSON.stringify(savedDoc, null, '\t');						
 				zip.file(curr_directory + "page.json", json_output);				
@@ -1592,21 +1637,90 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			
 			// make page visible, set Scan doc properties
 			this.send('selectPageTab', pages[curr_index]);
-			var $page_div = Ember.get(pages[curr_index], 'pageDiv');	
+			var $page_div = Ember.get(pages[curr_index], 'pageDiv');
+			//console.log("page div "+$page_div);	
 			scanDoc.height = $page_div.height();
 			scanDoc.width = $page_div.width();
 			scanDoc.fields = [];
-			console.log();
-			var mapFieldJson = function(that,list){
+			//console.log();
+			var test = [];
+			var flag = [];
+			var index1 = false;
+			var count = 1;
+			//console.log("CHECKING HERE ",data('obj').field_type);
+			//console.log("try to acccess it ", this.data('obj').field_type);
+			var mapFieldJson0 = function(that,list){
 				var data = $(that).data('obj');
-				console.log("I am here data " + data.field_type);
-				if(data.field_type != 'text_box'){
-					list.push(data.getFieldJSON());
+				if (data.order != "") {
+					var index = parseInt(data.order);
+					if (test[index] == null || test[index] == undefined) {
+						test[index] = data;
+						count++;
+					}
+					if (count == test.length) {
+						for (var i = 1; i < test.length; i++) {
+							if ((test[i] != null || test[i] != undefined)) {
+								if (test[i].field_type != 'text_box') {
+									if (test[i] != 0) {
+										list.push(test[i].getFieldJSON());
+										test[i] = 0;
+									}	
+								}
+									
+							}
+							
+						}
+					}
+				} else {
+					if(data.field_type != 'text_box'){
+						list.push(data.getFieldJSON());
+					}
+				}
+				//console.log("order ", data.order);
+				
+				/*if(data.field_type != 'text_box'){
+					//if(test[1] != null || test[1]!= undefined) {
+						for (var i = 1; i < test.length; i++) {
+							if ((test[i] != null || test[i] != undefined)) {
+								//if (flag[i] == undefined) {
+									list.push(test[i].getFieldJSON());
+									//list.push(data.getFieldJSON());
+									//test[i] = null;
+								//}
+							}
+							
+						}
+					//}
+					
+					
+					//console.log("getFieldJSON "+data.getFieldJSON());
+				}*/
+				
+			}
+			//*****************************************************************
+
+			//console.log("length: ", test.length);
+			/*var mapFieldJson = function(this, list) {
+				console.log("length: ", test.length);
+				for(var i = 0; i < test.length; i++) {
+					console.log(test[i]);
+					if (test[i] != null || test[i] != undefined) {
+						list.push(test[i].getFieldJSON());
+						console.log("data.field_type ", test[i].field_type);
+					}
 				}
 			}
+			//console.log("hello "+test[2].field_type);
+			for(var i = 0; i < test.length; i ++) {
+				if(test[i] != null || test[i] != undefined) {
+					console.log("data.field_type ", test[i].field_type);
+				}
+			}*/
+			//*******************************************************************
+			//console.log("getFieldJSON "+mapFieldJson);
             
-			$page_div.find('.field').map(function(){mapFieldJson(this,scanDoc.fields)});
-			$page_div.children('.field').map(function(){mapFieldJson(this,xlsx_fields)});
+			$page_div.find('.field').map(function(){mapFieldJson0(this,scanDoc.fields)});
+			$page_div.children('.field').map(function(){mapFieldJson0(this,xlsx_fields)});
 
 			var groups = $page_div.children('.field_group');
 			var subform_name = $("#sub_form_name").val();
@@ -1626,20 +1740,19 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				original.find('.field').each(function(i,field){
 					var data = $(field).data('obj');
 					if (data.field_type != 'text_box') {
-						console.log("sub_form name "+sub_form.fields[data.name]);
 						sub_form.fields[data.name] = controller._actions.toODKType(data.type);
-						original_fields.push(data);
-
 					}
-									});
-                // proparing group field of the subform  for json
+					original_fields.push(data);
+				});
+				
+                // preparing group field of the subform  for json
 				groups.each(function(g,group){
 					var group_map = {};
 					$(group).children('.field').each(function(i,field){
 						var data = $(field).data('obj');
-						// checking original_fields[i] != undefined because at this index we did not push 
-						// anything as we dont want to output test on the json
-						if (data.field_type != "text_box" && original_fields[i] != undefined) {
+						// checking data.field_type !=  text_box because at this index we did not push 
+						// anything as we dont want to output text on the json
+						if (data.field_type != "text_box") {
 							group_map[original_fields[i].name] = data.name;
 						}
 					});

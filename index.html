@@ -277,6 +277,15 @@
 				{{view Ember.RadioButton1 type="radio" viewName="fieldNoView" name="fieldOption" value="0"}} No
 			</label>
 	</script>
+
+	<!-- added for order of priority-->
+	<script type="text/x-handlebars" data-template-name="priority-order-view">
+		<label for="name">Order Of Fields</label>
+
+		<input type="text" id="order" class="ui-widget-content ui-corner-all long_text_input"><br>
+			
+	</script>
+	<!-- added for order of priority-->
 	
 	<script type="text/x-handlebars" data-template-name="margin-options-view">
 		<label for="name">Top Margin</label>
@@ -313,6 +322,7 @@
 		<hr class="horz_divider">		
 		{{view BorderOptions viewName='bdOptions'}}
 		{{view PriorityOptions viewName='verOptions'}}
+		{{view OrderOptions viewName='orderOptions'}}
 		<hr class="horz_divider">
 		{{view MarginOptions}}
 	</script>
@@ -322,6 +332,7 @@
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
 		{{view PriorityOptions viewName='verOptions'}}
+		{{view OrderOptions viewName='orderOptions'}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="qr-code-view">
@@ -329,6 +340,7 @@
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
 		{{view PriorityOptions viewName='verOptions'}}
+		{{view OrderOptions viewName='orderOptions'}}
 	</script>	
 	
 	<script type="text/x-handlebars" data-template-name="textbox-view">
@@ -345,6 +357,7 @@
 		<hr class="horz_divider">
 		{{view BorderOptions viewName='bdOptions'}}
 		{{view PriorityOptions viewName='verOptions'}}
+		{{view OrderOptions viewName='orderOptions'}}
 	</script>
 	
 	<!-- These views are loaded into the dialog menus and the properties sidebar. -->
@@ -430,6 +443,7 @@
 		
 		{{view BorderOptions viewName="bdOptions"}}
 		{{view PriorityOptions viewName='verOptions'}}
+		{{view OrderOptions viewName='orderOptions'}}
 		<hr class="horz_divider">
 		
 		<label for="name">Number of groups</label>

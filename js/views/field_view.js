@@ -32,6 +32,7 @@ ODKScan.FieldViewController = Ember.View.extend({
 			//console.log(field_obj);
 			// check if the selected field has a border, display the border
 			// input box if it does
+			//this.get('orderOptions').get('hello').set('selection', field_obj.order);
 			if (field_obj.border_width > 0) {
 				this.get('bdOptions').get('borderYesView').set('selection', 1);
 				$("#border_width").val(field_obj.border_width); 
@@ -45,11 +46,13 @@ ODKScan.FieldViewController = Ember.View.extend({
 			} else {
 				this.get('verOptions').get('fieldNoView').set('selection', 0);
 			}
+			
 
-			// need to add priprity
+			// need to add prioprity
             	
 		} else {
 			// loading view into a dialog menu, default border option set to 'Yes'
+			console.log($('#order').value);
 			this.get('bdOptions').get('borderYesView').set('selection', 1);
 			this.get('verOptions').get('fieldYesView').set('selection', 1);
 
@@ -62,7 +65,8 @@ ODKScan.FieldViewController = Ember.View.extend({
 			
 			if (new_field_type == 'checkbox') {
 			    var name = ODKScan.runGlobal('getCopyName')("checkboxes");
-				$("#field_name").val(name);				
+				$("#field_name").val(name);	
+
 				$("#checkbox_dialog").dialog("open");
 			} else if (new_field_type == 'bubble') {
 				var name = ODKScan.runGlobal('getCopyName')("bubbles");

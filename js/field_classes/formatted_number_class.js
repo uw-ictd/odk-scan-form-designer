@@ -25,6 +25,7 @@ function FormField(json_init, update_init) {
 	
 	if (json_init) {
 		// invoke by Load button
+		this.order = json_init.order;
 		this.border_offset = json_init.border_offset;
 		this.param = json_init.param;
 		this.dot_width = json_init.dot_width;
@@ -73,8 +74,10 @@ function FormField(json_init, update_init) {
 		this.border_width = parseInt($("#border_width").val());
 		
 		// set other field attributes
+		this.order = $("#order").val();
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
+
 		//this.field_priority = $("#field_priority").val(); changing here
 		//this.verify = $("#verified").val();
 		if ($("#verified").val() == "") {
@@ -90,7 +93,7 @@ function FormField(json_init, update_init) {
 */
 FormField.prototype.getProperties = function() {
 	var json = {};
-	
+	json.order = this.order;
 	json.field_type = this.field_type;
 	json.num_rows = this.num_rows;
 	json.num_cols = this.num_cols;
@@ -275,6 +278,7 @@ FormField.prototype.addEventHandlers = function($grid) {
 FormField.prototype.getFieldJSON = function() {
 	console.log(this);
 	var f_info = {};
+	f_info.order = this.order;
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
@@ -688,6 +692,7 @@ FormNumField.prototype.loadProperties = function() {
 	// set field attributes
 	$("#field_name").val(this.name);
 	$("#field_label").val(this.label);
+	$("#order").val(this.order);
 	
 	if (this.field_priority == "low") {
 		$("#field_priority").prop('selectedIndex', 0);

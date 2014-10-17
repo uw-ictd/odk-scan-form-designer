@@ -48,6 +48,7 @@ function GridField(json_init, update_init, field_group) {
 	this.$grid_div.data("obj", this);
 	
 	if (json_init) {
+		this.order = json_init.order;
 		this.num_rows = json_init.num_rows;
 		this.num_cols = json_init.num_cols;
 		this.margin_top = json_init.margin_top;
@@ -60,7 +61,7 @@ function GridField(json_init, update_init, field_group) {
 		this.$grid_div.css({top: rem(json_init.top), 
 							left: rem(json_init.left), 
 							zIndex: json_init.zIndex});
-		this.border_width = json_init.border_width;	
+		this.border_width = json_init.border_width;
 		this.name = json_init.name;
 		this.label = json_init.label;
 		//this.field_priority = json_init.field_priority; making change here
@@ -91,6 +92,7 @@ function GridField(json_init, update_init, field_group) {
 		this.border_width = $("#border_width").val();
 		
 		// set other field attributes
+		this.order = $("#order").val();
 		this.name = $("#field_name").val();
 		this.label = $("#field_label").val();
 		//.field_priority = $("#field_priority").val(); changing here
@@ -108,7 +110,7 @@ function GridField(json_init, update_init, field_group) {
 */
 GridField.prototype.getProperties = function() {
 	var json = {};
-	
+	json.order = this.order;
 	json.num_rows = this.num_rows;
 	json.num_cols = this.num_cols;
 	json.margin_top = this.margin_top;
@@ -293,6 +295,7 @@ GridField.prototype.addEventHandlers = function($grid) {
 */
 GridField.prototype.getFieldJSON = function() {
 	var f_info = {};
+	f_info.order = this.order;
 	f_info.type = this.type;
 	f_info.name = this.name;
 	f_info.label = this.label;
@@ -425,6 +428,7 @@ GridField.prototype.loadGridProp = function() {
 	// set field attributes
 	$("#field_name").val(this.name);
 	$("#field_label").val(this.label);
+	$("#order").val(this.order);
 	
 	if (this.field_priority == "low") {
 		$("#field_priority").prop('selectedIndex', 0);

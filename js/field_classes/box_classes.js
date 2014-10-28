@@ -243,7 +243,7 @@ Box.prototype.getSubFieldJSON = function() {
 */
 Box.prototype.getProperties = function() {
 	var json = {};
-	json.order = order;
+	json.order = this.order;
 	json.left = this.$box.css('left');
 	//console.log("left: "+this.$box.css('left'));
 	json.top = this.$box.css('top');

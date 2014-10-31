@@ -1336,16 +1336,22 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					//======================================================================================				
 				}
 
+				//Check For Subform
+				if(page_json.sub_forms) { // groups in this json are subforms
+					$("#sub_form_name").val(page_json.sub_forms[0].name);
+				}
+
 				// create all of the groups
 				for (var id in field_groups) {
-					console.log("I am here");
-					console.log("id is ", id);
-					console.log("my name",f_json.sub_forms[0]);
 					if (field_groups.hasOwnProperty(id)) {
 						var position = page_json.group_positions[id];
 						var field_group = new FieldGroup($(field_groups[id]), 
 														position.top, 
 														position.left);
+						if(page_json.sub_forms && id==0){
+							//If there are sub_forms and this is the first group
+							field_group.$group_div.addClass('original');
+						}
 					}
 				}
 				

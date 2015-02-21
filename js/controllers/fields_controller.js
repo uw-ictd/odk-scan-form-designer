@@ -2,7 +2,7 @@ var count = 1;
 ODKScan.FieldsController = Ember.ArrayController.extend({
 	isImageEditing: false,	// toggles app between field editing and image editing mode
 	imgSelect: null,		// imgAreaSelect object used to crop images
-	currPage: 1,			// current page tab number
+	numPages: 1,			// number of pages
 	pageStyle: "letter_portrait",	// the page style used by pages in the current Scan document
 	selectedPageTab: null,	// metadata about the currently selected page tab (number, active/non-active, DOM reference)
 	pages: [],			// list of JSON objects containing page tab metadata
@@ -157,7 +157,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*/
 		deleteAllPages: function() {
 			// delete all current pages, fields
-			this.set("currPage", 1);
+			this.set("numPages", 1);
 			this.set("pages", []);
 			this.set("images", {});
 			$(".img_div").remove();
@@ -1086,8 +1086,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			}
 			
 			// create new page tab
-			var new_page_num = this.get('currPage');
-			this.set('currPage', new_page_num + 1);
+			var new_page_num = this.get('numPages');
+			this.set('numPages', new_page_num + 1);
 			var new_page_tab = {pageNum: new_page_num, isActive: true, pageDiv: $new_page};
 			
 			// store the new page tab in the controller
@@ -1132,7 +1132,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			page_arr.removeObject(selected_page);
 
             // decrement page count
-            this.set("currPage", this.get("currPage") - 1);
+            this.set("numPages", this.get("numPages") - 1);
 			
 			if (page_arr.length > 0) {
 				// set the first page to be the selected page

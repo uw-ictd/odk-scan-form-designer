@@ -1130,6 +1130,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			var selected_page = this.get("selectedPageTab");
 			selected_page.pageDiv.remove();
 			page_arr.removeObject(selected_page);
+
+            // decrement page count
+            this.set("currPage", this.get("currPage") - 1);
 			
 			if (page_arr.length > 0) {
 				// set the first page to be the selected page

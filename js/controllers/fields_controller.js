@@ -1128,9 +1128,17 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		
 			var page_arr = this.get('pages');
 			var selected_page = this.get("selectedPageTab");
+            var selected_page_num = selected_page.pageNum;
 			selected_page.pageDiv.remove();
 			page_arr.removeObject(selected_page);
 
+            // renumber existing pages
+            page_arr.forEach( function(page) {
+                if (page.pageNum > selected_page_num) {
+                    Ember.set(page, "pageNum", page.pageNum - 1);
+                }
+            });
+ 
             // decrement page count
             this.set("numPages", this.get("numPages") - 1);
 			

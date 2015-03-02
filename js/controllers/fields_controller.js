@@ -1296,7 +1296,6 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 				// maps groups to sets of fields that they contain
 				var field_groups = {};
-				//var field_groups = [];// I have added
 
 				// add all of the fields to the page
 				var fields = page_json.fields;
@@ -1336,7 +1335,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 					// check if field should be added to a group
 					//=======================================================================================
-					if (f_json.group_id != null) {  // just commente out
+					// Note that group id is arbitrary. The id read from JSON is only used
+					// locally and will be replaced in the FieldGroup constructor. 
+					if (f_json.group_id != null) {  
 						// check if a new field list should be created
 						if (field_groups[f_json.group_id] == null) {
 							field_groups[f_json.group_id] = [];
@@ -1359,13 +1360,15 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 						var field_group = new FieldGroup($(field_groups[id]), 
 														position.top, 
 														position.left);
-						if(page_json.sub_forms && id==0){
-							//If there are sub_forms and this is the first group
-							field_group.$group_div.addClass('original');
-						}
 					}
 				}
 				
+				// Currently all subForms must be based off of an identical template. 
+				// So we can choose an arbitrary subForm and assign it as the "original"
+				if (field_group != undefined) {
+					field_group.$group_div.addClass('original');
+				}
+								
 				// unhighlight groups and other fields which were just added
 				// to the page
 				$(".highlighted_group").addClass("unhighlighted_group");

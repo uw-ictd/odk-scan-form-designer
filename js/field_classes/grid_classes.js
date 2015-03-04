@@ -326,35 +326,15 @@ GridField.prototype.getFieldJSON = function() {
 
 	var seg = {};
 	
-	//added, very left from entire page - scan page
-	/*seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
-	seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);*/
-	if(this.$grid_div.parent().hasClass("field_group") && $(".letter_portrait").hasClass("selected_page")) {
-    // this works for group field
-	    seg.segment_x = (this.$grid_div.offset().left) - ($('.scan_page').offset().left);
-	    seg.segment_y = (this.$grid_div.offset().top) - ($('.scan_page').offset().top);
-    } else if(this.$grid_div.parent().hasClass("field_group") && 
-    	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0 &&  $('.img_div').offset().left != 15){
-        seg.segment_x = (this.$grid_div.offset().left) - 310;//($('.img_div').offset().left);
-	    seg.segment_y = (this.$grid_div.offset().top) - ($('.img_div').offset().top);
+	seg.segment_x = (this.$grid_div.position().left);
+	seg.segment_y = (this.$grid_div.position().top);
 
-    } else if (this.$grid_div.parent().hasClass("field_group") && 
-   		$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0 && $('.img_div').offset().left == 15) {
+	// Account for the offset of the container field_group div
+	if (this.$grid_div.parent().hasClass("field_group")) {
+		seg.segment_x += this.$grid_div.parent().position().left;
+		seg.segment_y += this.$grid_div.parent().position().top;
+	}
 
-    	seg.segment_x = (this.$grid_div.offset().left);
-	    seg.segment_y = (this.$grid_div.offset().top);
-	    
-
-    } else if (!($(".letter_landscape").hasClass("selected_page")) && $("#prop_sidebar").offset().left != 0
-   		&& $('.img_div').offset().left == 15) {
-    	seg.segment_x = (this.$grid_div.position().left);
-        seg.segment_y = (this.$grid_div.position().top);
-
-    } else {
-   	    seg.segment_x = (this.$grid_div.position().left);
-        seg.segment_y = (this.$grid_div.position().top);
-    }
-	
 	seg.segment_width = this.$grid_div.outerWidth();
 	seg.segment_height = this.$grid_div.outerHeight();
 	seg.align_segment = false;

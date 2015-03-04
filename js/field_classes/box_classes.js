@@ -176,39 +176,15 @@ Box.prototype.getFieldJSON = function() {
 
 
 	var seg = {};
-	// very left of the entire page - scan page
-	// this works for single field
-    //seg.segment_x = (this.$box.position().left) - ($('.scan_page').offset().left);
-    //seg.segment_y = (this.$box.position().top) - ($('.scan_page').offset().top);
-
-    if(this.$box.parent().hasClass("field_group") && $(".letter_portrait").hasClass("selected_page")) {
-    // this works for group field
-    	
-	    seg.segment_x = (this.$box.offset().left) - ($('.scan_page').offset().left);
-	   
-	    seg.segment_y = (this.$box.offset().top) - ($('.scan_page').offset().top);
-   } else if(this.$box.parent().hasClass("field_group") && 
-   	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0 && $('.img_div').offset().left != 15) {
-   		console.log("I am here for the group");
-
-        seg.segment_x = (this.$box.offset().left) - 310;//($('.img_div').offset().left);
-	    seg.segment_y = (this.$box.offset().top) - ($('.img_div').offset().top);
-   } else if(this.$box.parent().hasClass("field_group") && 
-   	$(".letter_landscape").hasClass("selected_page") && $("#prop_sidebar").offset().left != 0 && $('.img_div').offset().left == 15) {
-   		console.log("I am here for correcting thing");
-   		seg.segment_x = (this.$box.offset().left);
-	    seg.segment_y = (this.$box.offset().top);
-
-   } else if(!($(".letter_landscape").hasClass("selected_page")) && $("#prop_sidebar").offset().left != 0
-   	&& $('.img_div').offset().left == 15) {
-   		console.log("I am here not to mess thing up");
-   		seg.segment_x = (this.$box.position().left);
-        seg.segment_y = (this.$box.position().top);
-
-   } else {
-   	    seg.segment_x = (this.$box.position().left);
-        seg.segment_y = (this.$box.position().top);
-   }
+	
+	seg.segment_x = (this.$box.position().left);
+	seg.segment_y = (this.$box.position().top);
+	
+	// Account for the offset of the container field_group div
+	if (this.$box.parent().hasClass("field_group")) {
+		seg.segment_x += this.$box.parent().position().left;
+		seg.segment_y += this.$box.parent().position().top;
+	}
 
 	seg.segment_width = this.$box.outerWidth();
 	seg.segment_height = this.$box.outerHeight();

@@ -1353,6 +1353,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					$("#sub_form_name").val(page_json.sub_forms[0].name);
 				}
 
+				// The convention is for the first subform listed to be the template to base
+				// all the other subforms on, particularly relating to field names.
+				// NOTE: This should be improved as a hard fast rule instead of a convention
+				var originalSet = false;
+
 				// create all of the groups
 				for (var id in field_groups) {
 					if (field_groups.hasOwnProperty(id)) {
@@ -1360,13 +1365,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 						var field_group = new FieldGroup($(field_groups[id]), 
 														position.top, 
 														position.left);
+						if (!originalSet) {
+							field_group.$group_div.addClass('original');
+							originalSet = true;
+						}
 					}
-				}
-				
-				// Currently all subForms must be based off of an identical template. 
-				// So we can choose an arbitrary subForm and assign it as the "original"
-				if (field_group != undefined) {
-					field_group.$group_div.addClass('original');
 				}
 								
 				// unhighlight groups and other fields which were just added

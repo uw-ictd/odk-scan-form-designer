@@ -1877,10 +1877,26 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			var model = new Array();
 			model[0] = new Array();
 			model[1] = new Array();
-            model[0][0] = "type";
-            model[0][1] = "name";
-            model[1][0] = "string";
-            model[1][1] = "scan_output_directory";
+      model[2] = new Array();
+            // For the model, fill in the column names
+            model[0][0] = "name";
+            model[0][1] = "type";
+            model[0][2] = "elementType";
+            model[0][3] = "properties.uriFragment.type";
+            model[0][4] = "properties.contentType.type";
+            model[0][5] = "properties.contentType.default";
+
+            // Include the model values that will be uploaded to aggregate
+            model[1][0] = "scan_output_directory";
+            model[1][1] = "string";
+
+            model[2][0] = "raw";
+            model[2][1] = "object";
+            model[2][2] = "mimeUri";
+            model[2][3] = "rowpath";
+            model[2][4] = "string";
+            model[2][5] = "applicaton/json";
+
             // for the choice sheet
             // filling out the initial values
             var choices = new Array();

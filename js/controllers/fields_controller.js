@@ -1618,8 +1618,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             // the form
 			this.send('createExportZipFolder', this.get('pages'), 0, "", zip);
 		},
+
 		/**
-		*	Creates a new subdirectory in the export zip file for the 
+		*	Creates a new subdirectory in the export zip file for the
 		*	current page.
 		*	@param (pages) A list of JSON objects which contain page metadata.
 		*	@param (curr_index) The current index into the pages list.
@@ -1630,128 +1631,84 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 		*/
 		createExportZipFolder: function(pages, curr_index, curr_directory, zip, xlsx_fields) {
 			// base case
-			// Callint createXLSX to make xlsx file 
-			if (curr_index == pages.length) { 
-				
+			// Callint createXLSX to make xlsx file
+			if (curr_index == pages.length) {
 				var xlFile = this._actions.createXLSX(xlsx_fields);
 				var jsonDef = this._actions.createFormDefJSON(xlsx_fields);
-				// get the user given name. if user does not provide with any name, append "default" to 
+				// get the user given name. if user does not provide with any name, append "default" to
 				var name = $('#zip_name').val() || "download";
 				zip.file("scan_" + name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
-				
+
 				zip.file("scan_" + name + "_main_formDef.json",jsonDef);
 
 				var content = zip.generate();
-				var scanDoc = "data:application/zip;base64," + content;	
+				var scanDoc = "data:application/zip;base64," + content;
 
 				$("#zip_link").attr('href', scanDoc);
 				$("#zip_link").attr("download", $("#zip_name").val());
 				// trigger the file to be downloaded
 				document.getElementById("zip_link").click();
-				$("#export_dialog").dialog("close");	
+				$("#export_dialog").dialog("close");
 				$(".field_group").addClass("unhighlighted_group");
-                 
-				return; 
-			} 
+
+				return;
+			}
 
 			// defining the fields argument
 			xlsx_fields = xlsx_fields || [];
 			var scanDoc = {};
-			
+
 			// make page visible, set Scan doc properties
 			this.send('selectPageTab', pages[curr_index]);
 			var $page_div = Ember.get(pages[curr_index], 'pageDiv');
-			//console.log("page div "+$page_div);	
 			scanDoc.height = $page_div.height();
 			scanDoc.width = $page_div.width();
 			scanDoc.fields = [];
-			//console.log();
-			var test = [];
-			var flag = [];
-			var index1 = false;
-			var count = 1;
-			//console.log("CHECKING HERE ",data('obj').field_type);
-			//console.log("try to acccess it ", this.data('obj').field_type);
-			var mapFieldJson0 = function(that,list){
-				var data = $(that).data('obj');
-				if (data.order != "") {
-					var index = parseInt(data.order);
-					if (test[index] == null || test[index] == undefined) {
-						test[index] = data;
-						count++;
-					}
-					if (count == test.length) {
-						for (var i = 1; i < test.length; i++) {
-							if ((test[i] != null || test[i] != undefined)) {
-								if (test[i].field_type != 'text_box') {
-									if (test[i] != 0) {
-										list.push(test[i].getFieldJSON());
-										test[i] = 0;
-									}	
-								}
-									
-							}
-							
-						}
-					}
-				} else {
-					if(data.field_type != 'text_box'){
-						list.push(data.getFieldJSON());
-					}
-				}
-				//console.log("order ", data.order);
-				
-				/*if(data.field_type != 'text_box'){
-					//if(test[1] != null || test[1]!= undefined) {
-						for (var i = 1; i < test.length; i++) {
-							if ((test[i] != null || test[i] != undefined)) {
-								//if (flag[i] == undefined) {
-									list.push(test[i].getFieldJSON());
-									//list.push(data.getFieldJSON());
-									//test[i] = null;
-								//}
-							}
-							
-						}
-					//}
-					
-					
-					//console.log("getFieldJSON "+data.getFieldJSON());
-				}*/
-				
-			}
-			//*****************************************************************
 
-			//console.log("length: ", test.length);
-			/*var mapFieldJson = function(this, list) {
-				console.log("length: ", test.length);
-				for(var i = 0; i < test.length; i++) {
-					console.log(test[i]);
-					if (test[i] != null || test[i] != undefined) {
-						list.push(test[i].getFieldJSON());
-						console.log("data.field_type ", test[i].field_type);
-					}
-				}
-			}
-			//console.log("hello "+test[2].field_type);
-			for(var i = 0; i < test.length; i ++) {
-				if(test[i] != null || test[i] != undefined) {
-					console.log("data.field_type ", test[i].field_type);
-				}
-			}*/
-			//*******************************************************************
-			//console.log("getFieldJSON "+mapFieldJson);
-            
-			$page_div.find('.field').map(function(){mapFieldJson0(this,scanDoc.fields)});
-			$page_div.children('.field').map(function(){mapFieldJson0(this,xlsx_fields)});
+      // Add the fields, in the order specified
+      var orderFields = function(fieldList) {
+        var item, index;
+        var orderedFields = [];
+        var unorderedFields = [];
+        var resultList = [];
+
+        // Collect all fields into the order they are written
+        for (var i = 0; i < fieldList.length; i++) {
+          item = $(fieldList[i]).data('obj');
+
+          if (item == null || item.field_type == 'text_box') {
+            continue;
+          }
+          index = Number(item.order);
+
+          // Any missing, invalid, or previously used orders are tacked
+          // on the back
+          if (item.order === "" || index === NaN || orderedFields[index]) {
+            unorderedFields.push(item.getFieldJSON());
+            continue;
+          }
+
+          orderedFields[index] = item.getFieldJSON();
+        }
+
+        // Remove any empty spaces
+        for (var i = 0; i < orderedFields.length; i++) {
+          if (orderedFields[i]) {
+            resultList.push(orderedFields[i]);
+          }
+        }
+
+        return resultList.concat(unorderedFields);
+      };
+
+      scanDoc.fields = orderFields($page_div.find('.field'));
+      xlsx_fields = orderFields($page_div.children('.field'));
 
 			var groups = $page_div.children('.field_group');
 			var subform_name = $("#sub_form_name").val();
-			//if(subform_name && groups.length>0){ // if there is a subform
-		    
-             if(subform_name && groups.length>0){ // if there is a subform
-				var sub_form = {
-					name:subform_name,
+      if(subform_name && groups.length>0){ // if there is a subform
+        var sub_form = {
+          name:subform_name,
 					groups:[],
 					fields:{}
 				}
@@ -1767,13 +1724,13 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 					}
 					original_fields.push(data);
 				});
-				
+
                 // preparing group field of the subform  for json
 				groups.each(function(g,group){
 					var group_map = {};
 					$(group).children('.field').each(function(i,field){
 						var data = $(field).data('obj');
-						// checking data.field_type !=  text_box because at this index we did not push 
+						// checking data.field_type !=  text_box because at this index we did not push
 						// anything as we dont want to output text on the json
 						if (data.field_type != "text_box") {
 							group_map[original_fields[i].name] = data.name;
@@ -1789,16 +1746,16 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				zip.file("scan_" + sub_form.name + ".xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 				var jsonDef = this._actions.createFormDefJSON(original_fields);
 				zip.file("scan_" + sub_form.name + "_formDef.json", jsonDef);  // added xlFile to the zip
-			}// end sub forms	
+			}// end sub forms
 
 			var json_output = JSON.stringify(scanDoc, null, '\t');
 			var controller = this;
 			// scale up the html element sizes
 			$("html").css("font-size", "200%");
-			html2canvas($(".selected_page"), {   
+			html2canvas($(".selected_page"), {
 				logging: true,
-				onrendered : function(canvas) {					
-					var img_src = canvas.toDataURL("image/jpeg");		
+				onrendered : function(canvas) {
+					var img_src = canvas.toDataURL("image/jpeg");
 					$("html").css("font-size", "62.5%");
 
 					/* 	Need to extract the base64 from the image source.
@@ -1806,13 +1763,13 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 						Where '...' is the actual base64.
 					*/
 					var img_base64 = img_src.split(",")[1];
-					
+
 					// add img and json to zip file
 					zip.file(curr_directory + "form.jpg", img_base64, {base64: true});
 					zip.file(curr_directory + "template.json", json_output);
 					controller.send('createExportZipFolder', pages, curr_index + 1, curr_directory + "nextPage/", zip,xlsx_fields);
 				}
-			});				
+			});
 		},
 		 /**
 		*	@param (fields) array containing all the properites for the json

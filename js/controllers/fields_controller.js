@@ -1637,17 +1637,14 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				var jsonDef = this._actions.createFormDefJSON(xlsx_fields);
 				// get the user given name. if user does not provide with any name, append "default" to
 				var name = $('#zip_name').val() || "download";
+        var fileName = name + ".zip";
 				zip.file("scan_" + name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 
 				zip.file("scan_" + name + "_main_formDef.json",jsonDef);
 
-				var content = zip.generate();
-				var scanDoc = "data:application/zip;base64," + content;
+				var content = zip.generate({type:"blob"});
+        saveAs(content, fileName);
 
-				$("#zip_link").attr('href', scanDoc);
-				$("#zip_link").attr("download", $("#zip_name").val());
-				// trigger the file to be downloaded
-				document.getElementById("zip_link").click();
 				$("#export_dialog").dialog("close");
 				$(".field_group").addClass("unhighlighted_group");
 
@@ -1683,7 +1680,8 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
           // Any missing, invalid, or previously used orders are tacked
           // on the back
-          if (item.order === "" || index === NaN || orderedFields[index]) {
+          if (item.order == "" || isNaN(index) || index < 0
+              || orderedFields[index]) {
             unorderedFields.push(item.getFieldJSON());
             continue;
           }

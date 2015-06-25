@@ -25,7 +25,7 @@ function Box(json_init, update_init) {
 		this.border_width = json_init.border_width;	
 		this.order = json_init.order;
 		this.name = json_init.name;
-		this.label = json_init.label;
+		this.displayText = json_init.displayText;
 		this.verify = json_init.verify;
 		
 		//changing it before it was field_priority
@@ -53,7 +53,7 @@ function Box(json_init, update_init) {
 		
 		// set other field attributes
 		this.name = $("#field_name").val();
-		this.label = $("#field_label").val();
+		this.displayText = $("#field_display_text").val();
 		this.order = $("#order").val();
 		console.log("order: " + $("#order").val());
 		//this.field_priority = $("#field_priority").val();
@@ -169,7 +169,7 @@ Box.prototype.getFieldJSON = function() {
 	f_info.order = this.order;
 	f_info.type = this.type;
 	f_info.name = this.name;
-	f_info.label = this.label;
+	f_info.displayText = this.displayText;
 	//f_info.priority = this.field_priority;
 	f_info.verify = this.verify; //getting the value from here
 	f_info.segments = [];
@@ -229,7 +229,7 @@ Box.prototype.getProperties = function() {
 	json.border_width = this.border_width;	
 	json.field_type = this.field_type;	
 	json.name = this.name;
-	json.label = this.label;
+	json.displayText = this.displayText;
 	//json.field_priority = this.field_priority;
 	json.verify = this.verify;
 	json.zIndex = this.$box.zIndex();
@@ -286,7 +286,7 @@ Box.prototype.loadBoxProp = function() {
 	
 	// set field attributes
 	$("#field_name").val(this.name);
-	$("#field_label").val(this.label);
+	$("#field_display_text").val(this.displayText);
 	$("#order").val(this.order);
 	
 	if (this.field_priority == "low") {

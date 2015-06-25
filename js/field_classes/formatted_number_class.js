@@ -49,7 +49,7 @@ function FormField(json_init, update_init) {
 							zIndex: json_init.zIndex});
 		this.border_width = json_init.border_width;
 		this.name = json_init.name;
-		this.label = json_init.label;
+		this.displayText = json_init.displayText;
 		//this.field_priority = json_init.field_priority; changing here
 		this.verify = json_init.verify;
 	} else {
@@ -76,7 +76,7 @@ function FormField(json_init, update_init) {
 		// set other field attributes
 		this.order = $("#order").val();
 		this.name = $("#field_name").val();
-		this.label = $("#field_label").val();
+		this.displayText = $("#field_display_text").val();
 
 		//this.field_priority = $("#field_priority").val(); changing here
 		//this.verify = $("#verified").val();
@@ -117,7 +117,7 @@ FormField.prototype.getProperties = function() {
 	json.group_sizes = this.group_sizes;
 	json.delim_type = this.delim_type;
 	json.name = this.name;
-	json.label = this.label;
+	json.displayText = this.displayText;
 	//json.field_priority = this.field_priority; changing here
 	//this.num_group = this.num_group;
 	json.verify = this.verify;
@@ -281,7 +281,7 @@ FormField.prototype.getFieldJSON = function() {
 	f_info.order = this.order;
 	f_info.type = this.type;
 	f_info.name = this.name;
-	f_info.label = this.label;
+	f_info.displayText = this.displayText;
 	f_info.delimiter = this.delimiter;
 	//f_info.priority = this.field_priority; changing here
 	f_info.delim_type = this.delim_type;
@@ -674,7 +674,7 @@ FormNumField.prototype.loadProperties = function() {
 	
 	// set field attributes
 	$("#field_name").val(this.name);
-	$("#field_label").val(this.label);
+	$("#field_display_text").val(this.displayText);
 	$("#order").val(this.order);
 	
 	if (this.field_priority == "low") {

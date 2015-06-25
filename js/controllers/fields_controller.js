@@ -1973,19 +1973,19 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                     //====================================================================
                     // TODO: we need to fix this on survey, survey gives us strange error when it 
                     // is int
-                    // if the user gives label as number in the xlsx we put in "given_number" format
+                    // if the user gives display text as number in the xlsx we put in "given_number" format
                     // otherwise it will be as it is
-                    var temp = fields[i].label;
+                    var temp = fields[i].displayText;
                     if(fields[i].type == "int") {
                     	var reg = new RegExp("[A-z]+");
 	                    
-	                    if (!reg.test(fields[i].label) ){
+	                    if (!reg.test(fields[i].displayText) ){
 	                    	console.log("Am I here??????");
-	                    	temp = "\"" + fields[i].label + "\"";
+	                    	temp = "\"" + fields[i].displayText + "\"";
 	                    }
 	                    survey[j][3] = temp || fields[i].name;
 	                }else {
-	                	survey[j][3] = fields[i].label || fields[i].name;
+	                	survey[j][3] = fields[i].displayText || fields[i].name;
 	                }
                     survey[j+1][0] = "end screen";
                     j = j+2;

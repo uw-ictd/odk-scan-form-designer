@@ -157,18 +157,14 @@
 			</ul>			
 		</nav>	
 		<div id="page_label_container">
-      <!-- TODO: Add back the multipage support when it is fully supported in Scan -->
-			<div id="page_list">
-      <!--
+      <!-- TODO: Add back the new page trigger when it is fully supported in Scan -->
+			<div id="page_list" style="display: none;">
 				{{#each pages}}
 					<div {{bind-attr class=":page_tab :scan_doc_page isActive:selected_tab"}} {{action 'selectPageTab' this}}>Page {{pageNum}}</div>
 				{{/each}}
-        -->
 			</div>				
-      <!--
-      <div id="new_page" class="page_tab" {{action 'newPage'}}>Add +</div>
-			<div id="remove_page" class="page_tab" {{action 'openRemovePageDialog'}}>Remove -</div>
-    -->
+      <div id="new_page" style="display: none;" class="page_tab" {{action 'newPage'}}>Add +</div>
+			<div id="remove_page" style="display: none;" class="page_tab" {{action 'openRemovePageDialog'}}>Remove -</div>
 		</div>
 		{{#if isImageEditing}}
 			<div id="image_tab_container">

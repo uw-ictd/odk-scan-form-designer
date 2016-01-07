@@ -1869,12 +1869,13 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             setting[0][2] = "display.title";
             // intiallinzing row 1 to 3 for setting sheet
 
-            
-            setting = ODKScan.runGlobal('intializeArray')(setting, 3);
+
+            setting = ODKScan.runGlobal('intializeArray')(setting, 4);
             setting[1][0] = "form_id";
-            setting[2][0] = "form_version";
-            setting[3][0] = "survey";
-            
+            setting[2][0] = "table_id";
+            setting[3][0] = "form_version";
+            setting[4][0] = "survey";
+
             // getting the curren date to add it to the value of form version
             // in the format of yyyymd
             var date = new Date();
@@ -1885,7 +1886,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
             var formatted = year+""+""+month+""+day;
 
             var form_name;
-            
+
             if (fields.length == 0 || $("#sub_form_name").val() == "") {
             	form_name = $('#zip_name').val() || "download";
             } else {
@@ -1894,13 +1895,15 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 
 	        setting[1][1] = "scan_"+form_name;
 	        setting[1][2] = "";
-	        setting[2][1] = formatted;
+	        setting[2][1] = "scan_"+form_name;
 	        setting[2][2] = "";
-	        setting[3][1] = "";
-	        setting[3][2] = setting[1][1];
+	        setting[3][1] = formatted;
+	        setting[3][2] = "";
+	        setting[4][1] = "";
+	        setting[4][2] = setting[1][1];
             // because for tally sheet we do not want choice sheet
             var is_not_tally = false;
-           
+
             if(fields){
              	//console.log("subform name "+ fields[0]);
                 var length = fields.length;
@@ -1911,9 +1914,9 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 	            	survey[1][2] = "";
 	            	survey[1][3] = "I am empty";
                 }
-                
+
                 // making two dimensional array for servey sheet
-               
+
                 survey = ODKScan.runGlobal('intializeArray')(survey, length + length * 3);
                 console.log("test length: "+survey.length);
                 var cur_length = fields.length;
@@ -1921,16 +1924,16 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                 var j = 1;
                 for(var i = 0; i < cur_length; i++){
                 	survey[j][0] = "begin screen";
-                	
+
                     survey[j + 1][0] = "";
                 	survey[j + 1][1] = "read_only_image";
                 	survey[j + 1][2] = fields[i].name + "_image0";
-                    
+
                     j = j + 2;
-                    
+
                    survey[j][0] = "";
                    survey[j][1] = ODKScan.runGlobal('toODKType')(fields[i].type);
-                   
+
                     // if the type is select1 or select_many, we need to have choice sheet
                     // preparing choice sheet
                     if(fields[i].type == "select1" || fields[i].type == "select_many") {

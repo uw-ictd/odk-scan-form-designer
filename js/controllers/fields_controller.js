@@ -1634,13 +1634,22 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			// Callint createXLSX to make xlsx file
 			if (curr_index == pages.length) {
 				var xlFile = this._actions.createXLSX(xlsx_fields);
-				var jsonDef = this._actions.createFormDefJSON(xlsx_fields);
+				var formDefJson = this._actions.createFormDefJSON(xlsx_fields);
+        var formDefString = JSON.stringify(formDefJson, 2, 2);
+
+        // Create the definitions.csv and properties.csv files from the formDef file
+        var dtm = formDefJson.specification.dataTableModel;
+        var defCsv = this._actions.createDefinitionCsvFromDataTableModel(this, dtm);
+        var propCsv = this._actions.createPropertiesCsvFromDataTableModel(this, dtm, formDefJson);
+
 				// get the user given name. if user does not provide with any name, append "default" to
 				var name = $('#zip_name').val() || "download";
         var fileName = name + ".zip";
 				zip.file("scan_" + name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 
-				zip.file("scan_" + name + "_main_formDef.json",jsonDef);
+				zip.file("scan_" + name + "_main_formDef.json",formDefString);
+        zip.file("definitions.csv", defCsv);
+        zip.file("properties.csv", propCsv);
 
 				var content = zip.generate({type:"blob"});
         saveAs(content, fileName);
@@ -1742,8 +1751,18 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				//add sub_form xlsx
 				var xlFile = this._actions.createXLSX(original_fields);
 				zip.file("scan_" + sub_form.name + ".xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
-				var jsonDef = this._actions.createFormDefJSON(original_fields);
-				zip.file("scan_" + sub_form.name + "_formDef.json", jsonDef);  // added xlFile to the zip
+				var formDefJson = this._actions.createFormDefJSON(original_fields);
+        var formDefString = JSON.stringify(formDefJson, 2, 2);
+				zip.file("scan_" + sub_form.name + "_formDef.json", formDefString);  // added xlFile to the zip
+
+        // Create the definitions.csv and properties.csv files from the formDef file
+        var dtm = formDefJson.specification.dataTableModel;
+
+        var defCsv = this._actions.createDefinitionCsvFromDataTableModel(this, dtm);
+        var propCsv = this._actions.createPropertiesCsvFromDataTableModel(this, dtm, formDefJson);
+
+        zip.file("definitions.csv", defCsv);
+        zip.file("properties.csv", propCsv);
 			}// end sub forms
 
 			var json_output = JSON.stringify(scanDoc, null, '\t');
@@ -1809,11 +1828,99 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 			        }
 			    });
 			var processedWorkbook = XLSXConverter.processJSONWorkbook(result);
-			return JSON.stringify(processedWorkbook, 2, 2);
+      return processedWorkbook;
 		},
 
+    /**
+     *  Create definition.csv from inverted the formDef.json
+     * for XLSXConverter processing
+     */
+    createDefinitionCsvFromDataTableModel : function(context, dataTableModel) {
+      var definitions = [];
+      var jsonDefn;
+
+      // and now traverse the dataTableModel making sure all the
+      // elementSet: 'data' values have columnDefinitions entries.
+      //
+      for ( var dbColumnName in dataTableModel ) {
+        // the XLSXconverter already handles expanding complex types
+        // such as geopoint into their underlying storage representation.
+        jsonDefn = dataTableModel[dbColumnName];
+
+        if ( jsonDefn.elementSet === 'data' && !jsonDefn.isSessionVariable ) {
+          var surveyElementName = jsonDefn.elementName;
+
+          // Make sure that the listChildElementKeys have extra quotes
+          // This breaks the RFC4180CsvReader otherwise
+          var listChildElem = null;
+          if (jsonDefn.listChildElementKeys !== undefined && jsonDefn.listChildElementKeys !== null && jsonDefn.listChildElementKeys.length !== 0) {
+            listChildElem = jsonDefn.listChildElementKeys;
+            listChildElem = context._actions.doubleQuoteString(JSON.stringify(listChildElem));
+          }
+
+          definitions.push({
+            _element_key: dbColumnName,
+            _element_name: jsonDefn.elementName,
+            _element_type: (jsonDefn.elementType === undefined || jsonDefn.elementType === null ? jsonDefn.type : jsonDefn.elementType),
+            _list_child_element_keys : (listChildElem === undefined || listChildElem === null ? JSON.stringify([]) : listChildElem)
+          });
+        }
+      }
+
+      // Now sort the _column_definitions
+      definitions = _.sortBy(definitions, function(o) {return o._element_key;});
+
+      // Now write the definitions in CSV format
+      var defCsv = "_element_key,_element_name,_element_type,_list_child_element_keys\r\n";
+      definitions.forEach(function(colDef){
+        var dataString = colDef._element_key + ",";
+        dataString += colDef._element_name + ",";
+        dataString += colDef._element_type + ",";
+        dataString += colDef._list_child_element_keys + "\r\n";
+        defCsv += dataString;
+      });
+      return defCsv;
+    },
+
+    /**
+     *  Create properties.csv from inverted the formDef.json
+     * for XLSXConverter processing
+     */
+    createPropertiesCsvFromDataTableModel : function(context, dataTableModel, formDef) {
+      var properties = formDef.specification.properties;
+
+      // Now write the properties in CSV format
+      var propCsv = "_partition,_aspect,_key,_type,_value\r\n";
+      properties.forEach(function(prop){
+        var dataString = prop._partition + ",";
+        dataString += prop._aspect + ",";
+        dataString += prop._key + ",";
+        dataString += prop._type + ",";
+        dataString += context._actions.doubleQuoteString(prop._value) + "\r\n";
+        propCsv += dataString;
+      });
+
+      return propCsv;
+    },
+
+    doubleQuoteString : function(str) {
+      if (str !== null) {
+        if (str.length === 0 ||
+            str.indexOf("\r") !== -1 ||
+            str.indexOf("\n") !== -1 ||
+            str.indexOf("\"") !== -1 ) {
+
+              str = str.replace(/"/g, "\"\"");
+              str = "\"" + str + "\"";
+              return str;
+            } else {
+              return str;
+            }
+      }
+    },
+
 		/**
-		*	Creates a xlsx filewhich is going to be in the export zip file for the 
+		*	Creates a xlsx filewhich is going to be in the export zip file for the
 		*	current page.
 		*	@param (fields) Array of JSON objects which contain page metadata.
 		*/

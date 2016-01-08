@@ -1637,7 +1637,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				var formDefJson = this._actions.createFormDefJSON(xlsx_fields);
         var formDefString = JSON.stringify(formDefJson, 2, 2);
 
-        // Create the definitions.csv and properties.csv files from the formDef file
+        // Create the definition.csv and properties.csv files from the formDef file
         var dtm = formDefJson.specification.dataTableModel;
         var defCsv = this._actions.createDefinitionCsvFromDataTableModel(this, dtm);
         var propCsv = this._actions.createPropertiesCsvFromDataTableModel(this, dtm, formDefJson);
@@ -1648,7 +1648,7 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
 				zip.file("scan_" + name + "_main.xlsx", xlFile.base64, {base64: true});  // added xlFile to the zip
 
 				zip.file("scan_" + name + "_main_formDef.json",formDefString);
-        zip.file("definitions.csv", defCsv);
+        zip.file("definition.csv", defCsv);
         zip.file("properties.csv", propCsv);
 
 				var content = zip.generate({type:"blob"});
@@ -1755,13 +1755,13 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
         var formDefString = JSON.stringify(formDefJson, 2, 2);
 				zip.file("scan_" + sub_form.name + "_formDef.json", formDefString);  // added xlFile to the zip
 
-        // Create the definitions.csv and properties.csv files from the formDef file
+        // Create the definition.csv and properties.csv files from the formDef file
         var dtm = formDefJson.specification.dataTableModel;
 
         var defCsv = this._actions.createDefinitionCsvFromDataTableModel(this, dtm);
         var propCsv = this._actions.createPropertiesCsvFromDataTableModel(this, dtm, formDefJson);
 
-        zip.file("definitions.csv", defCsv);
+        zip.file("definition.csv", defCsv);
         zip.file("properties.csv", propCsv);
 			}// end sub forms
 

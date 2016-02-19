@@ -2292,6 +2292,7 @@ var XLSXConverter = {};
 				f = flattenElementPath( dbKeyMap, elementPathPrefix, e, elementKey, jsonType.properties[e] );
 				listChildElementKeys.push(f.elementKey);
 			}
+      listChildElementKeys.sort();
 			jsonType.listChildElementKeys = listChildElementKeys;
 		}
 

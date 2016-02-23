@@ -2056,6 +2056,11 @@ ODKScan.FieldsController = Ember.ArrayController.extend({
                       survey[0][4] = "values_list";
                       // inserting the value_list for the current row
                       survey[j][4] = fields[i].name + "_grid_values";
+
+                      // adding "clear" button to deselect all options
+                      survey[0][5] = "display.deselect";
+                      survey[j][5] = "CLEAR";
+
                       // if it is first time preparing choice sheet
                       if(choices.length == 1) {
                         count = 1;
